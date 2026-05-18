@@ -2,184 +2,251 @@
 
 ## Goal
 
-Make the game feel easier to read and much more alive **without removing much content**.  
-The current issue is not mainly the number of elements on screen; it is that too many elements have the same visual weight and the interface feels static.
+Turn the current Office Village screen from a readable prototype dashboard into a more game-like interface that feels lively, playful, and easier to scan, **without changing the game rules or saved data**.
 
-## Current Problem
+The player should feel that:
 
-- Most cards use the same shape, border weight, spacing, and visual rhythm.
-- Important information and secondary information compete equally for attention.
-- The office preview is present, but it does not yet feel like the emotional center of the game.
-- Player actions work mechanically, but they give little visual reward after a click.
-- The game state changes, yet the screen often appears still.
+- the office is the heart of the game;
+- their village is visibly growing;
+- the next useful click is easy to find;
+- the interface keeps its handmade office-paper personality.
 
-## Experience Target
+## Non-goals
 
-The revised interface should feel like a **cozy diorama with living paper UI**:
-
-- the office is the main scene;
-- important information is obvious at a glance;
-- secondary information remains available but quieter;
-- the world is gently animated even when the player does nothing;
-- clicks, unlocks, and mission completions feel satisfying immediately.
+- No change to economy, progression, incidents, missions, cooldowns, or unlock logic.
+- No replacement of the current cartoon / paper art direction.
+- No new gameplay system.
+- No heavy illustration pipeline or 3D scene.
 
 ## Chosen Direction
 
-Use **Cozy Diorama** as the base direction, with touches of **Paper vivant**:
+Use an **equilibrated living office scene**:
 
-- keep the handmade paper identity already present in the game;
-- promote the office preview into the strongest visual area;
-- use stronger contrast between “important now” and “background information”;
-- prefer soft, frequent motion over loud, rare spectacle.
+- more playful than a dashboard;
+- more structured than a full illustration;
+- centered on a large office scene with small animated objects and avatars;
+- supported by compact UI panels around it.
 
-## Visual Hierarchy
+This keeps the interface safe to read while making the game feel much more alive.
 
-### Strong emphasis
+## Information Hierarchy
 
-- Current mission
-- Office village preview
-- Purchases or upgrades currently available
+### Primary
 
-### Medium emphasis
+1. Current resources
+2. Office Village scene
+3. Available quick actions
+4. Active mission or incident
 
-- Main resources
-- Manual actions
-- Active incidents
+### Secondary
 
-### Quiet emphasis
+1. Shop choices
+2. Navigation between Bureau / Upgrades / Réussites
+3. Journal feed
 
-- Locked future content
-- Journal
-- Overview stats
-- Repeated explanatory text
+### Quiet
 
-## Layout Principles
+1. Locked content
+2. Long explanations already understood after the first minute
+3. Menu / meta controls
 
-The screen should keep its existing richness, but distribute attention more deliberately:
+## Layout
 
-1. **Top area:** compact resources and current mission.
-2. **Center:** office village as the main visual scene.
-3. **Side zones:** available recruitment and building choices.
-4. **Lower area:** manual actions and secondary information.
+### 1. Compact header
 
-The goal is not to hide everything. The goal is that the player naturally sees:
+The header stays at the top and becomes shorter:
 
-1. what matters now;
-2. what changed;
-3. what they can do next.
+- game name on the left;
+- compact resource pills for idées, budget, réputation, talent;
+- two slimmer modern gauges for ambiance and chaos;
+- low height so more room is left for the game scene.
+
+### 2. Main desktop structure
+
+Use a three-zone desktop layout:
+
+```text
+┌──────────────┬──────────────────────────────┬────────────────────┐
+│ Navigation   │ Office Village               │ Boutique           │
+│              │ grande scène centrale        │ onglets            │
+│ Bureau       │ lieux + avatars + effets      │ Personnages        │
+│ Upgrades     │ mission + actions rapides     │ Lieux              │
+│ Réussites    │ incident + journal compact    │ Upgrades           │
+└──────────────┴──────────────────────────────┴────────────────────┘
+```
+
+- Left column: simple navigation only.
+- Center column: largest area of the page, focused on the office scene and moment-to-moment play.
+- Right column: one unified shop with tabs `Personnages`, `Lieux`, `Upgrades`.
+
+### 3. Responsive behavior
+
+- Desktop first.
+- On narrower screens, columns may stack in this order:
+  1. header,
+  2. scene,
+  3. quick actions,
+  4. shop,
+  5. incident / journal,
+  6. navigation if needed.
+- Nothing important should require hover to understand.
+
+## Component Design
+
+### Header
+
+- Smaller visual footprint.
+- Pills remain readable but less tall.
+- Gauges use softer borders and clearer fill color.
+- Ambiance and chaos feel like game meters, not admin progress bars.
+
+### Office Village scene
+
+This becomes the visual hero.
+
+- Built locations appear as small objects or tiles placed in the office.
+- Owned workers appear as small avatars inside the scene.
+- Empty build space remains visible so growth feels tangible.
+- The scene uses layered paper textures and light environmental decoration, but not enough to hide information.
+
+Suggested scene behaviors:
+
+- floating `+ idées` gain bubble;
+- gentle coffee-machine motion;
+- subtle positive glow / lift when ambiance rises;
+- subtle shake or warm tint when chaos rises.
+
+### Unified shop
+
+The right column merges people, places, and upgrades into one coherent shop.
+
+- Tabs: `Personnages`, `Lieux`, `Upgrades`.
+- Cards are shorter and easier to scan.
+- Color families:
+  - personnages: pale yellow;
+  - lieux: pale blue;
+  - upgrades: pale purple or neutral paper;
+  - actions: pale green;
+  - incidents: pale orange / red;
+  - missions: pale violet / gold.
+- Borders become thinner and shadows softer.
+- Locked cards stay visible but quieter than available ones.
+
+### Quick actions
+
+Manual actions become large satisfying buttons:
+
+- title;
+- optional cost;
+- gain;
+- cooldown text when disabled;
+- strong hover / press feedback.
+
+The player should understand the whole button without reading a paragraph.
+
+### Mission
+
+- Keep visible near the center play area.
+- Use a stronger card treatment than ordinary info panels.
+- Keep reward and progress clear.
+
+### Incident active
+
+- Make it look like a real game event.
+- Use a stronger alert color and `🚨` cue.
+- Choices become obvious decision buttons.
+- Preserve the humorous tone in text.
+
+### Journal
+
+- Make it secondary.
+- Use a compact feed showing only the latest few entries.
+- Prefer a small collapsible panel rather than a visually dominant large card.
+
+## Visual Language
+
+- Keep the existing handmade / office-paper identity.
+- Reduce the feeling of “black box around every object”.
+- Use more breathing room between major surfaces.
+- Reserve stronger contrast for things the player can act on now.
+- Add hover states and short transitions to all clickable elements.
+- Prefer rounded paper edges, soft shadows, and a few sketch-like accents over thick borders everywhere.
 
 ## Motion System
 
 ### Ambient motion
 
-Small loops that make the office feel inhabited:
+- slow, low-amplitude animation only;
+- office feels awake while idle;
+- examples: coffee steam, worker bobbing, tiny paper float.
 
-- coffee steam;
-- tiny worker bobbing or idle movement;
-- gentle office breathing effects;
-- subtle resource shimmer when values rise.
+### Feedback motion
 
-These motions must stay calm and not distract from decision-making.
+- resource gain bubble on action;
+- button press compression;
+- small reveal when a new location or worker appears;
+- mission update pulse.
 
-### Interaction feedback
+### State-reaction motion
 
-Every important player action should answer back visually:
+- ambiance increase: soft positive shimmer / lift;
+- chaos increase: brief gentle shake or warm pulse.
 
-- resource gains rise briefly near the source;
-- successful purchases pop or settle into place;
-- buttons compress and rebound clearly;
-- newly available content enters with a small reveal.
+### Motion safety
 
-### Celebration moments
+- No important information conveyed by motion alone.
+- All animations must stay short and non-blocking.
+- Respect `prefers-reduced-motion`.
 
-Important milestones should feel distinct:
+## Data and Logic Boundary
 
-- mission completion gets a short “stamp” or confirmation motion;
-- new location unlocks receive a small reveal;
-- synergies and major upgrades get a stronger highlight than ordinary purchases.
+The refactor is presentational only.
 
-### Motion limits
+- Existing game state shape remains unchanged.
+- Existing logic functions remain the source of truth.
+- New UI state may be transient only, for example:
+  - current selected shop tab;
+  - temporary floating gain bubbles;
+  - short-lived animation classes.
+- No persistent gameplay data should be introduced for visual effects.
 
-- Avoid constant large movement.
-- Avoid casino-style flashing.
-- Prefer short durations and soft easing.
-- Respect reduced-motion preferences when possible.
+## Accessibility and Usability
 
-## Component-Level Changes
-
-### Office village preview
-
-- Becomes the visual hero of the page.
-- Shows locations and active workers with more scene-like presentation.
-- Receives the richest ambient animation.
-
-### Cards
-
-- Not all cards should look equally loud.
-- Available actions should read more strongly than locked future options.
-- Locked cards should be visually quieter rather than nearly as prominent as active ones.
-
-### Mission card
-
-- Remains highly visible.
-- Gets stronger completion feedback and may visually “resolve” before the next mission appears.
-
-### Manual actions
-
-- Keep their presence, but give stronger hover/click response and clearer cooldown feedback.
-
-### Journal and overview
-
-- Stay available, but use calmer treatment so they stop competing with the core loop.
-
-## Technical Shape
-
-- No gameplay-rule changes are required.
-- Existing React component boundaries can stay mostly intact.
-- Most work should live in presentational components plus shared CSS/animation utilities.
-- The office preview may need richer internal markup so individual locations and workers can animate separately.
-- Motion state should be driven from existing game events where possible rather than introducing new persistent game data.
-
-## Error Handling and Safety
-
-- Animation must never block a game action from completing.
-- If a motion class fails or a browser skips an animation, the game should still remain fully usable.
-- Existing save/load behavior should remain unchanged.
-
-## Accessibility and Performance
-
-- Preserve readable contrast.
-- Do not rely on motion alone to communicate success.
-- Add or respect `prefers-reduced-motion` so players can reduce animation.
-- Prefer CSS transforms and opacity changes over layout-thrashing effects.
+- Keep readable contrast.
+- Preserve button labels and obvious disabled states.
+- Do not rely only on color to explain card type or availability.
+- Keep enough spacing for comfortable clicking.
+- Respect reduced motion preferences.
 
 ## Testing and Verification
 
 ### Automated
 
-- Keep existing game-logic tests unchanged and passing.
-- Add focused UI tests only where visual state changes produce meaningful class/state differences.
+- Existing gameplay tests must remain unchanged and pass.
+- Add or update focused UI tests only where the layout introduces meaningful visible state:
+  - shop tab switching;
+  - journal compact behavior;
+  - disabled cooldown labels;
+  - scene rendering of owned workers / locations.
 
 ### Manual
 
-- Verify the player can still understand the main loop in the first minute.
-- Verify the office feels alive even while idle.
-- Verify purchases, mission completion, and unlocks create visible feedback.
-- Verify secondary information is still available but no longer dominates the screen.
-- Verify reduced-motion mode remains usable.
-
-## Non-Goals
-
-- No major gameplay redesign.
-- No removal of large feature groups purely for minimalism.
-- No full art-style replacement.
-- No heavy 3D or asset pipeline shift.
+- Verify the office remains understandable within the first minute.
+- Verify all existing gameplay actions still work.
+- Verify the desktop layout clearly reads as:
+  - left navigation,
+  - central office,
+  - right shop.
+- Verify hover / press feedback feels satisfying.
+- Verify scene animations remain subtle, not noisy.
+- Verify responsive stacking remains usable on smaller widths.
 
 ## Success Criteria
 
-The change is successful if:
+The redesign succeeds if:
 
-- the player’s eye lands first on mission, office, and available actions;
-- the interface feels more alive within the first few seconds;
-- important clicks feel better immediately;
-- the game remains readable, cozy, and not visually exhausting.
+1. the player’s eye lands on the office scene first;
+2. the next useful action is easier to spot than before;
+3. the screen feels warmer and more game-like within a few seconds;
+4. the player can still access every current feature;
+5. no gameplay behavior changes.
