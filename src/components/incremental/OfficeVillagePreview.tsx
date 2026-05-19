@@ -1,0 +1,171 @@
+"use client";
+
+import { useState } from "react";
+import { IncrementalResourceBar } from "@/components/incremental/IncrementalResourceBar";
+import { LocationCard } from "@/components/incremental/LocationCard";
+import { ManualActionsPanel } from "@/components/incremental/ManualActionsPanel";
+import { WorkerCard } from "@/components/incremental/WorkerCard";
+import { formatResourceEffect } from "@/lib/incrementalUi";
+import { type GainBubble } from "@/lib/incrementalPresentation";
+import type { GameState, ProductionSummary } from "@/types/incremental";
+
+export function OfficeVillagePreview({
+  state,
+  production,
+  now,
+  gainBubbles,
+  sceneReaction,
+  onNewGame,
+  onSave,
+  onLoad,
+  onBuyWorker,
+  onUpgradeWorker,
+  onBuyOrUpgradeLocation,
+  onUseManualAction,
+  onResolveIncident,
+}: {
+  state: GameState;
+  production: ProductionSummary;
+  now: number;
+  gainBubbles: GainBubble[];
+  sceneReaction: "ambiance" | "chaos" | null;
+  onNewGame: () => void;
+  onSave: () => void;
+  onLoad: () => void;
+  onBuyWorker: (workerId: string) => void;
+  onUpgradeWorker: (workerId: string) => void;
+  onBuyOrUpgradeLocation: (locationId: string) => void;
+  onUseManualAction: (actionId: string) => void;
+  onResolveIncident: (incidentId: string, choiceId: string) => void;
+}) {
+  const [incidentOpen, setIncidentOpen] = useState(false);
+  const ownedLocations = state.locations.filter((location) => location.owned);
+  const activeWorkers = state.workers.filter((worker) => worker.count > 0);
+  const incidentButton = (
+    <button
+      type="button"
+      className={`office-scene-chip ${
+        state.activeIncident ? "incident-alert-chip" : "office-scene-chip-muted"
+      }`}
+      onClick={() => state.activeIncident && setIncidentOpen(true)}
+      disabled={!state.activeIncident}
+    >
+      🚨 Incident
+    </button>
+  );
+
+  return (
+    <section
+      className={`office-scene office-breathe ${
+        sceneReaction === "ambiance" ? "office-scene-ambiance" : ""
+      } ${sceneReaction === "chaos" ? "office-scene-chaos" : ""}`}
+    >
+      <div className="office-scene-gains">
+        {gainBubbles.map((bubble) => (
+          <span key={bubble.id} className="gain-pop paper-pill bg-[var(--yellow)] text-sm font-black">
+            {bubble.label}
+          </span>
+        ))}
+      </div>
+
+      <IncrementalResourceBar
+        state={state}
+        production={production}
+        onNewGame={onNewGame}
+        onSave={onSave}
+        onLoad={onLoad}
+        incidentControl={incidentButton}
+      />
+
+      <div className="office-scene-header flex items-center justify-between gap-3">
+        <div>
+          <p className="handwritten text-sm">Le bureau grandit</p>
+        </div>
+      </div>
+
+      <div className="office-floor">
+        <div className="office-board-grid">
+          {ownedLocations.map((location) => (
+            <LocationCard
+              key={location.id}
+              location={location}
+              reputation={state.resources.reputation}
+              budget={state.resources.budget}
+              onBuyOrUpgrade={() => onBuyOrUpgradeLocation(location.id)}
+              variant="office"
+            />
+          ))}
+
+          {activeWorkers.map((worker) => (
+            <WorkerCard
+              key={worker.id}
+              worker={worker}
+              reputation={state.resources.reputation}
+              budget={state.resources.budget}
+              onBuy={() => onBuyWorker(worker.id)}
+              onUpgrade={() => onUpgradeWorker(worker.id)}
+              variant="office"
+            />
+          ))}
+        </div>
+      </div>
+
+      <ManualActionsPanel
+        actions={state.manualActions}
+        resources={state.resources}
+        locations={state.locations}
+        now={now}
+        onUse={onUseManualAction}
+        variant="scene"
+      />
+
+      {incidentOpen && state.activeIncident && (
+        <div className="office-scene-modal-backdrop">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-label="Incident actif"
+            className="paper-card office-scene-modal incident-scene-modal"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-black uppercase tracking-wide">Incident actif</p>
+                <h3 className="mt-1 text-xl font-black">
+                  🚨 {state.activeIncident.emoji} {state.activeIncident.title}
+                </h3>
+              </div>
+              <button
+                type="button"
+                aria-label="Fermer"
+                className="paper-button h-10 w-10 bg-white p-0"
+                onClick={() => setIncidentOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <p className="handwritten mt-3">{state.activeIncident.description}</p>
+            <div className="mt-4 grid gap-2">
+              {state.activeIncident.choices.map((choice) => (
+                <button
+                  key={choice.id}
+                  type="button"
+                  className="decision-button"
+                  onClick={() => {
+                    onResolveIncident(state.activeIncident!.id, choice.id);
+                    setIncidentOpen(false);
+                  }}
+                >
+                  <span>{choice.label}</span>
+                  <span className="text-xs opacity-70">
+                    {choice.chance ? "Effet incertain" : formatResourceEffect(choice.effect)}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
+    </section>
+  );
+}
