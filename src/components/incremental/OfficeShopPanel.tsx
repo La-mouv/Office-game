@@ -135,7 +135,7 @@ export function OfficeShopPanel({
             ))
           ) : (
             <p className="handwritten rounded-2xl bg-white/70 p-3 text-sm">
-              Tout le recrutement actif est maintenant dans le Bureau.
+              Tout le recrutement actif est déjà dans le Bureau. Le badge d’accès souffle un peu.
             </p>
           ))}
 
@@ -152,7 +152,7 @@ export function OfficeShopPanel({
             ))
           ) : (
             <p className="handwritten rounded-2xl bg-white/70 p-3 text-sm">
-              Tous les aménagements construits sont maintenant dans le Bureau.
+              Tous les aménagements construits sont déjà dans le Bureau. Les murs font les fiers.
             </p>
           ))}
 

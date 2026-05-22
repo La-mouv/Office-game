@@ -1,26 +1,54 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AchievementsView } from "@/components/incremental/AchievementsView";
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import type { GameState } from "@/types/incremental";
+
+type GameLanguage = "fr" | "en" | "es";
+
+const LANGUAGE_STORAGE_KEY = "office-village-language";
+const LANGUAGE_OPTIONS: { code: GameLanguage; label: string }[] = [
+  { code: "fr", label: "Français" },
+  { code: "en", label: "English" },
+  { code: "es", label: "Español" },
+];
+
+function isGameLanguage(value: string | null): value is GameLanguage {
+  return value === "fr" || value === "en" || value === "es";
+}
 
 export function OfficeTopControls({
   state,
   onNewGame,
   onSave,
   onLoad,
+  initialMenuOpen = false,
 }: {
   state: GameState;
   onNewGame: () => void;
   onSave: () => void;
   onLoad: () => void;
+  initialMenuOpen?: boolean;
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(initialMenuOpen);
   const [achievementsOpen, setAchievementsOpen] = useState(false);
+  const [language, setLanguage] = useState<GameLanguage>("fr");
   const ownedLocations = state.locations.filter((location) => location.owned).length;
   const totalWorkers = state.workers.reduce((total, worker) => total + worker.count, 0);
   const activeSynergies = state.synergies.filter((synergy) => synergy.discovered).length;
+
+  useEffect(() => {
+    const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (isGameLanguage(storedLanguage)) {
+      setLanguage(storedLanguage);
+    }
+  }, []);
+
+  function handleLanguageChange(nextLanguage: GameLanguage) {
+    setLanguage(nextLanguage);
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
+  }
 
   return (
     <>
@@ -83,7 +111,7 @@ export function OfficeTopControls({
             </div>
 
             <div className="paper-note surface-quiet space-y-2">
-              <h3 className="font-black">Vue d’ensemble</h3>
+              <h3 className="font-black">Tableau de bord improvisé</h3>
               <p className="overview-line">
                 <GameAssetImage assetId="worker-intern" alt="" className="overview-asset-icon" />
                 Collègues : {totalWorkers}
@@ -102,15 +130,39 @@ export function OfficeTopControls({
               </p>
               <p className="overview-line">
                 <GameAssetImage assetId="badge-trophy" alt="" className="overview-asset-icon" />
-                Objectif : {state.completed ? "atteint" : "en cours"}
+                Objectif : {state.completed ? "sauvé" : "en chantier"}
               </p>
             </div>
 
             <div className="paper-note surface-quiet space-y-2 bg-[var(--yellow-soft)]">
               <h3 className="font-black">Règle d’or</h3>
               <p className="handwritten text-sm">
-                Le bureau peut partir en vrille, mais il continue de produire.
+                Le bureau peut partir en vrille, tant qu’il continue de produire quelque chose de présentable.
               </p>
+            </div>
+
+            <div className="paper-note surface-quiet space-y-3">
+              <div>
+                <h3 className="font-black">Langue</h3>
+                <p className="handwritten text-sm">
+                  Choisis la langue du jeu. La traduction complète arrive juste après.
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {LANGUAGE_OPTIONS.map((option) => (
+                  <button
+                    key={option.code}
+                    type="button"
+                    aria-pressed={language === option.code}
+                    className={`paper-button justify-center px-2 py-2 text-sm ${
+                      language === option.code ? "bg-[var(--yellow)]" : "bg-white"
+                    }`}
+                    onClick={() => handleLanguageChange(option.code)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="grid gap-2">

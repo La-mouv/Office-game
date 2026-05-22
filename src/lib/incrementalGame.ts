@@ -59,7 +59,7 @@ export function createInitialGameState(now = Date.now()): GameState {
     highestRewardedReputationLevel: 1,
     completed: false,
     sandboxMode: false,
-    log: ["Bienvenue dans Office Village. Le bureau respire, les idées commencent."],
+    log: ["Bienvenue dans Office Village. L’open-space respire encore, le chaos demande déjà un badge."],
   };
 
   return {
@@ -352,7 +352,7 @@ export function updateSynergies(state: GameState): GameState {
     nextState = applyResourceDelta(nextState, {
       ambiance: synergy.effect.ambianceBonus ?? 0,
     });
-    nextState = appendLog(nextState, `Combo découvert : ${synergy.name}.`);
+    nextState = appendLog(nextState, `Combo découvert : ${synergy.name}. Le bureau prétend que c’était prévu.`);
     return { ...synergy, discovered: true };
   });
 
@@ -400,7 +400,7 @@ export function updateMilestones(state: GameState): GameState {
     if (milestone.achieved || !milestoneReached(nextState, milestone)) return milestone;
 
     nextState = applyResourceDelta(nextState, milestone.reward.resources ?? {});
-    nextState = appendLog(nextState, `Milestone atteint : ${milestone.title}.`);
+    nextState = appendLog(nextState, `Palier validé : ${milestone.title}. Le reporting gonfle les épaules.`);
     return { ...milestone, achieved: true };
   });
 
@@ -461,7 +461,7 @@ export function updateMissions(
       if (mission.reward.boost) {
         nextState = grantMissionBoost(nextState, mission.reward.boost, now);
       }
-      nextState = appendLog(nextState, `Mission accomplie : ${mission.title}.`);
+      nextState = appendLog(nextState, `Mission pliée : ${mission.title}. Le comité applaudit en silence.`);
       nextState = {
         ...nextState,
         completedMissionIds: [...nextState.completedMissionIds, mission.id],
@@ -519,12 +519,12 @@ export function buyWorker(
   const worker = state.workers.find((candidate) => candidate.id === workerId);
   if (!worker) return state;
   if (state.resources.reputation < worker.unlockReputation) {
-    return appendLog(state, `${worker.name} est encore verrouillé.`);
+    return appendLog(state, `${worker.name} reste verrouillé. Le badge refuse l’accès.`);
   }
 
   const cost = getWorkerCost(worker);
   if (state.resources.budget < cost) {
-    return appendLog(state, `Pas assez de budget pour recruter ${worker.name}.`);
+    return appendLog(state, `Pas assez de budget pour recruter ${worker.name}. La finance garde le mug fermé.`);
   }
 
   let nextState: GameState = {
@@ -534,7 +534,7 @@ export function buyWorker(
     ),
   };
   nextState = applyResourceDelta(nextState, { budget: -cost });
-  nextState = appendLog(nextState, `${worker.name} rejoint le bureau.`);
+  nextState = appendLog(nextState, `${worker.name} rejoint le bureau. Quelqu’un ajoute une chaise au plan.`);
   nextState = updateSynergies(nextState);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now, rng);
@@ -550,15 +550,15 @@ export function upgradeWorker(
   const worker = state.workers.find((candidate) => candidate.id === workerId);
   if (!worker) return state;
   if (state.resources.reputation < worker.unlockReputation) {
-    return appendLog(state, `${worker.name} est encore verrouillé.`);
+    return appendLog(state, `${worker.name} reste verrouillé. Le badge refuse l’accès.`);
   }
   if (worker.level >= 5) {
-    return appendLog(state, `${worker.name} est déjà au niveau maximum.`);
+    return appendLog(state, `${worker.name} est déjà au niveau maximum. Même le manager lâche l’affaire.`);
   }
 
   const cost = getWorkerUpgradeCost(worker);
   if (state.resources.budget < cost) {
-    return appendLog(state, `Pas assez de budget pour améliorer ${worker.name}.`);
+    return appendLog(state, `Pas assez de budget pour améliorer ${worker.name}. Le fichier Excel dit non.`);
   }
 
   let nextState: GameState = {
@@ -568,7 +568,7 @@ export function upgradeWorker(
     ),
   };
   nextState = applyResourceDelta(nextState, { budget: -cost });
-  nextState = appendLog(nextState, `${worker.name} passe niveau ${worker.level + 1}.`);
+  nextState = appendLog(nextState, `${worker.name} passe niveau ${worker.level + 1}. La fiche de poste fait semblant de suivre.`);
   return updateMissions(nextState, now, rng);
 }
 
@@ -581,15 +581,15 @@ export function buyOrUpgradeLocation(
   const location = state.locations.find((candidate) => candidate.id === locationId);
   if (!location) return state;
   if (state.resources.reputation < location.unlockReputation) {
-    return appendLog(state, `${location.name} est encore verrouillé.`);
+    return appendLog(state, `${location.name} reste verrouillé. Le badge d’accès boude.`);
   }
   if (location.owned && location.level >= location.maxLevel) {
-    return appendLog(state, `${location.name} est déjà au niveau maximum.`);
+    return appendLog(state, `${location.name} est déjà au niveau maximum. Le plan des locaux capitule.`);
   }
 
   const cost = getLocationCost(location);
   if (state.resources.budget < cost) {
-    return appendLog(state, `Pas assez de budget pour ${location.name}.`);
+    return appendLog(state, `Pas assez de budget pour ${location.name}. Le devis part en pause café.`);
   }
 
   let nextState: GameState = {
@@ -607,7 +607,9 @@ export function buyOrUpgradeLocation(
   });
   nextState = appendLog(
     nextState,
-    location.owned ? `${location.name} passe niveau ${location.level + 1}.` : `${location.name} construit.`,
+    location.owned
+      ? `${location.name} passe niveau ${location.level + 1}. Les murs prennent confiance.`
+      : `${location.name} construit. Le bureau gagne quelques mètres carrés d’illusion.`,
   );
   nextState = updateSynergies(nextState);
   nextState = updateMilestones(nextState);
@@ -624,10 +626,10 @@ export function unlockSkill(
   const skill = state.skills.find((candidate) => candidate.id === skillId);
   if (!skill || skill.unlocked) return state;
   if (state.resources.reputation < skill.unlockReputation) {
-    return appendLog(state, `${skill.name} est encore verrouillé.`);
+    return appendLog(state, `${skill.name} reste verrouillé. Le talent attend son badge.`);
   }
   if (state.talentPoints < skill.cost) {
-    return appendLog(state, `Pas assez de points de talent pour ${skill.name}.`);
+    return appendLog(state, `Pas assez de points de talent pour ${skill.name}. Le plan de carrière patiente.`);
   }
 
   let nextState: GameState = {
@@ -644,7 +646,7 @@ export function unlockSkill(
     ...nextState,
     resources: clampResources(nextState.resources, nextState.skills),
   };
-  nextState = appendLog(nextState, `Skill débloqué : ${skill.name}.`);
+  nextState = appendLog(nextState, `Talent signé : ${skill.name}. Le bureau se sent soudain compétent.`);
   return updateMissions(nextState, now, rng);
 }
 
@@ -672,7 +674,7 @@ export function maybeTriggerIncident(
       activeIncident: incident,
       lastIncidentAt: now,
     },
-    `Incident : ${incident.title}.`,
+    `Incident bureau : ${incident.title}. Le calme pose sa démission.`,
   );
 }
 
@@ -731,7 +733,7 @@ export function useManualAction(state: GameState, actionId: string, now: number)
     const missingResource = firstMissingResource(state.resources, cost);
     return appendLog(
       state,
-      `Pas assez ${missingResource ? getResourceName(missingResource) : "de ressources"} pour ${action.name}.`,
+      `Pas assez ${missingResource ? getResourceName(missingResource) : "de ressources"} pour ${action.name}. Le process vide ses poches.`,
     );
   }
 
@@ -747,7 +749,7 @@ export function useManualAction(state: GameState, actionId: string, now: number)
   };
   nextState = payResourceCost(nextState, cost);
   nextState = applyResourceDelta(nextState, action.effect);
-  nextState = appendLog(nextState, `Action : ${action.name}.`);
+  nextState = appendLog(nextState, `Action lancée : ${action.name}. Le bureau fait semblant de garder son calme.`);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now);
   return checkCompletion(nextState);
@@ -760,7 +762,12 @@ export function checkCompletion(state: GameState): GameState {
   const completed =
     state.resources.reputation >= 1_000_000 && autonomousOffice?.owned && autopilot?.discovered;
 
-  return completed ? appendLog({ ...state, completed: true }, "Office Village complet.") : state;
+  return completed
+    ? appendLog(
+        { ...state, completed: true },
+        "Office Village complet. Le comité de pilotage applaudit sans ouvrir le micro.",
+      )
+    : state;
 }
 
 export function continueInSandbox(state: GameState): GameState {

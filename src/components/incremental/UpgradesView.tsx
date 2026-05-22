@@ -29,7 +29,7 @@ export function UpgradesView({
       <section className="paper-note bg-[var(--yellow-soft)]">
         <h2 className="text-2xl font-black">Points de talent</h2>
         <p className="handwritten mt-2">
-          Tu gagnes 1 point à chaque grand palier de réputation. Disponible maintenant :{" "}
+          Tu gagnes 1 point à chaque grand palier de réputation. C’est rare, précieux, et déjà suivi dans un fichier que personne ne retrouve. Disponible maintenant :{" "}
           <strong>{state.talentPoints}</strong>.
         </p>
       </section>

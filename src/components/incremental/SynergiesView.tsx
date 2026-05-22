@@ -49,7 +49,7 @@ export function SynergiesView({ state }: { state: GameState }) {
         <h2 className="text-2xl font-black">Combos actifs</h2>
         {active.length === 0 ? (
           <div className="paper-note">
-            <p className="handwritten">Pas encore de combo. Le bureau apprend à respirer ensemble.</p>
+            <p className="handwritten">Pas encore de combo. Le bureau se regarde en silence autour de la machine à café.</p>
           </div>
         ) : (
           <div className="grid gap-3 md:grid-cols-2">

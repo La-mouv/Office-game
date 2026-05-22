@@ -5,8 +5,9 @@ import { SynergiesView } from "@/components/incremental/SynergiesView";
 import { UpgradesView } from "@/components/incremental/UpgradesView";
 import { createInitialGameState } from "@/lib/incrementalGame";
 import { getOfficeGuidance } from "@/lib/incrementalGuidance";
+import { GUIDED_MISSIONS } from "@/lib/incrementalMissions";
 import { getEligibleDynamicMissions } from "@/lib/incrementalMissions";
-import { MILESTONES, SKILLS } from "@/lib/incrementalData";
+import { INCIDENTS, MANUAL_ACTIONS, MILESTONES, SKILLS, WORKERS } from "@/lib/incrementalData";
 import type { GameState } from "@/types/incremental";
 
 function textFrom(parts: string[]): string {
@@ -112,5 +113,37 @@ describe("incremental copy consistency", () => {
 
     expect(skillCopy).not.toMatch(/production globale/i);
     expect(html).toContain(`Acheter ${multiTalentSkill!.cost} talents`);
+  });
+
+  it("uses sharper office-crisis wording on stable non-button surfaces", () => {
+    const initialState = createInitialGameState(0);
+    const coffeeIncident = INCIDENTS.find((incident) => incident.id === "coffee-noise");
+    const intern = WORKERS.find((worker) => worker.id === "intern");
+
+    expect(initialState.log[0]).toBe(
+      "Bienvenue dans Office Village. L’open-space respire encore, le chaos demande déjà un badge.",
+    );
+    expect(GUIDED_MISSIONS[0]?.description).toBe(
+      "Recrute une première paire de mains avant que le planning parte en comité de crise.",
+    );
+    expect(coffeeIncident?.description).toBe(
+      "La machine à café tousse comme un vieux serveur. Tout l’open-space nie le problème.",
+    );
+    expect(intern?.description).toBe(
+      "Il ne sait pas encore tout faire, mais il clique avec une confiance de comité de pilotage.",
+    );
+  });
+
+  it("keeps high-risk button labels unchanged during the copy refresh", () => {
+    expect(MANUAL_ACTIONS.map((action) => action.name)).toEqual([
+      "Brainstorm",
+      "Pause café",
+      "Pitch client",
+    ]);
+    expect(INCIDENTS.find((incident) => incident.id === "coffee-noise")?.choices.map((choice) => choice.label)).toEqual([
+      "La réparer proprement",
+      "Taper dessus doucement",
+      "Dire que c’est normal",
+    ]);
   });
 });

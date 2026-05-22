@@ -65,7 +65,7 @@ export function getRecentLogEntries(entries: string[], limit = 4): string[] {
 export function buildMissionTodoItems(state: GameState): MissionTodoItem[] {
   const completed = state.log
     .map((entry, index): MissionTodoItem | null => {
-      const match = entry.match(/^Mission accomplie : (.+)\.$/);
+      const match = entry.match(/^(?:Mission accomplie|Mission pliée) : (.+?)(?:\.| Le comité)/);
       if (!match) return null;
 
       return {

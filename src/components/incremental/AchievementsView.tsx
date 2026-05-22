@@ -41,7 +41,7 @@ export function AchievementsView({ state }: { state: GameState }) {
         </h2>
         <p className="handwritten mt-2">
           {unlockedCount} réussite{unlockedCount > 1 ? "s" : ""} débloquée
-          {unlockedCount > 1 ? "s" : ""}. Les badges gagnés apportent des pouvoirs au bureau.
+          {unlockedCount > 1 ? "s" : ""}. Les badges gagnés donnent au bureau des raisons de bomber le torse.
         </p>
       </section>
 
@@ -75,7 +75,7 @@ export function AchievementsView({ state }: { state: GameState }) {
 
             <p className="handwritten text-sm">{badge.description}</p>
             <p className="text-sm font-bold">
-              {badge.unlocked ? effectText(badge.effect) : badge.requirement ?? "À débloquer"}
+              {badge.unlocked ? effectText(badge.effect) : badge.requirement ?? "À débloquer quand le bureau aura arrêté de paniquer"}
             </p>
           </article>
         ))}

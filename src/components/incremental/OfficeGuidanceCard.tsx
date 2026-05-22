@@ -49,7 +49,7 @@ export function OfficeGuidanceCard({
         <p className="text-xs font-black uppercase tracking-wide">Mission du moment</p>
         <h2 className="mt-1 text-xl font-black">Le bureau improvise</h2>
         <p className="handwritten mt-3 text-sm">
-          Rien d’urgent pour l’instant. Continue de recruter, construire et laisser les idées mûrir.
+          Rien d’urgent pour l’instant. Profite, c’est probablement une erreur de planning.
         </p>
       </section>
     );

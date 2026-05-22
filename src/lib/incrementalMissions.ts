@@ -6,7 +6,7 @@ export const GUIDED_MISSIONS: Mission[] = [
     templateId: "guided-first-intern",
     kind: "guided",
     title: "Première recrue",
-    description: "Le bureau a besoin d’une première paire de mains curieuses.",
+    description: "Recrute une première paire de mains avant que le planning parte en comité de crise.",
     emoji: "🧢",
     requirement: { kind: "workerCount", workerId: "intern", count: 1 },
     reward: { resources: { budget: 10 } },
@@ -16,7 +16,7 @@ export const GUIDED_MISSIONS: Mission[] = [
     templateId: "guided-first-ideas",
     kind: "guided",
     title: "Un peu de matière grise",
-    description: "Accumule 25 idées. Même les post-its ont besoin de matière première.",
+    description: "Accumule 25 idées. Le mur de post-its réclame sa ration quotidienne.",
     emoji: "💡",
     requirement: { kind: "resourceAtLeast", resource: "ideas", amount: 25 },
     reward: { resources: { budget: 10 } },
@@ -26,7 +26,7 @@ export const GUIDED_MISSIONS: Mission[] = [
     templateId: "guided-first-pitch",
     kind: "guided",
     title: "Le premier pitch",
-    description: "Transforme une bonne idée en vraie conversation client.",
+    description: "Transforme une idée correcte en conversation client presque crédible.",
     emoji: "🤝",
     requirement: { kind: "manualActionUses", actionId: "client-pitch", count: 1 },
     reward: {
@@ -45,7 +45,7 @@ export const GUIDED_MISSIONS: Mission[] = [
     templateId: "guided-coffee-machine",
     kind: "guided",
     title: "Café diplomatique",
-    description: "Construis la Machine à café. Les réunions passent mieux avec mousse.",
+    description: "Construis la Machine à café. Sans elle, le bureau négocie avec le vide.",
     emoji: "☕",
     requirement: { kind: "locationOwned", locationId: "coffee-machine" },
     reward: { resources: { ambiance: 5, reputation: 10 } },
@@ -55,7 +55,7 @@ export const GUIDED_MISSIONS: Mission[] = [
     templateId: "guided-first-skill",
     kind: "guided",
     title: "Une vraie méthode",
-    description: "Achète Organisation. Le chaos aime les systèmes mal rangés.",
+    description: "Achète Organisation. Le chaos déteste quand quelqu’un retrouve le bon dossier.",
     emoji: "📋",
     requirement: { kind: "skillUnlocked", skillId: "organization" },
     reward: {
@@ -115,7 +115,7 @@ function createBrainstormBurst(state: GameState): Mission {
     templateId: "brainstorm-burst",
     kind: "dynamic",
     title: "Pluie de post-its",
-    description: "Lance 3 brainstorms. Le tableau blanc réclame sa ration.",
+    description: "Lance 3 brainstorms. Le tableau blanc veut souffrir utilement.",
     emoji: "💡",
     requirement: {
       kind: "manualActionUses",
@@ -141,7 +141,7 @@ function createPitchRound(state: GameState): Mission {
     templateId: "pitch-round",
     kind: "dynamic",
     title: "Petite tournée commerciale",
-    description: "Fais 2 Pitchs client. Quelqu’un doit financer les feutres.",
+    description: "Fais 2 Pitchs client. Les feutres ne vont pas se financer seuls.",
     emoji: "🤝",
     requirement: {
       kind: "manualActionUses",
@@ -173,7 +173,7 @@ function createHireTeam(state: GameState): Mission | null {
     templateId: "hire-team",
     kind: "dynamic",
     title: "Renfort demandé",
-    description: `Recrute 2 ${worker.name.toLowerCase()} supplémentaires.`,
+    description: `Recrute 2 ${worker.name.toLowerCase()} supplémentaires avant que le planning fasse semblant d’aller bien.`,
     emoji: worker.emoji,
     requirement: {
       kind: "workerCount",
@@ -205,7 +205,7 @@ function createBuildNextRoom(state: GameState): Mission | null {
     templateId: "build-next-room",
     kind: "dynamic",
     title: "Le bureau pousse",
-    description: `Construis ${location.name}. Les murs veulent aussi leur carrière.`,
+    description: `Construis ${location.name}. Même les murs veulent une promotion.`,
     emoji: location.emoji,
     requirement: {
       kind: "locationOwned",
@@ -222,7 +222,7 @@ function createFreshAir(state: GameState): Mission | null {
     templateId: "fresh-air",
     kind: "dynamic",
     title: "Air respirable",
-    description: "Fais monter l’ambiance. Même les plantes ont l’air concernées.",
+    description: "Fais monter l’ambiance. Les plantes commencent à lire les mails RH.",
     emoji: "😊",
     requirement: {
       kind: "ambianceAtLeast",
@@ -255,7 +255,7 @@ function createUnlockSkill(state: GameState): Mission | null {
     templateId: "unlock-skill",
     kind: "dynamic",
     title: "La bonne habitude",
-    description: `Achète ${skill.name}. La compétence préfère être invitée.`,
+    description: `Achète ${skill.name}. Le talent attend devant la salle de réunion.`,
     emoji: skill.emoji,
     requirement: {
       kind: "skillUnlocked",
@@ -296,7 +296,7 @@ function createFindSynergy(state: GameState): Mission | null {
     templateId: "find-synergy",
     kind: "dynamic",
     title: "Éclair de génie collectif",
-    description: "Découvre un nouveau combo. Les bureaux aussi aiment les duos.",
+    description: "Découvre un nouveau combo. Le bureau adore quand le chaos devient rentable.",
     emoji: "🔗",
     requirement: {
       kind: "synergiesDiscovered",

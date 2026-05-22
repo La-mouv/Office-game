@@ -21,7 +21,7 @@ export const WORKERS: Worker[] = [
   {
     id: "intern",
     name: "Stagiaire motivé",
-    description: "Il ne sait pas encore tout faire, mais il veut tout essayer.",
+    description: "Il ne sait pas encore tout faire, mais il clique avec une confiance de comité de pilotage.",
     baseCost: 10,
     count: 0,
     level: 1,
@@ -33,7 +33,7 @@ export const WORKERS: Worker[] = [
   {
     id: "tired-dev",
     name: "Développeur fatigué",
-    description: "Produit beaucoup d’idées, surtout après un café.",
+    description: "Produit des idées entre deux cafés et trois regards vides sur Jira.",
     baseCost: 45,
     count: 0,
     level: 1,
@@ -45,7 +45,7 @@ export const WORKERS: Worker[] = [
   {
     id: "designer",
     name: "Designer débordé",
-    description: "Génère des idées brillantes et des débats de DA interminables.",
+    description: "Sort des idées brillantes et un débat de DA avant même le café.",
     baseCost: 90,
     count: 0,
     level: 1,
@@ -57,7 +57,7 @@ export const WORKERS: Worker[] = [
   {
     id: "manager",
     name: "Manager inspirant",
-    description: "Transforme le chaos en plan d’action presque clair.",
+    description: "Transforme le chaos en plan d’action, puis propose un point rapide.",
     baseCost: 160,
     count: 0,
     level: 1,
@@ -69,7 +69,7 @@ export const WORKERS: Worker[] = [
   {
     id: "senior-dev",
     name: "Développeuse senior",
-    description: "Transforme les prototypes bancals en vraies solutions.",
+    description: "Répare les prototypes bancals pendant que tout le monde dit “ça marchait hier”.",
     baseCost: 260,
     count: 0,
     level: 1,
@@ -81,7 +81,7 @@ export const WORKERS: Worker[] = [
   {
     id: "sales",
     name: "Commercial enthousiaste",
-    description: "Vend parfois ce qui existe. Parfois ce qui n’existe pas encore.",
+    description: "Vend ce qui existe, ce qui arrive, et parfois ce qui vient de lui traverser l’esprit.",
     baseCost: 400,
     count: 0,
     level: 1,
@@ -93,7 +93,7 @@ export const WORKERS: Worker[] = [
   {
     id: "hr",
     name: "RH bienveillante",
-    description: "Protège l’ambiance avant que Slack ne prenne feu.",
+    description: "Éteint les débuts d’incendie Slack avec des phrases très calmes.",
     baseCost: 650,
     count: 0,
     level: 1,
@@ -105,7 +105,7 @@ export const WORKERS: Worker[] = [
   {
     id: "office-manager",
     name: "Office Manager",
-    description: "Répare, range, organise et sauve discrètement tout le monde.",
+    description: "Répare, range, organise, et sauve la boîte sans jamais faire de slide.",
     baseCost: 900,
     count: 0,
     level: 1,
@@ -117,7 +117,7 @@ export const WORKERS: Worker[] = [
   {
     id: "ai-agent",
     name: "Agent IA",
-    description: "Automatise tout. Même ce qu’il ne devrait pas.",
+    description: "Automatise tout, y compris les mauvaises idées qui avaient juste besoin de dormir.",
     baseCost: 3500,
     count: 0,
     level: 1,
@@ -132,7 +132,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "starting-office",
     name: "Bureau de départ",
-    description: "Une table, deux chaises, beaucoup d’espoir.",
+    description: "Une table, deux chaises, et assez d’espoir pour ignorer le bail.",
     baseCost: 0,
     owned: true,
     level: 1,
@@ -145,7 +145,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "coffee-machine",
     name: "Machine à café",
-    description: "Le cœur énergétique du bureau.",
+    description: "Le vrai serveur central. Sans elle, même les idées demandent un arrêt maladie.",
     baseCost: 40,
     owned: false,
     level: 1,
@@ -158,7 +158,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "open-space",
     name: "Open Space",
-    description: "Plus d’idées, plus de bruit, plus de post-its.",
+    description: "Plus d’idées, plus de bruit, et zéro chance de finir une phrase.",
     baseCost: 90,
     owned: false,
     level: 1,
@@ -171,7 +171,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "project-room",
     name: "Salle projet",
-    description: "Les idées commencent à ressembler à des plans.",
+    description: "L’endroit où les idées mettent une chemise et prétendent être un plan.",
     baseCost: 180,
     owned: false,
     level: 1,
@@ -184,7 +184,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "relax-corner",
     name: "Coin détente",
-    description: "Un canapé peut parfois remplacer trois process.",
+    description: "Un canapé, deux plantes, et soudain le process semble moins dangereux.",
     baseCost: 300,
     owned: false,
     level: 1,
@@ -197,7 +197,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "meeting-room",
     name: "Salle réunion",
-    description: "Risque modéré de réunion utile.",
+    description: "Zone à risque : une réunion utile peut arriver, mais rien n’est garanti.",
     baseCost: 450,
     owned: false,
     level: 1,
@@ -210,7 +210,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "creative-studio",
     name: "Studio créatif",
-    description: "Des couleurs, des idées, et trop de variantes de logo.",
+    description: "Des couleurs, des idées, et beaucoup trop de versions “final_final_v3”.",
     baseCost: 700,
     owned: false,
     level: 1,
@@ -223,7 +223,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "client-desk",
     name: "Accueil client",
-    description: "Pour faire croire que tout est parfaitement maîtrisé.",
+    description: "Pour sourire fort et cacher que le dossier partagé est introuvable.",
     baseCost: 1200,
     owned: false,
     level: 1,
@@ -236,7 +236,7 @@ export const LOCATIONS: OfficeLocation[] = [
   {
     id: "autonomous-office",
     name: "Bureau autonome",
-    description: "Le bureau tourne presque tout seul. Presque.",
+    description: "Le bureau tourne presque seul. Quelqu’un surveille quand même la machine à café.",
     baseCost: 15000,
     owned: false,
     level: 1,
@@ -252,7 +252,7 @@ export const SYNERGIES: Synergy[] = [
   {
     id: "caffeinated-dev",
     name: "Développeur caféiné",
-    description: "Machine à café + développeur = idées techniques boostées.",
+    description: "Machine à café + développeur : les idées partent en sprint sans demander l’avis du planning.",
     requirements: { workers: { "tired-dev": 1 }, locations: ["coffee-machine"] },
     effect: { ideasMultiplier: 0.25 },
     discovered: false,
@@ -261,7 +261,7 @@ export const SYNERGIES: Synergy[] = [
   {
     id: "junior-team",
     name: "Équipe junior",
-    description: "Cinq stagiaires motivés qui avancent dans la même direction. Parfois.",
+    description: "Cinq stagiaires motivés dans la même direction. Enfin, globalement.",
     requirements: { workers: { intern: 5 }, locations: ["open-space"] },
     effect: { ideasMultiplier: 0.2 },
     discovered: false,
@@ -270,7 +270,7 @@ export const SYNERGIES: Synergy[] = [
   {
     id: "permanent-brainstorm",
     name: "Brainstorm permanent",
-    description: "La salle projet canalise enfin la créativité.",
+    description: "La salle projet transforme le chaos créatif en mur de post-its presque lisible.",
     requirements: { workers: { designer: 1 }, locations: ["project-room"] },
     effect: { ideasMultiplier: 0.3 },
     discovered: false,
@@ -279,7 +279,7 @@ export const SYNERGIES: Synergy[] = [
   {
     id: "calm-team",
     name: "Équipe sereine",
-    description: "RH bienveillante + coin détente = ambiance protégée.",
+    description: "RH bienveillante + coin détente : l’ambiance reçoit enfin un badge d’accès.",
     requirements: { workers: { hr: 1 }, locations: ["relax-corner"] },
     effect: { ambianceBonus: 10, chaosReduction: 0.05 },
     discovered: false,
@@ -289,7 +289,7 @@ export const SYNERGIES: Synergy[] = [
     id: "business-pipeline",
     name: "Pipeline business",
     description:
-      "Un commercial avec un accueil client peut transformer une idée floue en facture.",
+      "Un commercial avec un accueil client peut transformer une idée floue en facture pressée.",
     requirements: { workers: { sales: 1 }, locations: ["client-desk"] },
     effect: { budgetMultiplier: 0.5, reputationMultiplier: 0.2 },
     discovered: false,
@@ -298,7 +298,7 @@ export const SYNERGIES: Synergy[] = [
   {
     id: "office-autopilot",
     name: "Office Autopilot",
-    description: "L’Agent IA et le Bureau autonome font tourner le village presque seuls.",
+    description: "L’Agent IA et le Bureau autonome font tourner le village pendant que le comité cherche le lien Teams.",
     requirements: { workers: { "ai-agent": 1 }, locations: ["autonomous-office"] },
     effect: { globalMultiplier: 1, chaosReduction: 0.1 },
     discovered: false,
@@ -311,7 +311,7 @@ export const INCIDENTS: Incident[] = [
     id: "coffee-noise",
     title: "Machine à café suspecte",
     description:
-      "La machine à café fait un bruit inquiétant. Tout le monde fait semblant de ne pas entendre.",
+      "La machine à café tousse comme un vieux serveur. Tout l’open-space nie le problème.",
     emoji: "☕",
     choices: [
       { id: "repair", label: "La réparer proprement", effect: { budget: -100, ambiance: 10, chaos: -5 } },
@@ -331,7 +331,7 @@ export const INCIDENTS: Incident[] = [
   {
     id: "wild-meeting",
     title: "Réunion sauvage",
-    description: "Un manager propose une réunion rapide de 2h.",
+    description: "Un manager vient de prononcer “point rapide” avec une invitation de 2h.",
     emoji: "🪑",
     choices: [
       { id: "accept", label: "Accepter", effect: { ideas: 20, ambiance: -10, chaos: 5 } },
@@ -346,7 +346,7 @@ export const INCIDENTS: Incident[] = [
   {
     id: "intern-blockchain",
     title: "Grande idée du stagiaire",
-    description: "Le stagiaire propose de refaire tout le produit en blockchain.",
+    description: "Le stagiaire propose de refaire tout le produit en blockchain. Le tableau blanc tremble.",
     emoji: "🧢",
     choices: [
       { id: "listen", label: "L’écouter vraiment", effect: { ideas: 30, ambiance: 5, chaos: 5 } },
@@ -357,7 +357,7 @@ export const INCIDENTS: Incident[] = [
   {
     id: "microwave-fish",
     title: "Poisson au micro-ondes",
-    description: "Quelqu’un a réchauffé du poisson à 9h12.",
+    description: "Quelqu’un a réchauffé du poisson à 9h12. La QVT demande un plan d’urgence.",
     emoji: "🐟",
     choices: [
       { id: "windows", label: "Ouvrir les fenêtres", effect: { budget: -5, ambiance: 5, chaos: -5 } },
@@ -368,7 +368,7 @@ export const INCIDENTS: Incident[] = [
   {
     id: "postit-wall",
     title: "Mur de post-its illisible",
-    description: "Le mur est couvert de post-its. Plus personne ne sait lesquels sont importants.",
+    description: "Le mur est couvert de post-its. Même les post-its ne savent plus qui décide.",
     emoji: "🗒️",
     choices: [
       { id: "colors", label: "Ranger par couleur", effect: { ideas: -20, ambiance: 10, chaos: -10 } },
@@ -380,7 +380,7 @@ export const INCIDENTS: Incident[] = [
     id: "designer-redesign",
     title: "Refonte de DA imprévue",
     description:
-      "Le designer veut refaire le logo, les couleurs, les boutons et probablement la cafetière.",
+      "Le designer veut refaire le logo, les couleurs, et probablement la personnalité de la cafetière.",
     emoji: "🎨",
     choices: [
       { id: "give-time", label: "Lui donner 30 minutes", effect: { ideas: 50, budget: -5, chaos: 5 } },
@@ -395,7 +395,7 @@ export const INCIDENTS: Incident[] = [
   {
     id: "sales-fake-feature",
     title: "Feature inexistante vendue",
-    description: "Le commercial a promis un dashboard IA vocal en 3D pour lundi.",
+    description: "Le commercial a promis un dashboard IA vocal en 3D pour lundi. Le lundi n’a pas été consulté.",
     emoji: "📣",
     choices: [
       { id: "pretend", label: "Faire semblant que c’était prévu", effect: { budget: 50, reputation: 10, chaos: 15 } },
@@ -406,7 +406,7 @@ export const INCIDENTS: Incident[] = [
   {
     id: "demo-bug",
     title: "Bug de démo",
-    description: "Évidemment, ça marchait très bien hier.",
+    description: "Évidemment, ça marchait hier. Phrase officielle, valeur juridique zéro.",
     emoji: "🐞",
     choices: [
       { id: "fix-live", label: "Corriger en live", effect: { ideas: -20, reputation: 10, chaos: 5 } },
@@ -417,7 +417,7 @@ export const INCIDENTS: Incident[] = [
   {
     id: "slack-fire",
     title: "Slack en feu",
-    description: "Quelqu’un a lancé un débat dans #general. Mauvais signe.",
+    description: "Quelqu’un a lancé un débat dans #general. Les gifs arrivent, la productivité part.",
     emoji: "🔥",
     minChaos: 30,
     choices: [
@@ -429,7 +429,7 @@ export const INCIDENTS: Incident[] = [
   {
     id: "ai-too-motivated",
     title: "Agent IA trop motivé",
-    description: "L’Agent IA propose de remplacer toutes les réunions par des poèmes.",
+    description: "L’Agent IA veut remplacer toutes les réunions par des poèmes. Le comité hésite sérieusement.",
     emoji: "🤖",
     minChaos: 50,
     choices: [
@@ -453,7 +453,7 @@ export const MANUAL_ACTIONS: ManualAction[] = [
   {
     id: "brainstorm",
     name: "Brainstorm",
-    description: "+12 idées.",
+    description: "+12 idées. Le tableau blanc accepte le choc.",
     cooldownMs: 3000,
     lastUsedAt: null,
     effect: { ideas: 12 },
@@ -462,7 +462,7 @@ export const MANUAL_ACTIONS: ManualAction[] = [
   {
     id: "coffee-break",
     name: "Pause café",
-    description: "+5 ambiance.",
+    description: "+5 ambiance. Le bureau respire par la cafetière.",
     cooldownMs: 15000,
     lastUsedAt: null,
     effect: { ambiance: 5 },
@@ -471,7 +471,7 @@ export const MANUAL_ACTIONS: ManualAction[] = [
   {
     id: "client-pitch",
     name: "Pitch client",
-    description: "Transforme 25 idées en budget et réputation.",
+    description: "Transforme 25 idées en budget, réputation, et sourire commercial.",
     cooldownMs: 20000,
     lastUsedAt: null,
     cost: { ideas: 25 },
@@ -485,7 +485,7 @@ export const SKILLS: Skill[] = [
     id: "organization",
     name: "Organisation",
     branch: "productivity",
-    description: "+10 % idées.",
+    description: "+10 % idées. Les post-its arrêtent de vivre leur vie.",
     cost: 1,
     unlockReputation: 20,
     effect: { ideasMultiplier: 0.1 },
@@ -496,7 +496,7 @@ export const SKILLS: Skill[] = [
     id: "efficient-meetings",
     name: "Réunions efficaces",
     branch: "productivity",
-    description: "+20 % efficacité globale.",
+    description: "+20 % efficacité globale. Oui, une réunion peut servir.",
     cost: 1,
     unlockReputation: 120,
     effect: { globalMultiplier: 0.2 },
@@ -507,7 +507,7 @@ export const SKILLS: Skill[] = [
     id: "postit-empire",
     name: "Empire du Post-it",
     branch: "productivity",
-    description: "+50 % idées.",
+    description: "+50 % idées. Le mur devient officiellement incontrôlable.",
     cost: 2,
     unlockReputation: 500,
     effect: { ideasMultiplier: 0.5 },
@@ -518,7 +518,7 @@ export const SKILLS: Skill[] = [
     id: "green-plants",
     name: "Plantes vertes",
     branch: "comfort",
-    description: "+5 ambiance.",
+    description: "+5 ambiance. Les plantes jugent moins que le comité.",
     cost: 1,
     unlockReputation: 60,
     effect: { ambianceBonus: 5 },
@@ -529,7 +529,7 @@ export const SKILLS: Skill[] = [
     id: "coffee-culture",
     name: "Culture café",
     branch: "comfort",
-    description: "+10 ambiance.",
+    description: "+10 ambiance. Le carburant social passe en illimité.",
     cost: 1,
     unlockReputation: 250,
     effect: { ambianceBonus: 10 },
@@ -540,7 +540,7 @@ export const SKILLS: Skill[] = [
     id: "team-culture",
     name: "Culture d’équipe",
     branch: "comfort",
-    description: "Ambiance minimum 50.",
+    description: "Ambiance minimum 50. La mauvaise humeur signe une charte.",
     cost: 2,
     unlockReputation: 1500,
     effect: { minAmbiance: 50 },
@@ -551,7 +551,7 @@ export const SKILLS: Skill[] = [
     id: "pitch-deck",
     name: "Pitch deck",
     branch: "business",
-    description: "+10 % réputation.",
+    description: "+10 % réputation. Les slides font semblant d’être modestes.",
     cost: 1,
     unlockReputation: 120,
     effect: { reputationMultiplier: 0.1 },
@@ -562,7 +562,7 @@ export const SKILLS: Skill[] = [
     id: "clear-offer",
     name: "Offre claire",
     branch: "business",
-    description: "+20 % budget.",
+    description: "+20 % budget. Même la finance comprend la phrase.",
     cost: 1,
     unlockReputation: 500,
     effect: { budgetMultiplier: 0.2 },
@@ -573,7 +573,7 @@ export const SKILLS: Skill[] = [
     id: "scale-up",
     name: "Scale-up",
     branch: "business",
-    description: "+50 % budget et réputation.",
+    description: "+50 % budget et réputation. Le reporting commence à transpirer.",
     cost: 3,
     unlockReputation: 6000,
     effect: { budgetMultiplier: 0.5, reputationMultiplier: 0.5 },
@@ -586,7 +586,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "ten-interns",
     title: "Promo de stagiaires",
-    description: "Acheter 10 stagiaires. Bonus global +10 %.",
+    description: "Recruter 10 stagiaires. Le bureau découvre la puissance du badge temporaire. Bonus global +10 %.",
     condition: { workerCount: { workerId: "intern", count: 10 } },
     reward: { globalMultiplier: 0.1 },
     achieved: false,
@@ -595,7 +595,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "first-office",
     title: "Vrai bureau",
-    description: "Construire l’Open Space. +10 % idées.",
+    description: "Construire l’Open Space. Le bruit monte, les idées aussi. +10 % idées.",
     condition: { locationOwned: "open-space" },
     reward: { ideasMultiplier: 0.1 },
     achieved: false,
@@ -604,7 +604,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "happy-office",
     title: "Bonne ambiance",
-    description: "Atteindre 90 ambiance. +10 % réputation.",
+    description: "Atteindre 90 ambiance. Même le calendrier paraît moins hostile. +10 % réputation.",
     condition: { ambiance: 90 },
     reward: { reputationMultiplier: 0.1 },
     achieved: false,
@@ -613,7 +613,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "one-million-ideas",
     title: "Machine à idées",
-    description: "Atteindre 1 000 000 idées cumulées. +20 % idées.",
+    description: "Atteindre 1 000 000 idées cumulées. Le mur de post-its demande un syndicat. +20 % idées.",
     condition: { totalIdeas: 1_000_000 },
     reward: { ideasMultiplier: 0.2 },
     achieved: false,
@@ -622,7 +622,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "synergy-master",
     title: "Bureau combo",
-    description: "Découvrir 5 combos. +20 % global.",
+    description: "Découvrir 5 combos. Le bureau prétend que tout était prévu. +20 % global.",
     condition: { synergiesCount: 5 },
     reward: { globalMultiplier: 0.2 },
     achieved: false,

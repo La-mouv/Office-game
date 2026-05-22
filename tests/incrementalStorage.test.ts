@@ -141,7 +141,7 @@ describe("incremental save parsing", () => {
     const rehydrated = rehydrateSavedGame(state);
 
     expect(rehydrated.activeMission?.description).toBe(
-      "Achète Organisation. La compétence préfère être invitée.",
+      "Achète Organisation. Le talent attend devant la salle de réunion.",
     );
     expect(rehydrated.log.join(" ")).toContain("Combo découvert");
     expect(rehydrated.log.join(" ")).not.toContain("Synergie découverte");

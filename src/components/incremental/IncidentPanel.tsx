@@ -14,7 +14,7 @@ export function IncidentPanel({
     return (
       <section className="incident-card incident-card-idle">
         <h2 className="font-black">Incident actif</h2>
-        <p className="handwritten mt-2">Rien à signaler. C’est presque louche.</p>
+        <p className="handwritten mt-2">Rien à signaler. L’open-space retient son souffle pour rien.</p>
       </section>
     );
   }

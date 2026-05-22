@@ -17,7 +17,7 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
       title: "Commence ici",
       actionLabel: "Recrute ton premier stagiaire",
       description:
-        "Les personnages fabriquent des idées automatiquement. Le stagiaire est ton premier moteur.",
+        "Les collègues fabriquent des idées automatiquement. Le stagiaire lance la machine avant le premier mail passif-agressif.",
     };
   }
 
@@ -26,7 +26,7 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
       title: "Fais monter les idées",
       actionLabel: "Attends ou clique Brainstorm",
       description:
-        "Quand tu auras 25 idées, tu pourras les transformer en argent et réputation.",
+        "À 25 idées, tu peux les transformer en budget et réputation. Le bureau appelle ça une stratégie.",
     };
   }
 
@@ -35,7 +35,7 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
       title: "Transforme tes idées",
       actionLabel: "Utilise Pitch client",
       description:
-        "Pitch client dépense 25 idées pour gagner du budget et de la réputation. C’est la boucle de départ.",
+        "Pitch client dépense 25 idées pour gagner du budget et de la réputation. C’est la boucle, avec costume invisible.",
     };
   }
 
@@ -44,7 +44,7 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
       title: "Premier vrai boost",
       actionLabel: "Construis la Machine à café",
       description:
-        "Elle arrive vite, augmente l’ambiance et rend toutes tes idées plus rentables.",
+        "Elle arrive vite, remonte l’ambiance et rend les idées moins molles qu’un lundi matin.",
     };
   }
 
@@ -53,7 +53,7 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
       title: "Passe à l’étape suivante",
       actionLabel: "Recrute un Développeur fatigué",
       description:
-        "Il produit beaucoup plus d’idées que le stagiaire. La partie commence à s’accélérer.",
+        "Il produit beaucoup plus d’idées que le stagiaire. La partie commence à courir dans le couloir.",
     };
   }
 
@@ -62,7 +62,7 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
       title: "Construis ton équipe",
       actionLabel: "Ouvre l’Open Space",
       description:
-        "Il booste les idées et prépare ton premier vrai combo d’équipe.",
+        "Il booste les idées et prépare ton premier vrai combo d’équipe. Prévois du bruit.",
     };
   }
 
@@ -70,6 +70,6 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
     title: "Boucle principale",
     actionLabel: "Achète → optimise → débloque",
     description:
-      "Garde l’ambiance haute, limite le chaos et cherche les combinaisons qui ouvrent des combos.",
+      "Garde l’ambiance haute, limite le chaos et cherche les combos qui font croire que tout était prévu.",
   };
 }

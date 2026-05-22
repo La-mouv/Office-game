@@ -89,7 +89,7 @@ export function IncrementalSidebar({
             </div>
 
             <div className="paper-note surface-quiet space-y-2">
-              <h3 className="font-black">Vue d’ensemble</h3>
+              <h3 className="font-black">Tableau de bord improvisé</h3>
               <p className="overview-line">
                 <GameAssetImage assetId="worker-intern" alt="" className="overview-asset-icon" />
                 Collègues : {totalWorkers}
@@ -108,14 +108,14 @@ export function IncrementalSidebar({
               </p>
               <p className="overview-line">
                 <GameAssetImage assetId="badge-trophy" alt="" className="overview-asset-icon" />
-                Objectif : {state.completed ? "atteint" : "en cours"}
+                Objectif : {state.completed ? "sauvé" : "en chantier"}
               </p>
             </div>
 
             <div className="paper-note surface-quiet space-y-2 bg-[var(--yellow-soft)]">
               <h3 className="font-black">Règle d’or</h3>
               <p className="handwritten text-sm">
-                Le bureau peut partir en vrille, mais il continue de produire.
+                Le bureau peut partir en vrille, tant qu’il continue de produire quelque chose de présentable.
               </p>
             </div>
 

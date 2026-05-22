@@ -165,7 +165,7 @@ export function IncrementalGameShell() {
     return (
       <div className="grid min-h-screen place-items-center p-4">
         <div className="paper-note bg-[var(--yellow)]">
-          <p className="handwritten">Le bureau ouvre ses volets…</p>
+          <p className="handwritten">Le stagiaire virtuel cherche les clés du bureau…</p>
         </div>
       </div>
     );
@@ -216,7 +216,7 @@ export function IncrementalGameShell() {
             <GameAssetImage assetId="badge-trophy" alt="" className="completion-asset" />
             <h2 className="mt-3 text-3xl font-black">Office Village complet</h2>
             <p className="handwritten mt-3">
-              Ton bureau est devenu une machine à idées autonome, heureuse et absurdement productive.
+              Ton bureau tourne tout seul. Le comité n’a rien compris, donc il valide.
             </p>
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <button

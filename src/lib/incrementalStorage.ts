@@ -1,5 +1,6 @@
 import { clampResources, createInitialGameState, updateMissions } from "@/lib/incrementalGame";
-import type { GameState, Mission, Resources, Skill } from "@/types/incremental";
+import { INCIDENTS } from "@/lib/incrementalData";
+import type { GameState, Incident, Mission, Resources, Skill } from "@/types/incremental";
 
 export const SAVE_KEY = "office-village-incremental-save-v1";
 const RETIRED_MANUAL_ACTION_LABELS = ["Sprint équipe"];
@@ -8,26 +9,97 @@ function refreshMissionCopy(
   mission: Mission,
   skills: Skill[],
 ): Mission {
+  if (mission.templateId === "guided-first-intern") {
+    return {
+      ...mission,
+      description: "Recrute une première paire de mains avant que le planning parte en comité de crise.",
+    };
+  }
+
+  if (mission.templateId === "guided-first-ideas") {
+    return {
+      ...mission,
+      description: "Accumule 25 idées. Le mur de post-its réclame sa ration quotidienne.",
+    };
+  }
+
+  if (mission.templateId === "guided-first-pitch") {
+    return {
+      ...mission,
+      description: "Transforme une idée correcte en conversation client presque crédible.",
+    };
+  }
+
+  if (mission.templateId === "guided-coffee-machine") {
+    return {
+      ...mission,
+      description: "Construis la Machine à café. Sans elle, le bureau négocie avec le vide.",
+    };
+  }
+
   if (mission.templateId === "guided-first-skill") {
     return {
       ...mission,
-      description: "Achète Organisation. Le chaos aime les systèmes mal rangés.",
+      description: "Achète Organisation. Le chaos déteste quand quelqu’un retrouve le bon dossier.",
+    };
+  }
+
+  if (mission.templateId === "brainstorm-burst") {
+    return {
+      ...mission,
+      description: "Lance 3 brainstorms. Le tableau blanc veut souffrir utilement.",
+    };
+  }
+
+  if (mission.templateId === "pitch-round") {
+    return {
+      ...mission,
+      description: "Fais 2 Pitchs client. Les feutres ne vont pas se financer seuls.",
     };
   }
 
   const requirement = mission.requirement;
+  if (mission.templateId === "hire-team" && requirement.kind === "workerCount") {
+    return {
+      ...mission,
+      description:
+        mission.description.replace(
+          /Recrute 2 (.+?) supplémentaires\.?$/,
+          "Recrute 2 $1 supplémentaires avant que le planning fasse semblant d’aller bien.",
+        ),
+    };
+  }
+
+  if (mission.templateId === "build-next-room") {
+    return {
+      ...mission,
+      description:
+        mission.description.replace(
+          /Construis (.+?)\. Les murs veulent aussi leur carrière\./,
+          "Construis $1. Même les murs veulent une promotion.",
+        ),
+    };
+  }
+
+  if (mission.templateId === "fresh-air") {
+    return {
+      ...mission,
+      description: "Fais monter l’ambiance. Les plantes commencent à lire les mails RH.",
+    };
+  }
+
   if (mission.templateId === "unlock-skill" && requirement.kind === "skillUnlocked") {
     const skill = skills.find((candidate) => candidate.id === requirement.skillId);
     return {
       ...mission,
-      description: `Achète ${skill?.name ?? "ce talent"}. La compétence préfère être invitée.`,
+      description: `Achète ${skill?.name ?? "ce talent"}. Le talent attend devant la salle de réunion.`,
     };
   }
 
   if (mission.templateId === "find-synergy") {
     return {
       ...mission,
-      description: "Découvre un nouveau combo. Les bureaux aussi aiment les duos.",
+      description: "Découvre un nouveau combo. Le bureau adore quand le chaos devient rentable.",
     };
   }
 
@@ -35,7 +107,26 @@ function refreshMissionCopy(
 }
 
 function refreshLogCopy(entry: string): string {
-  return entry.replace("Synergie découverte", "Combo découvert");
+  return entry
+    .replace(
+      "Bienvenue dans Office Village. Le bureau respire, les idées commencent.",
+      "Bienvenue dans Office Village. L’open-space respire encore, le chaos demande déjà un badge.",
+    )
+    .replace("Synergie découverte", "Combo découvert")
+    .replace("Mission accomplie", "Mission pliée")
+    .replace("Milestone atteint", "Palier validé")
+    .replace("Skill débloqué", "Talent signé");
+}
+
+function refreshIncidentCopy(incident: Incident): Incident {
+  const latestIncident = INCIDENTS.find((candidate) => candidate.id === incident.id);
+  return latestIncident
+    ? {
+        ...incident,
+        title: latestIncident.title,
+        description: latestIncident.description,
+      }
+    : incident;
 }
 
 function hasNumericResources(value: unknown): value is Resources {
@@ -156,7 +247,7 @@ export function rehydrateSavedGame(saved: GameState): GameState {
     completedMissionIds: saved.completedMissionIds ?? [],
     activeBoosts: saved.activeBoosts ?? [],
     lastMissionTemplateId: saved.lastMissionTemplateId,
-    activeIncident: saved.activeIncident,
+    activeIncident: saved.activeIncident ? refreshIncidentCopy(saved.activeIncident) : null,
     lastIncidentAt: saved.lastIncidentAt,
     startedAt: saved.startedAt,
     lastTickAt: saved.lastTickAt,
