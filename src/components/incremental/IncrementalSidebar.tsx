@@ -18,20 +18,29 @@ export function IncrementalSidebar({
   state,
   onViewChange,
   onNewGame,
-  onSave,
-  onLoad,
+  initialMenuOpen = false,
+  initialNewGameConfirmOpen = false,
 }: {
   activeView: IncrementalView;
   state: GameState;
   onViewChange: (view: IncrementalView) => void;
   onNewGame: () => void;
-  onSave: () => void;
-  onLoad: () => void;
+  onSave?: () => void;
+  onLoad?: () => void;
+  initialMenuOpen?: boolean;
+  initialNewGameConfirmOpen?: boolean;
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(initialMenuOpen);
+  const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(initialNewGameConfirmOpen);
   const ownedLocations = state.locations.filter((location) => location.owned).length;
   const totalWorkers = state.workers.reduce((total, worker) => total + worker.count, 0);
   const activeSynergies = state.synergies.filter((synergy) => synergy.discovered).length;
+
+  function handleConfirmNewGame() {
+    onNewGame();
+    setNewGameConfirmOpen(false);
+    setMenuOpen(false);
+  }
 
   return (
     <aside className="office-sidebar">
@@ -119,19 +128,47 @@ export function IncrementalSidebar({
               </p>
             </div>
 
+            <div className="paper-note surface-quiet bg-[var(--mint)] py-3">
+              <p className="overview-line text-sm font-black">
+                <GameAssetImage assetId="ui-check" alt="" className="overview-asset-icon" />
+                Sauvegarde automatique active
+              </p>
+            </div>
+
             <div className="grid gap-2">
-              <button type="button" className="paper-button bg-white" onClick={onSave}>
-                <GameAssetImage assetId="ui-check" alt="" className="button-asset-icon" />
-                Sauvegarder
-              </button>
-              <button type="button" className="paper-button bg-white" onClick={onLoad}>
-                <GameAssetImage assetId="badge-confetti" alt="" className="button-asset-icon" />
-                Charger
-              </button>
-              <button type="button" className="paper-button bg-[var(--pink)]" onClick={onNewGame}>
+              <button
+                type="button"
+                className="paper-button bg-[var(--pink)]"
+                onClick={() => setNewGameConfirmOpen(true)}
+              >
                 <GameAssetImage assetId="badge-starburst" alt="" className="button-asset-icon" />
                 Nouvelle partie
               </button>
+
+              {newGameConfirmOpen && (
+                <div className="paper-note surface-quiet space-y-3 bg-[var(--pink)]">
+                  <div>
+                    <h3 className="font-black">Nouvelle partie ?</h3>
+                    <p className="handwritten text-sm">Ça remet la progression à zéro.</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      className="paper-button bg-white px-3"
+                      onClick={() => setNewGameConfirmOpen(false)}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="button"
+                      className="paper-button bg-[var(--yellow)] px-3"
+                      onClick={handleConfirmNewGame}
+                    >
+                      Recommencer
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         </div>

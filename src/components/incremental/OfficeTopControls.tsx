@@ -15,27 +15,34 @@ export function OfficeTopControls({
   language = "fr",
   onLanguageChange,
   onNewGame,
-  onSave,
-  onLoad,
   initialMenuOpen = false,
+  initialNewGameConfirmOpen = false,
 }: {
   state: GameState;
   language?: GameLanguage;
   onLanguageChange?: (language: GameLanguage) => void;
   onNewGame: () => void;
-  onSave: () => void;
-  onLoad: () => void;
+  onSave?: () => void;
+  onLoad?: () => void;
   initialMenuOpen?: boolean;
+  initialNewGameConfirmOpen?: boolean;
 }) {
   const copy = GAME_COPY[language];
   const [menuOpen, setMenuOpen] = useState(initialMenuOpen);
   const [achievementsOpen, setAchievementsOpen] = useState(false);
+  const [newGameConfirmOpen, setNewGameConfirmOpen] = useState(initialNewGameConfirmOpen);
   const ownedLocations = state.locations.filter((location) => location.owned).length;
   const totalWorkers = state.workers.reduce((total, worker) => total + worker.count, 0);
   const activeSynergies = state.synergies.filter((synergy) => synergy.discovered).length;
 
   function handleLanguageChange(nextLanguage: GameLanguage) {
     onLanguageChange?.(nextLanguage);
+  }
+
+  function handleConfirmNewGame() {
+    onNewGame();
+    setNewGameConfirmOpen(false);
+    setMenuOpen(false);
   }
 
   return (
@@ -150,19 +157,47 @@ export function OfficeTopControls({
               </div>
             </div>
 
+            <div className="paper-note surface-quiet bg-[var(--mint)] py-3">
+              <p className="overview-line text-sm font-black">
+                <GameAssetImage assetId="ui-check" alt="" className="overview-asset-icon" />
+                {copy.ui.autoSaveStatus}
+              </p>
+            </div>
+
             <div className="grid gap-2">
-              <button type="button" className="paper-button bg-white" onClick={onSave}>
-                <GameAssetImage assetId="ui-check" alt="" className="button-asset-icon" />
-                {copy.ui.save}
-              </button>
-              <button type="button" className="paper-button bg-white" onClick={onLoad}>
-                <GameAssetImage assetId="badge-confetti" alt="" className="button-asset-icon" />
-                {copy.ui.load}
-              </button>
-              <button type="button" className="paper-button bg-[var(--pink)]" onClick={onNewGame}>
+              <button
+                type="button"
+                className="paper-button bg-[var(--pink)]"
+                onClick={() => setNewGameConfirmOpen(true)}
+              >
                 <GameAssetImage assetId="badge-starburst" alt="" className="button-asset-icon" />
                 {copy.ui.newGame}
               </button>
+
+              {newGameConfirmOpen && (
+                <div className="paper-note surface-quiet space-y-3 bg-[var(--pink)]">
+                  <div>
+                    <h3 className="font-black">{copy.ui.newGameConfirmTitle}</h3>
+                    <p className="handwritten text-sm">{copy.ui.newGameConfirmBody}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      className="paper-button bg-white px-3"
+                      onClick={() => setNewGameConfirmOpen(false)}
+                    >
+                      {copy.ui.cancel}
+                    </button>
+                    <button
+                      type="button"
+                      className="paper-button bg-[var(--yellow)] px-3"
+                      onClick={handleConfirmNewGame}
+                    >
+                      {copy.ui.restart}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </section>
         </div>

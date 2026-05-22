@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import { OfficeView } from "@/components/incremental/OfficeView";
+import { WelcomeScreen } from "@/components/incremental/WelcomeScreen";
 import {
   buyOrUpgradeLocation,
   buyWorker,
@@ -27,6 +28,8 @@ import {
 } from "@/lib/incrementalPresentation";
 import type { GameState } from "@/types/incremental";
 
+const PLAYER_NAME_STORAGE_KEY = "office-village-player-name";
+
 declare global {
   interface Window {
     render_game_to_text?: () => string;
@@ -38,6 +41,9 @@ export function IncrementalGameShell() {
   const language = useGameLanguage();
   const copy = getCopy(language);
   const [hydrated, setHydrated] = useState(false);
+  const [welcomeVisible, setWelcomeVisible] = useState(true);
+  const [playerName, setPlayerName] = useState("");
+  const [showNameError, setShowNameError] = useState(false);
   const [now, setNow] = useState(0);
   const [state, setState] = useState<GameState>(() => createInitialGameState(0));
   const [gainBubbles, setGainBubbles] = useState<GainBubble[]>([]);
@@ -47,8 +53,18 @@ export function IncrementalGameShell() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const timestamp = Date.now();
+      const loaded = loadGame();
+      let storedPlayerName = "";
+
+      try {
+        storedPlayerName = window.localStorage.getItem(PLAYER_NAME_STORAGE_KEY) ?? "";
+      } catch {
+        storedPlayerName = "";
+      }
+
       setNow(timestamp);
-      setState(loadGame() ?? createInitialGameState(timestamp));
+      setState(loaded ?? createInitialGameState(timestamp));
+      setPlayerName(storedPlayerName);
       setHydrated(true);
     }, 0);
 
@@ -63,7 +79,7 @@ export function IncrementalGameShell() {
   }, [hydrated, state]);
 
   useEffect(() => {
-    if (!hydrated) return undefined;
+    if (!hydrated || welcomeVisible) return undefined;
 
     const tickTimer = window.setInterval(() => {
       const timestamp = Date.now();
@@ -79,7 +95,7 @@ export function IncrementalGameShell() {
       window.clearInterval(tickTimer);
       window.clearInterval(autosaveTimer);
     };
-  }, [hydrated]);
+  }, [hydrated, welcomeVisible]);
 
   useEffect(() => {
     window.render_game_to_text = () =>
@@ -156,14 +172,30 @@ export function IncrementalGameShell() {
     setGainBubbles([]);
   }
 
-  function handleLoad() {
-    const loaded = loadGame();
-    if (loaded) {
-      latestStateRef.current = loaded;
-      setState(loaded);
-      setNow(Date.now());
-      setGainBubbles([]);
+  function handleStartGame() {
+    const trimmedName = playerName.trim();
+
+    if (!trimmedName) {
+      setShowNameError(true);
+      return;
     }
+
+    const timestamp = Date.now();
+    try {
+      window.localStorage.setItem(PLAYER_NAME_STORAGE_KEY, trimmedName);
+    } catch {
+      // The run can start even if browser storage is blocked.
+    }
+
+    setPlayerName(trimmedName);
+    setShowNameError(false);
+    setWelcomeVisible(false);
+    setNow(timestamp);
+    setState((current) => {
+      const next = { ...current, lastTickAt: timestamp };
+      latestStateRef.current = next;
+      return next;
+    });
   }
 
   if (!hydrated) {
@@ -173,6 +205,25 @@ export function IncrementalGameShell() {
           <p className="handwritten">{copy.ui.loading}</p>
         </div>
       </div>
+    );
+  }
+
+  if (welcomeVisible) {
+    return (
+      <WelcomeScreen
+        copy={copy.welcome}
+        language={language}
+        playerName={playerName}
+        showNameError={showNameError}
+        onPlayerNameChange={(value) => {
+          setPlayerName(value);
+          if (showNameError && value.trim()) {
+            setShowNameError(false);
+          }
+        }}
+        onLanguageChange={setStoredGameLanguage}
+        onStart={handleStartGame}
+      />
     );
   }
 
@@ -187,8 +238,6 @@ export function IncrementalGameShell() {
           gainBubbles={gainBubbles}
           sceneReaction={sceneReaction}
           onNewGame={handleNewGame}
-          onSave={() => saveGame(state)}
-          onLoad={handleLoad}
           onBuyWorker={(workerId) =>
             runAtCurrentTime((current, timestamp) => buyWorker(current, workerId, timestamp))
           }

@@ -11,8 +11,6 @@ export function IncrementalResourceBar({
   state,
   production,
   onNewGame,
-  onSave,
-  onLoad,
   incidentControl,
   onLanguageChange,
 }: {
@@ -20,8 +18,8 @@ export function IncrementalResourceBar({
   state: GameState;
   production: ProductionSummary;
   onNewGame: () => void;
-  onSave: () => void;
-  onLoad: () => void;
+  onSave?: () => void;
+  onLoad?: () => void;
   incidentControl?: ReactNode;
   onLanguageChange?: (language: GameLanguage) => void;
 }) {
@@ -54,8 +52,6 @@ export function IncrementalResourceBar({
             language={language}
             onLanguageChange={onLanguageChange}
             onNewGame={onNewGame}
-            onSave={onSave}
-            onLoad={onLoad}
           />
         </div>
       </div>

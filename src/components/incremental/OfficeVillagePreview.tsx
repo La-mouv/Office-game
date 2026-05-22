@@ -20,8 +20,6 @@ export function OfficeVillagePreview({
   gainBubbles,
   sceneReaction,
   onNewGame,
-  onSave,
-  onLoad,
   onBuyWorker,
   onUpgradeWorker,
   onBuyOrUpgradeLocation,
@@ -36,8 +34,8 @@ export function OfficeVillagePreview({
   gainBubbles: GainBubble[];
   sceneReaction: "ambiance" | "chaos" | null;
   onNewGame: () => void;
-  onSave: () => void;
-  onLoad: () => void;
+  onSave?: () => void;
+  onLoad?: () => void;
   onBuyWorker: (workerId: string) => void;
   onUpgradeWorker: (workerId: string) => void;
   onBuyOrUpgradeLocation: (locationId: string) => void;
@@ -84,8 +82,6 @@ export function OfficeVillagePreview({
         language={language}
         production={production}
         onNewGame={onNewGame}
-        onSave={onSave}
-        onLoad={onLoad}
         onLanguageChange={onLanguageChange}
         incidentControl={incidentButton}
       />

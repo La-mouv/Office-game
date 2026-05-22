@@ -14,8 +14,6 @@ export function OfficeView({
   gainBubbles,
   sceneReaction,
   onNewGame,
-  onSave,
-  onLoad,
   onBuyWorker,
   onUpgradeWorker,
   onBuyOrUpgradeLocation,
@@ -31,8 +29,8 @@ export function OfficeView({
   gainBubbles: GainBubble[];
   sceneReaction: SceneReaction;
   onNewGame: () => void;
-  onSave: () => void;
-  onLoad: () => void;
+  onSave?: () => void;
+  onLoad?: () => void;
   onBuyWorker: (workerId: string) => void;
   onUpgradeWorker: (workerId: string) => void;
   onBuyOrUpgradeLocation: (locationId: string) => void;
@@ -52,8 +50,6 @@ export function OfficeView({
           gainBubbles={gainBubbles}
           sceneReaction={sceneReaction}
           onNewGame={onNewGame}
-          onSave={onSave}
-          onLoad={onLoad}
           onBuyWorker={onBuyWorker}
           onUpgradeWorker={onUpgradeWorker}
           onBuyOrUpgradeLocation={onBuyOrUpgradeLocation}

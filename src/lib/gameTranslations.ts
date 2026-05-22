@@ -55,6 +55,20 @@ type MilestoneCopy = {
 type TranslationBundle = {
   locale: string;
   resources: Record<keyof GameState["resources"], string>;
+  welcome: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    playerLabel: string;
+    playerPlaceholder: string;
+    playerError: string;
+    start: string;
+    language: string;
+    leaderboardTitle: string;
+    leaderboardBadge: string;
+    leaderboardEmpty: string;
+    leaderboardMeta: string;
+  };
   ui: {
     loading: string;
     menu: string;
@@ -73,6 +87,10 @@ type TranslationBundle = {
     goldenRule: string;
     save: string;
     load: string;
+    autoSaveStatus: string;
+    newGameConfirmTitle: string;
+    newGameConfirmBody: string;
+    cancel: string;
     newGame: string;
     toDo: string;
     doNow: string;
@@ -121,6 +139,8 @@ type TranslationBundle = {
   };
 };
 
+export type WelcomeCopy = TranslationBundle["welcome"];
+
 const COPY: CopyMap<TranslationBundle> = {
   fr: {
     locale: "fr-FR",
@@ -130,6 +150,20 @@ const COPY: CopyMap<TranslationBundle> = {
       ambiance: "Ambiance",
       reputation: "Réputation",
       chaos: "Chaos",
+    },
+    welcome: {
+      eyebrow: "Open-space en crise permanente",
+      title: "Office Village",
+      subtitle: "Choisis ton badge, lance la partie, et essaie de sauver la boîte.",
+      playerLabel: "Pseudo",
+      playerPlaceholder: "Ton nom de bureau",
+      playerError: "Entre un pseudo avant de passer le badge.",
+      start: "Démarrer la partie",
+      language: "Langue",
+      leaderboardTitle: "Leaderboard",
+      leaderboardBadge: "Bientôt branché",
+      leaderboardEmpty: "Aucun score pour l'instant. Le reporting attend son premier héros.",
+      leaderboardMeta: "On gardera le pseudo et le temps final. Rien de plus, promis.",
     },
     ui: {
       loading: "Le stagiaire virtuel cherche les clés du bureau...",
@@ -149,6 +183,10 @@ const COPY: CopyMap<TranslationBundle> = {
       goldenRule: "Garde le chaos bas, sinon même la machine à café demande un point rapide.",
       save: "Sauvegarder",
       load: "Charger",
+      autoSaveStatus: "Sauvegarde automatique active",
+      newGameConfirmTitle: "Nouvelle partie ?",
+      newGameConfirmBody: "Ça remet la progression à zéro.",
+      cancel: "Annuler",
       newGame: "Nouvelle partie",
       toDo: "To-do",
       doNow: "À faire maintenant",
@@ -206,6 +244,20 @@ const COPY: CopyMap<TranslationBundle> = {
       reputation: "Reputation",
       chaos: "Chaos",
     },
+    welcome: {
+      eyebrow: "Open office in permanent crisis",
+      title: "Office Village",
+      subtitle: "Pick your badge, start the run, and try to save the company.",
+      playerLabel: "Nickname",
+      playerPlaceholder: "Your office name",
+      playerError: "Enter a nickname before swiping the badge.",
+      start: "Start game",
+      language: "Language",
+      leaderboardTitle: "Leaderboard",
+      leaderboardBadge: "Coming soon",
+      leaderboardEmpty: "No scores yet. Reporting is waiting for its first hero.",
+      leaderboardMeta: "Later we only keep nickname and final time. Nothing extra.",
+    },
     ui: {
       loading: "Hold on, the virtual intern is hunting for the office keys...",
       menu: "Menu",
@@ -224,6 +276,10 @@ const COPY: CopyMap<TranslationBundle> = {
       goldenRule: "Keep chaos low, or even the coffee machine will ask for a quick sync.",
       save: "Save",
       load: "Load",
+      autoSaveStatus: "Autosave active",
+      newGameConfirmTitle: "New game?",
+      newGameConfirmBody: "This resets your progress.",
+      cancel: "Cancel",
       newGame: "New game",
       toDo: "To-do",
       doNow: "Do now",
@@ -281,6 +337,20 @@ const COPY: CopyMap<TranslationBundle> = {
       reputation: "Reputación",
       chaos: "Caos",
     },
+    welcome: {
+      eyebrow: "Open space en crisis permanente",
+      title: "Office Village",
+      subtitle: "Elige tu tarjeta, empieza la partida e intenta salvar la empresa.",
+      playerLabel: "Pseudo",
+      playerPlaceholder: "Tu nombre de oficina",
+      playerError: "Escribe un pseudo antes de pasar la tarjeta.",
+      start: "Empezar partida",
+      language: "Idioma",
+      leaderboardTitle: "Leaderboard",
+      leaderboardBadge: "Próximamente",
+      leaderboardEmpty: "Aún no hay puntuaciones. El reporting espera a su primer héroe.",
+      leaderboardMeta: "Luego guardaremos solo pseudo y tiempo final. Nada más.",
+    },
     ui: {
       loading: "Espera, el becario virtual está buscando las llaves de la oficina...",
       menu: "Menú",
@@ -299,6 +369,10 @@ const COPY: CopyMap<TranslationBundle> = {
       goldenRule: "Mantén el caos bajo, o hasta la máquina de café pedirá una reunión rápida.",
       save: "Guardar",
       load: "Cargar",
+      autoSaveStatus: "Guardado automático activo",
+      newGameConfirmTitle: "¿Nueva partida?",
+      newGameConfirmBody: "Esto reinicia tu progreso.",
+      cancel: "Cancelar",
       newGame: "Nueva partida",
       toDo: "Tareas",
       doNow: "Hacer ahora",
