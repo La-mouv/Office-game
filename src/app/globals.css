@@ -84,6 +84,97 @@ body {
   box-shadow: 2px 2px 0 rgba(17, 17, 17, 0.12);
 }
 
+.game-asset {
+  display: block;
+  max-width: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.button-asset-icon,
+.resource-pill-asset,
+.notice-asset-icon,
+.meter-label-asset,
+.overview-asset-icon {
+  flex: 0 0 auto;
+  filter: drop-shadow(0 2px 2px rgba(17, 17, 17, 0.16));
+}
+
+.button-asset-icon {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.resource-pill-asset,
+.notice-asset-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.meter-label-asset {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.title-chip-asset {
+  width: 1.55rem;
+  height: 1.25rem;
+}
+
+.overview-line,
+.meter-label,
+.section-title-with-asset,
+.incident-title-with-asset,
+.mission-current-title {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.overview-asset-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+.locked-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  border: 2px solid #111111;
+  border-radius: 999px;
+  background: white;
+  padding: 0.45rem 0.7rem;
+  font-weight: 800;
+}
+
+.unlock-requirement {
+  width: fit-content;
+  border-radius: 999px;
+  background: rgba(255, 239, 117, 0.72);
+  padding: 0.32rem 0.58rem;
+  color: #5f4200;
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.section-title-asset {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.achievement-title-asset {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.completion-asset {
+  width: min(6.5rem, 40vw);
+  height: 5.8rem;
+  margin-inline: auto;
+  filter: drop-shadow(0 10px 12px rgba(17, 17, 17, 0.16));
+}
+
 .surface-hero {
   box-shadow:
     0 0 0 5px rgba(255, 184, 77, 0.16),
@@ -164,8 +255,9 @@ body {
 }
 
 .resource-incident-slot {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  place-items: center;
+  min-width: 9rem;
 }
 
 .game-title-chip {
@@ -254,6 +346,10 @@ body {
 }
 
 .office-scene-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   border-radius: 999px;
   background: white;
   padding: 0.55rem 0.8rem;
@@ -272,8 +368,67 @@ body {
   opacity: 0.55;
 }
 
+.incident-button {
+  min-width: 8.75rem;
+  min-height: 3.15rem;
+  border: 2px solid rgba(190, 18, 60, 0.34);
+  background: linear-gradient(180deg, #fff5f5, #fecaca);
+  color: #7f1d1d;
+  box-shadow:
+    0 8px 18px rgba(127, 29, 29, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.incident-button.office-scene-chip-muted {
+  opacity: 1;
+}
+
+.incident-alarm-icon {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1.45rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  border: 2px solid #7f1d1d;
+  border-bottom-width: 4px;
+  border-radius: 0.85rem 0.85rem 0.42rem 0.42rem;
+  background:
+    radial-gradient(circle at 50% 32%, rgba(255, 255, 255, 0.86) 0 18%, transparent 20%),
+    linear-gradient(180deg, #fb7185, #dc2626 68%, #991b1b);
+  filter: drop-shadow(0 4px 5px rgba(127, 29, 29, 0.28));
+}
+
+.incident-alarm-icon::before,
+.incident-alarm-icon::after {
+  content: "";
+  position: absolute;
+  top: 0.28rem;
+  width: 0.34rem;
+  height: 0.12rem;
+  border-radius: 999px;
+  background: #dc2626;
+}
+
+.incident-alarm-icon::before {
+  left: -0.48rem;
+  transform: rotate(24deg);
+}
+
+.incident-alarm-icon::after {
+  right: -0.48rem;
+  transform: rotate(-24deg);
+}
+
+.incident-alarm-glow {
+  width: 0.48rem;
+  height: 0.3rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
 .incident-alert-chip {
-  background: linear-gradient(135deg, #ffe4ec, #ffb84d);
+  background: linear-gradient(180deg, #ffe4e6, #fb7185 58%, #ef4444);
   animation: incident-blink 1s ease-in-out infinite;
 }
 
@@ -289,14 +444,96 @@ body {
 
 .office-board-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  grid-auto-rows: 12.5rem;
   gap: 1rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .office-board-card {
   position: relative;
   z-index: 1;
+  display: grid;
+  height: 12.5rem;
+  overflow: visible;
+  gap: 0.55rem;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  align-content: start;
+}
+
+.office-board-card > * {
+  min-width: 0;
+}
+
+.office-board-card > * + * {
+  margin-top: 0;
+}
+
+.office-board-card .shop-card-hero {
+  min-height: 4.25rem;
+}
+
+.office-board-card h3,
+.office-board-card > .handwritten,
+.office-board-card > .text-sm,
+.office-board-card > .grid {
+  overflow: hidden;
+}
+
+.office-board-card h3,
+.office-board-card > .handwritten {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.office-board-card h3 {
+  -webkit-line-clamp: 2;
+}
+
+.office-board-card > .handwritten {
+  -webkit-line-clamp: 3;
+}
+
+.office-board-card > .text-sm,
+.office-board-card > .grid {
+  max-height: 2.25rem;
+}
+
+.office-card-stat {
+  line-height: 1.25;
+}
+
+.office-card-bottom-controls {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  left: 0.85rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  align-items: stretch;
+}
+
+.office-card-bottom-controls-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.office-card-action {
+  min-height: 3rem;
+  padding: 0.55rem 0.65rem;
+  font-size: 1.02rem;
+  line-height: 1.1;
+}
+
+.office-card-upgrade-action {
+  color: #4c4330;
+}
+
+.office-card-action-icon {
+  width: 1.45rem;
+  height: 1.45rem;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 3px 3px rgba(17, 17, 17, 0.18));
 }
 
 .office-stacked-card::before,
@@ -321,12 +558,27 @@ body {
 }
 
 .stack-count-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.6rem;
+  min-height: 2.25rem;
   border-radius: 999px;
   background: var(--yellow);
-  padding: 0.35rem 0.65rem;
+  padding: 0.32rem 0.62rem;
   font-size: 0.9rem;
   font-weight: 900;
-  box-shadow: 0 6px 14px rgba(17, 17, 17, 0.12);
+  box-shadow:
+    0 7px 15px rgba(17, 17, 17, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.stack-count-floating {
+  position: absolute;
+  top: -0.7rem;
+  right: -0.7rem;
+  z-index: 5;
+  border: 2px solid rgba(255, 255, 255, 0.75);
 }
 
 .office-object,
@@ -417,7 +669,7 @@ body {
 }
 
 .office-action-wall .quick-action-card {
-  min-height: 7.25rem;
+  min-height: 6.2rem;
   padding: 0.75rem;
   background: rgba(221, 248, 232, 0.9);
 }
@@ -441,7 +693,13 @@ body {
 }
 
 .incident-scene-modal {
-  background: linear-gradient(135deg, rgba(255, 228, 236, 0.98), rgba(255, 184, 77, 0.26));
+  background: linear-gradient(135deg, #fff1f2, #ffe4cc);
+  color: #241111;
+}
+
+.incident-scene-modal .opacity-70 {
+  opacity: 1;
+  color: #7f1d1d;
 }
 
 .mission-todo-item {
@@ -480,10 +738,51 @@ body {
   gap: 0.5rem;
 }
 
+.todo-status {
+  display: inline-grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  border: 1.5px solid rgba(17, 17, 17, 0.35);
+  border-radius: 0.25rem;
+  background: white;
+}
+
+.todo-status-done {
+  border-color: transparent;
+  background: transparent;
+}
+
+.todo-status-asset {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
 .todo-current-note {
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.72);
   padding: 0.75rem;
+}
+
+.mission-current-asset {
+  width: 2.2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 6px 6px rgba(17, 17, 17, 0.14));
+}
+
+.achievement-card-heading {
+  display: grid;
+  grid-template-columns: 3.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.achievement-card-asset {
+  width: 3.25rem;
+  height: 3rem;
+  filter: drop-shadow(0 8px 8px rgba(17, 17, 17, 0.14));
 }
 
 .office-scene-ambiance {
@@ -502,15 +801,30 @@ body {
   background: rgba(255, 255, 255, 0.78);
 }
 
+.shop-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.35rem;
+  border: 2px solid rgba(17, 17, 17, 0.14);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.25rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
 .shop-tab {
-  border-radius: 999px;
-  background: white;
-  padding: 0.55rem 0.5rem;
+  min-height: 2.55rem;
+  border: 2px solid transparent;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.72);
+  padding: 0.55rem 0.45rem;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 850;
   transition:
     transform 140ms ease,
-    background 140ms ease;
+    background 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease;
 }
 
 .shop-tab:hover {
@@ -519,6 +833,8 @@ body {
 
 .shop-tab-active {
   background: var(--yellow);
+  border-color: rgba(17, 17, 17, 0.24);
+  box-shadow: 0 4px 0 rgba(17, 17, 17, 0.12);
 }
 
 .shop-card {
@@ -526,6 +842,34 @@ body {
   border-radius: 1.15rem;
   padding: 0.85rem;
   box-shadow: 0 8px 18px rgba(17, 17, 17, 0.06);
+}
+
+.shop-card-hero {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 4.15rem;
+}
+
+.shop-card-asset {
+  width: 4rem;
+  height: 3.75rem;
+  justify-self: start;
+  filter: drop-shadow(0 8px 8px rgba(17, 17, 17, 0.16));
+}
+
+.shop-card-character {
+  transform: translateY(0.05rem) scale(1.03);
+}
+
+.shop-card-location-asset {
+  transform: scale(1.02);
+}
+
+.shop-card-skill-asset {
+  width: 3.2rem;
+  height: 3rem;
 }
 
 .shop-card-worker {
@@ -587,6 +931,20 @@ body {
   transform: translateY(1px) scale(0.99);
 }
 
+.quick-action-main {
+  display: grid;
+  grid-template-columns: 3.3rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 3.25rem;
+}
+
+.quick-action-asset {
+  width: 3.3rem;
+  height: 3.05rem;
+  filter: drop-shadow(0 8px 8px rgba(17, 17, 17, 0.14));
+}
+
 .quick-action-disabled {
   cursor: not-allowed;
   opacity: 0.65;
@@ -615,11 +973,18 @@ body {
 }
 
 .incident-card {
-  background: linear-gradient(135deg, rgba(255, 228, 236, 0.95), rgba(255, 184, 77, 0.24));
+  background: linear-gradient(135deg, #fff1f2, #ffe4cc);
+  color: #241111;
 }
 
 .incident-card-idle {
   background: rgba(255, 247, 191, 0.8);
+}
+
+.incident-title-asset {
+  width: 3.25rem;
+  height: 3rem;
+  filter: drop-shadow(0 8px 9px rgba(17, 17, 17, 0.14));
 }
 
 .decision-button {
@@ -814,6 +1179,24 @@ body {
 
   .office-action-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .shop-card-hero {
+    grid-template-columns: 3.6rem minmax(0, 1fr) auto;
+  }
+
+  .shop-card-asset {
+    width: 3.6rem;
+    height: 3.35rem;
+  }
+
+  .quick-action-main {
+    grid-template-columns: 3rem minmax(0, 1fr);
+  }
+
+  .quick-action-asset {
+    width: 3rem;
+    height: 2.75rem;
   }
 }
 

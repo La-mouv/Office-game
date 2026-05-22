@@ -117,6 +117,36 @@ describe("incremental save parsing", () => {
     expect(rehydrated.activeBoosts[0]?.id).toBe("boost-1");
   });
 
+  it("refreshes saved mission copy when wording changes", () => {
+    const state = {
+      ...createInitialGameState(1_000),
+      talentPoints: 1,
+      resources: {
+        ...createInitialGameState(1_000).resources,
+        reputation: 100,
+      },
+      activeMission: {
+        id: "dynamic-skill-organization",
+        templateId: "unlock-skill",
+        kind: "dynamic" as const,
+        title: "La bonne habitude",
+        description: "Débloque Organisation. La compétence préfère être invitée.",
+        emoji: "📋",
+        requirement: { kind: "skillUnlocked" as const, skillId: "organization" },
+        reward: { resources: { budget: 40 } },
+      },
+      log: ["Synergie découverte : Développeur caféiné."],
+    };
+
+    const rehydrated = rehydrateSavedGame(state);
+
+    expect(rehydrated.activeMission?.description).toBe(
+      "Achète Organisation. La compétence préfère être invitée.",
+    );
+    expect(rehydrated.log.join(" ")).toContain("Combo découvert");
+    expect(rehydrated.log.join(" ")).not.toContain("Synergie découverte");
+  });
+
   it("advances stale tutorial missions immediately when an older save already satisfies them", () => {
     const state = createInitialGameState(1_000);
     const olderSave = {

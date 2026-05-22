@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AchievementsView } from "@/components/incremental/AchievementsView";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import type { GameState } from "@/types/incremental";
 
 export function OfficeTopControls({
@@ -29,7 +30,8 @@ export function OfficeTopControls({
           className="paper-button bg-white"
           onClick={() => setAchievementsOpen(true)}
         >
-          🏅 Réussites
+          <GameAssetImage assetId="badge-medal" alt="" className="button-asset-icon" />
+          Réussites
         </button>
         <button type="button" className="paper-button bg-white" onClick={() => setMenuOpen(true)}>
           ☰ Menu
@@ -82,10 +84,26 @@ export function OfficeTopControls({
 
             <div className="paper-note surface-quiet space-y-2">
               <h3 className="font-black">Vue d’ensemble</h3>
-              <p>👥 Collègues : {totalWorkers}</p>
-              <p>🏗️ Lieux : {ownedLocations}</p>
-              <p>🔗 Synergies : {activeSynergies}</p>
-              <p>🏁 Objectif : {state.completed ? "atteint" : "en cours"}</p>
+              <p className="overview-line">
+                <GameAssetImage assetId="worker-intern" alt="" className="overview-asset-icon" />
+                Collègues : {totalWorkers}
+              </p>
+              <p className="overview-line">
+                <GameAssetImage
+                  assetId="location-starting-office"
+                  alt=""
+                  className="overview-asset-icon"
+                />
+                Lieux : {ownedLocations}
+              </p>
+              <p className="overview-line">
+                <GameAssetImage assetId="badge-gem" alt="" className="overview-asset-icon" />
+                Combos : {activeSynergies}
+              </p>
+              <p className="overview-line">
+                <GameAssetImage assetId="badge-trophy" alt="" className="overview-asset-icon" />
+                Objectif : {state.completed ? "atteint" : "en cours"}
+              </p>
             </div>
 
             <div className="paper-note surface-quiet space-y-2 bg-[var(--yellow-soft)]">
@@ -97,13 +115,16 @@ export function OfficeTopControls({
 
             <div className="grid gap-2">
               <button type="button" className="paper-button bg-white" onClick={onSave}>
-                💾 Sauvegarder
+                <GameAssetImage assetId="ui-check" alt="" className="button-asset-icon" />
+                Sauvegarder
               </button>
               <button type="button" className="paper-button bg-white" onClick={onLoad}>
-                📂 Charger
+                <GameAssetImage assetId="badge-confetti" alt="" className="button-asset-icon" />
+                Charger
               </button>
               <button type="button" className="paper-button bg-[var(--pink)]" onClick={onNewGame}>
-                🔄 Nouvelle partie
+                <GameAssetImage assetId="badge-starburst" alt="" className="button-asset-icon" />
+                Nouvelle partie
               </button>
             </div>
           </section>

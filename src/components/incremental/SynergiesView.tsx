@@ -1,3 +1,5 @@
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import { getSynergyAssetId } from "@/lib/incrementalAssets";
 import type { GameState } from "@/types/incremental";
 
 const EFFECT_LABELS: Record<string, string> = {
@@ -44,16 +46,20 @@ export function SynergiesView({ state }: { state: GameState }) {
   return (
     <div className="space-y-6">
       <section className="space-y-3">
-        <h2 className="text-2xl font-black">Synergies actives</h2>
+        <h2 className="text-2xl font-black">Combos actifs</h2>
         {active.length === 0 ? (
           <div className="paper-note">
-            <p className="handwritten">Pas encore de synergie. Le bureau apprend à respirer ensemble.</p>
+            <p className="handwritten">Pas encore de combo. Le bureau apprend à respirer ensemble.</p>
           </div>
         ) : (
           <div className="grid gap-3 md:grid-cols-2">
             {active.map((synergy) => (
               <article key={synergy.id} className="paper-note bg-[var(--mint)]">
-                <p className="text-2xl">{synergy.emoji}</p>
+                <GameAssetImage
+                  assetId={getSynergyAssetId(synergy.id)}
+                  alt=""
+                  className="achievement-card-asset"
+                />
                 <h3 className="font-black">{synergy.name}</h3>
                 <p className="handwritten mt-2 text-sm">{synergy.description}</p>
                 <p className="mt-3 text-sm font-bold">{effectText(synergy.effect)}</p>
@@ -64,14 +70,21 @@ export function SynergiesView({ state }: { state: GameState }) {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-black">Synergies verrouillées</h2>
+        <h2 className="text-2xl font-black">Combos verrouillés</h2>
         <div className="grid gap-3 md:grid-cols-2">
           {locked.map((synergy) => (
             <article key={synergy.id} className="paper-note bg-white">
-              <p className="text-2xl">{synergy.emoji}</p>
+              <GameAssetImage
+                assetId={getSynergyAssetId(synergy.id)}
+                alt=""
+                className="achievement-card-asset"
+              />
               <h3 className="font-black">{synergy.name}</h3>
               <p className="handwritten mt-2 text-sm">{synergy.description}</p>
-              <p className="mt-3 text-sm font-bold">🔒 {requirementText(state, synergy.id)}</p>
+              <p className="locked-notice mt-3 text-sm">
+                <GameAssetImage assetId="ui-lock" alt="" className="notice-asset-icon" />
+                {requirementText(state, synergy.id)}
+              </p>
               <p className="mt-2 text-sm">{effectText(synergy.effect)}</p>
             </article>
           ))}

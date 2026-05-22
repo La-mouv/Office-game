@@ -1,4 +1,6 @@
 import { getAchievementBadges } from "@/lib/incrementalAchievements";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import { getMilestoneAssetId, getSynergyAssetId } from "@/lib/incrementalAssets";
 import type { AchievementBadge } from "@/lib/incrementalAchievements";
 import type { GameState } from "@/types/incremental";
 
@@ -33,7 +35,10 @@ export function AchievementsView({ state }: { state: GameState }) {
     <div className="space-y-5">
       <section className="paper-note bg-[var(--yellow-soft)]">
         <p className="text-xs font-black uppercase tracking-wide">Collection</p>
-        <h2 className="mt-1 text-3xl font-black">🏅 Mur des réussites</h2>
+        <h2 className="section-title-with-asset mt-1 text-3xl font-black">
+          <GameAssetImage assetId="badge-medal" alt="" className="achievement-title-asset" />
+          Mur des réussites
+        </h2>
         <p className="handwritten mt-2">
           {unlockedCount} réussite{unlockedCount > 1 ? "s" : ""} débloquée
           {unlockedCount > 1 ? "s" : ""}. Les badges gagnés apportent des pouvoirs au bureau.
@@ -49,8 +54,18 @@ export function AchievementsView({ state }: { state: GameState }) {
             }`}
           >
             <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-3xl">{badge.unlocked ? badge.emoji : "🔒"}</p>
+              <div className="achievement-card-heading">
+                <GameAssetImage
+                  assetId={
+                    badge.unlocked
+                      ? badge.kind === "combo"
+                        ? getSynergyAssetId(badge.id)
+                        : getMilestoneAssetId(badge.id)
+                      : "ui-lock"
+                  }
+                  alt=""
+                  className="achievement-card-asset"
+                />
                 <h3 className="font-black">{badge.name}</h3>
               </div>
               <span className="paper-pill">

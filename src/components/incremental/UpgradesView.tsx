@@ -1,4 +1,6 @@
 import { formatNumber } from "@/lib/incrementalUi";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import { getSkillAssetId } from "@/lib/incrementalAssets";
 import type { GameState, Skill } from "@/types/incremental";
 import { WorkerCard } from "@/components/incremental/WorkerCard";
 import { LocationCard } from "@/components/incremental/LocationCard";
@@ -33,7 +35,7 @@ export function UpgradesView({
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-black">Améliorations des personnages</h2>
+        <h2 className="text-2xl font-black">Personnages</h2>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {state.workers.map((worker) => (
             <WorkerCard
@@ -49,7 +51,7 @@ export function UpgradesView({
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-2xl font-black">Améliorations des lieux</h2>
+        <h2 className="text-2xl font-black">Lieux</h2>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {state.locations.map((location) => (
             <LocationCard
@@ -78,17 +80,29 @@ export function UpgradesView({
                     key={skill.id}
                     className={`paper-note ${skill.unlocked ? "bg-[var(--mint)]" : "bg-white"}`}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-2xl">{skill.emoji}</p>
+                    <div className="shop-card-hero">
+                      <GameAssetImage
+                        assetId={getSkillAssetId(skill.id)}
+                        alt=""
+                        className="shop-card-asset shop-card-skill-asset"
+                      />
+                      <div className="min-w-0">
                         <h3 className="font-black">{skill.name}</h3>
                       </div>
-                      <span className="paper-pill">🌱 {skill.cost}</span>
+                      <span className="paper-pill">
+                        <GameAssetImage
+                          assetId="resource-talent"
+                          alt=""
+                          className="resource-pill-asset"
+                        />
+                        {skill.cost}
+                      </span>
                     </div>
                     <p className="handwritten mt-2 text-sm">{skill.description}</p>
                     {locked && (
-                      <p className="mt-3 text-sm font-bold">
-                        🔒 {formatNumber(skill.unlockReputation)} réputation requise
+                      <p className="locked-notice mt-3 text-sm">
+                        <GameAssetImage assetId="ui-lock" alt="" className="notice-asset-icon" />
+                        {formatNumber(skill.unlockReputation)} réputation requise
                       </p>
                     )}
                     <button
@@ -97,7 +111,7 @@ export function UpgradesView({
                       className="paper-button mt-3 bg-[var(--yellow)] disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={() => onUnlockSkill(skill.id)}
                     >
-                      {skill.unlocked ? "Débloqué" : "Débloquer"}
+                      {skill.unlocked ? "Débloqué" : "Acheter"}
                     </button>
                   </article>
                 );

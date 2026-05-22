@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { IncrementalResourceBar } from "@/components/incremental/IncrementalResourceBar";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import { LocationCard } from "@/components/incremental/LocationCard";
 import { ManualActionsPanel } from "@/components/incremental/ManualActionsPanel";
 import { WorkerCard } from "@/components/incremental/WorkerCard";
 import { formatResourceEffect } from "@/lib/incrementalUi";
+import { getIncidentAssetId } from "@/lib/incrementalAssets";
 import { type GainBubble } from "@/lib/incrementalPresentation";
 import type { GameState, ProductionSummary } from "@/types/incremental";
 
@@ -44,13 +46,16 @@ export function OfficeVillagePreview({
   const incidentButton = (
     <button
       type="button"
-      className={`office-scene-chip ${
+      className={`office-scene-chip incident-button ${
         state.activeIncident ? "incident-alert-chip" : "office-scene-chip-muted"
       }`}
       onClick={() => state.activeIncident && setIncidentOpen(true)}
       disabled={!state.activeIncident}
     >
-      🚨 Incident
+      <span className="incident-alarm-icon" aria-hidden="true">
+        <span className="incident-alarm-glow" />
+      </span>
+      Incident
     </button>
   );
 
@@ -76,12 +81,6 @@ export function OfficeVillagePreview({
         onLoad={onLoad}
         incidentControl={incidentButton}
       />
-
-      <div className="office-scene-header flex items-center justify-between gap-3">
-        <div>
-          <p className="handwritten text-sm">Le bureau grandit</p>
-        </div>
-      </div>
 
       <div className="office-floor">
         <div className="office-board-grid">
@@ -130,8 +129,13 @@ export function OfficeVillagePreview({
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-black uppercase tracking-wide">Incident actif</p>
-                <h3 className="mt-1 text-xl font-black">
-                  🚨 {state.activeIncident.emoji} {state.activeIncident.title}
+                <h3 className="incident-title-with-asset mt-1 text-xl font-black">
+                  <GameAssetImage
+                    assetId={getIncidentAssetId(state.activeIncident.id)}
+                    alt=""
+                    className="incident-title-asset"
+                  />
+                  {state.activeIncident.title}
                 </h3>
               </div>
               <button

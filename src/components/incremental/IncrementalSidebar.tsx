@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import type { GameAssetId } from "@/lib/gameAssets";
 import type { GameState } from "@/types/incremental";
 
 export type IncrementalView = "office" | "upgrades" | "achievements";
 
-const VIEWS: { id: IncrementalView; label: string; emoji: string }[] = [
-  { id: "office", label: "Bureau", emoji: "🏢" },
-  { id: "upgrades", label: "Upgrades", emoji: "⬆️" },
-  { id: "achievements", label: "Réussites", emoji: "🏅" },
+const VIEWS: { id: IncrementalView; label: string; assetId: GameAssetId }[] = [
+  { id: "office", label: "Bureau", assetId: "location-starting-office" },
+  { id: "upgrades", label: "Talents", assetId: "icon-plus" },
+  { id: "achievements", label: "Réussites", assetId: "badge-medal" },
 ];
 
 export function IncrementalSidebar({
@@ -45,7 +47,7 @@ export function IncrementalSidebar({
               activeView === view.id ? "bg-[var(--yellow)]" : "bg-white"
             }`}
           >
-            <span>{view.emoji}</span>
+            <GameAssetImage assetId={view.assetId} alt="" className="button-asset-icon" />
             {view.label}
           </button>
         ))}
@@ -88,10 +90,26 @@ export function IncrementalSidebar({
 
             <div className="paper-note surface-quiet space-y-2">
               <h3 className="font-black">Vue d’ensemble</h3>
-              <p>👥 Collègues : {totalWorkers}</p>
-              <p>🏗️ Lieux : {ownedLocations}</p>
-              <p>🔗 Synergies : {activeSynergies}</p>
-              <p>🏁 Objectif : {state.completed ? "atteint" : "en cours"}</p>
+              <p className="overview-line">
+                <GameAssetImage assetId="worker-intern" alt="" className="overview-asset-icon" />
+                Collègues : {totalWorkers}
+              </p>
+              <p className="overview-line">
+                <GameAssetImage
+                  assetId="location-starting-office"
+                  alt=""
+                  className="overview-asset-icon"
+                />
+                Lieux : {ownedLocations}
+              </p>
+              <p className="overview-line">
+                <GameAssetImage assetId="badge-gem" alt="" className="overview-asset-icon" />
+                Combos : {activeSynergies}
+              </p>
+              <p className="overview-line">
+                <GameAssetImage assetId="badge-trophy" alt="" className="overview-asset-icon" />
+                Objectif : {state.completed ? "atteint" : "en cours"}
+              </p>
             </div>
 
             <div className="paper-note surface-quiet space-y-2 bg-[var(--yellow-soft)]">
@@ -103,13 +121,16 @@ export function IncrementalSidebar({
 
             <div className="grid gap-2">
               <button type="button" className="paper-button bg-white" onClick={onSave}>
-                💾 Sauvegarder
+                <GameAssetImage assetId="ui-check" alt="" className="button-asset-icon" />
+                Sauvegarder
               </button>
               <button type="button" className="paper-button bg-white" onClick={onLoad}>
-                📂 Charger
+                <GameAssetImage assetId="badge-confetti" alt="" className="button-asset-icon" />
+                Charger
               </button>
               <button type="button" className="paper-button bg-[var(--pink)]" onClick={onNewGame}>
-                🔄 Nouvelle partie
+                <GameAssetImage assetId="badge-starburst" alt="" className="button-asset-icon" />
+                Nouvelle partie
               </button>
             </div>
           </section>

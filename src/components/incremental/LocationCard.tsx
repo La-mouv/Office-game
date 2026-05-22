@@ -1,5 +1,7 @@
 import { formatNumber } from "@/lib/incrementalUi";
 import { getLocationCost } from "@/lib/incrementalGame";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import { getLocationAssetId } from "@/lib/incrementalAssets";
 import { classifyLocationCard } from "@/lib/incrementalPresentation";
 import type { OfficeLocation } from "@/types/incremental";
 
@@ -46,6 +48,7 @@ export function LocationCard({
   const cost = getLocationCost(location);
   const maxed = location.owned && location.level >= location.maxLevel;
   const levelLabel = maxed ? "Max" : `Niv. ${location.level}`;
+  const showLevelLabel = isOffice && location.owned && !maxed;
   const emphasis = classifyLocationCard(location, reputation, budget);
   const emphasisClass =
     emphasis === "strong"
@@ -60,32 +63,56 @@ export function LocationCard({
         location.owned ? "shop-card-location" : "bg-white"
       } ${emphasisClass} ${isOffice ? "office-board-card" : ""}`}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-3xl">{location.emoji}</p>
+      <div className="shop-card-hero">
+        <GameAssetImage
+          assetId={getLocationAssetId(location.id)}
+          alt=""
+          className="shop-card-asset shop-card-location-asset"
+        />
+        <div className="min-w-0">
           <h3 className="font-black">{location.name}</h3>
         </div>
         <div className="flex flex-col items-end gap-2">
-          {location.owned && <span className="paper-pill">{levelLabel}</span>}
+          {showLevelLabel && <span className="paper-pill">{levelLabel}</span>}
         </div>
       </div>
 
-      <p className="handwritten text-sm">{location.description}</p>
-      <p className="text-sm">Effet : {formatLocationEffect(location)}</p>
+      {!isOffice && <p className="handwritten text-sm">{location.description}</p>}
+      {!isOffice && locked && (
+        <p className="unlock-requirement">
+          Débloqué à {formatNumber(location.unlockReputation)} réputation
+        </p>
+      )}
+      {isOffice && <p className="office-card-stat text-sm">{formatLocationEffect(location)}</p>}
 
-      {locked ? (
-        <p className="rounded-full border-2 border-black bg-white px-3 py-2 text-sm font-bold">
-          🔒 {formatNumber(location.unlockReputation)} réputation requise
+      {locked && isOffice ? (
+        <p className="locked-notice">
+          <GameAssetImage assetId="ui-lock" alt="" className="notice-asset-icon" />
+          {formatNumber(location.unlockReputation)} réputation requise
         </p>
       ) : !maxed ? (
-        <button
-          type="button"
-          disabled={budget < cost}
-          className="paper-button pressable-feedback bg-[var(--mint)] disabled:cursor-not-allowed disabled:opacity-50"
-          onClick={onBuyOrUpgrade}
-        >
-          {`${location.owned || isOffice ? "Améliorer" : "Construire"} ${formatNumber(cost)} €`}
-        </button>
+        <div className={isOffice ? "office-card-bottom-controls office-card-bottom-controls-single" : ""}>
+          <button
+            type="button"
+            aria-label={isOffice ? `Monter niveau ${formatNumber(cost)} €` : undefined}
+            disabled={locked || budget < cost}
+            className={`paper-button pressable-feedback disabled:cursor-not-allowed disabled:opacity-50 ${
+              isOffice
+                ? "office-card-action office-card-upgrade-action bg-[var(--mint)]"
+                : "bg-[var(--mint)]"
+            }`}
+            onClick={onBuyOrUpgrade}
+          >
+            {isOffice ? (
+              <>
+                <GameAssetImage assetId="ui-upgrade" alt="" className="office-card-action-icon" />
+                {formatNumber(cost)} €
+              </>
+            ) : (
+              `Acheter ${formatNumber(cost)} €`
+            )}
+          </button>
+        </div>
       ) : null}
     </article>
   );

@@ -1,4 +1,6 @@
 import { formatResourceEffect } from "@/lib/incrementalUi";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import { getIncidentAssetId } from "@/lib/incrementalAssets";
 import type { Incident } from "@/types/incremental";
 
 export function IncidentPanel({
@@ -20,12 +22,14 @@ export function IncidentPanel({
   return (
     <section className="incident-card">
       <div className="flex items-start gap-3">
-        <span className="text-3xl">🚨</span>
+        <GameAssetImage
+          assetId={getIncidentAssetId(incident.id)}
+          alt=""
+          className="incident-title-asset"
+        />
         <div>
           <p className="text-xs font-black uppercase tracking-wide">Incident actif</p>
-          <h2 className="text-xl font-black">
-            {incident.emoji} {incident.title}
-          </h2>
+          <h2 className="text-xl font-black">{incident.title}</h2>
         </div>
       </div>
       <p className="handwritten mt-3">{incident.description}</p>

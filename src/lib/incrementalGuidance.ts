@@ -41,7 +41,7 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
 
   if (!coffeeMachine?.owned) {
     return {
-      title: "Premier vrai upgrade",
+      title: "Premier vrai boost",
       actionLabel: "Construis la Machine à café",
       description:
         "Elle arrive vite, augmente l’ambiance et rend toutes tes idées plus rentables.",
@@ -62,14 +62,14 @@ export function getOfficeGuidance(state: GameState): OfficeGuidance {
       title: "Construis ton équipe",
       actionLabel: "Ouvre l’Open Space",
       description:
-        "Il booste les idées et prépare ta première vraie synergie d’équipe.",
+        "Il booste les idées et prépare ton premier vrai combo d’équipe.",
     };
   }
 
   return {
     title: "Boucle principale",
-    actionLabel: "Achète → améliore → débloque",
+    actionLabel: "Achète → optimise → débloque",
     description:
-      "Garde l’ambiance haute, limite le chaos et cherche les combinaisons qui ouvrent des synergies.",
+      "Garde l’ambiance haute, limite le chaos et cherche les combinaisons qui ouvrent des combos.",
   };
 }

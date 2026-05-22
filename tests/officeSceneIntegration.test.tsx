@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { OfficeView } from "@/components/incremental/OfficeView";
+import { MissionTodoPanel } from "@/components/incremental/MissionTodoPanel";
 import {
   OfficeShopPanel,
   getDevelopmentLocations,
@@ -46,6 +47,7 @@ describe("office scene integration", () => {
     expect(html).not.toContain("To-do");
     expect(html).not.toContain("Missions");
     expect(html).not.toContain("Mur des réussites");
+    expect(html).not.toContain("Le bureau grandit");
     expect(html).not.toContain("Sprint équipe");
     expect(html).not.toContain("Actions rapides");
     expect(html).not.toContain("Les petits gestes qui font avancer le bureau.");
@@ -53,6 +55,14 @@ describe("office scene integration", () => {
     expect(html).toContain("Brainstormer");
     expect(html).toContain("office-action-wall");
     expect(html).not.toContain("office-action-dock");
+  });
+
+  it("does not show raw mission progress counters in the to-do panel", () => {
+    const state = createInitialGameState(0);
+    const html = renderToStaticMarkup(<MissionTodoPanel state={state} now={0} />);
+
+    expect(html).toContain("À faire maintenant");
+    expect(html).not.toContain(">0 / 1<");
   });
 
   it("moves the title chip, resource pills and meters inside the office scene", () => {
@@ -105,13 +115,42 @@ describe("office scene integration", () => {
       />,
     );
 
-    const ambianceIndex = html.indexOf("😊 Ambiance");
+    const ambianceIndex = html.indexOf("Ambiance");
     const incidentIndex = html.indexOf("resource-incident-slot");
-    const chaosIndex = html.indexOf("🌀 Chaos");
+    const chaosIndex = html.indexOf("Chaos");
 
     expect(incidentIndex).toBeGreaterThan(ambianceIndex);
     expect(incidentIndex).toBeLessThan(chaosIndex);
     expect(html).not.toContain("office-scene-controls");
+  });
+
+  it("uses a centered red alarm icon for the incident button", () => {
+    const state = createInitialGameState(0);
+    const html = renderToStaticMarkup(
+      <OfficeVillagePreview
+        state={state}
+        production={calculateProduction(state)}
+        now={0}
+        gainBubbles={[]}
+        sceneReaction={null}
+        onNewGame={vi.fn()}
+        onSave={vi.fn()}
+        onLoad={vi.fn()}
+        onBuyWorker={vi.fn()}
+        onUpgradeWorker={vi.fn()}
+        onBuyOrUpgradeLocation={vi.fn()}
+        onUseManualAction={vi.fn()}
+        onResolveIncident={vi.fn()}
+      />,
+    );
+
+    const incidentSlotStart = html.indexOf("resource-incident-slot");
+    const incidentSlotEnd = html.indexOf("</button></div>", incidentSlotStart);
+    const incidentSlotHtml = html.slice(incidentSlotStart, incidentSlotEnd);
+
+    expect(incidentSlotHtml).toContain("incident-button");
+    expect(incidentSlotHtml).toContain("incident-alarm-icon");
+    expect(incidentSlotHtml).not.toContain("resource-chaos.png");
   });
 
   it("shows owned workers and locations as development-style cards inside the office", () => {
@@ -155,7 +194,9 @@ describe("office scene integration", () => {
     expect(html).toContain("Machine à café");
     expect(html).toContain("×2");
     expect(html).toContain(">+ ");
-    expect(html).toContain("Améliorer");
+    expect(html).toContain("office-card-bottom-controls");
+    expect(html).toContain("office-card-action-icon");
+    expect(html).not.toContain(">Améliorer");
     expect(html).not.toContain("office-avatar");
     expect(html).not.toContain("office-object");
   });

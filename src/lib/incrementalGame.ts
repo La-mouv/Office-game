@@ -352,7 +352,7 @@ export function updateSynergies(state: GameState): GameState {
     nextState = applyResourceDelta(nextState, {
       ambiance: synergy.effect.ambianceBonus ?? 0,
     });
-    nextState = appendLog(nextState, `Synergie découverte : ${synergy.name}.`);
+    nextState = appendLog(nextState, `Combo découvert : ${synergy.name}.`);
     return { ...synergy, discovered: true };
   });
 
