@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AchievementsView } from "@/components/incremental/AchievementsView";
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import type { GameState } from "@/types/incremental";
@@ -38,16 +38,25 @@ export function OfficeTopControls({
   const totalWorkers = state.workers.reduce((total, worker) => total + worker.count, 0);
   const activeSynergies = state.synergies.filter((synergy) => synergy.discovered).length;
 
-  useEffect(() => {
-    const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (isGameLanguage(storedLanguage)) {
-      setLanguage(storedLanguage);
+  function handleMenuOpen() {
+    try {
+      const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+      if (isGameLanguage(storedLanguage)) {
+        setLanguage(storedLanguage);
+      }
+    } catch {
+      // The menu still works if localStorage is unavailable.
     }
-  }, []);
+    setMenuOpen(true);
+  }
 
   function handleLanguageChange(nextLanguage: GameLanguage) {
     setLanguage(nextLanguage);
-    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
+    try {
+      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, nextLanguage);
+    } catch {
+      // The choice remains active for this session if persistence is blocked.
+    }
   }
 
   return (
@@ -61,7 +70,7 @@ export function OfficeTopControls({
           <GameAssetImage assetId="badge-medal" alt="" className="button-asset-icon" />
           Réussites
         </button>
-        <button type="button" className="paper-button bg-white" onClick={() => setMenuOpen(true)}>
+        <button type="button" className="paper-button bg-white" onClick={handleMenuOpen}>
           ☰ Menu
         </button>
       </div>
