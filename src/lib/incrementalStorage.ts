@@ -1,8 +1,42 @@
 import { clampResources, createInitialGameState, updateMissions } from "@/lib/incrementalGame";
-import type { GameState, Resources } from "@/types/incremental";
+import type { GameState, Mission, Resources, Skill } from "@/types/incremental";
 
 export const SAVE_KEY = "office-village-incremental-save-v1";
 const RETIRED_MANUAL_ACTION_LABELS = ["Sprint équipe"];
+
+function refreshMissionCopy(
+  mission: Mission,
+  skills: Skill[],
+): Mission {
+  if (mission.templateId === "guided-first-skill") {
+    return {
+      ...mission,
+      description: "Achète Organisation. Le chaos aime les systèmes mal rangés.",
+    };
+  }
+
+  const requirement = mission.requirement;
+  if (mission.templateId === "unlock-skill" && requirement.kind === "skillUnlocked") {
+    const skill = skills.find((candidate) => candidate.id === requirement.skillId);
+    return {
+      ...mission,
+      description: `Achète ${skill?.name ?? "ce talent"}. La compétence préfère être invitée.`,
+    };
+  }
+
+  if (mission.templateId === "find-synergy") {
+    return {
+      ...mission,
+      description: "Découvre un nouveau combo. Les bureaux aussi aiment les duos.",
+    };
+  }
+
+  return mission;
+}
+
+function refreshLogCopy(entry: string): string {
+  return entry.replace("Synergie découverte", "Combo découvert");
+}
 
 function hasNumericResources(value: unknown): value is Resources {
   if (!value || typeof value !== "object") return false;
@@ -101,9 +135,12 @@ export function rehydrateSavedGame(saved: GameState): GameState {
       activeManualActionIds.has(actionId),
     ),
   );
-  const log = saved.log.filter(
-    (entry) => !RETIRED_MANUAL_ACTION_LABELS.some((label) => entry.includes(label)),
-  );
+  const log = saved.log
+    .filter((entry) => !RETIRED_MANUAL_ACTION_LABELS.some((label) => entry.includes(label)))
+    .map(refreshLogCopy);
+  const activeMission = saved.activeMission
+    ? refreshMissionCopy(saved.activeMission, skills)
+    : base.activeMission;
 
   const rehydratedState: GameState = {
     ...base,
@@ -115,7 +152,7 @@ export function rehydrateSavedGame(saved: GameState): GameState {
     milestones,
     manualActions,
     manualActionUseCounts,
-    activeMission: saved.activeMission ?? base.activeMission,
+    activeMission,
     completedMissionIds: saved.completedMissionIds ?? [],
     activeBoosts: saved.activeBoosts ?? [],
     lastMissionTemplateId: saved.lastMissionTemplateId,

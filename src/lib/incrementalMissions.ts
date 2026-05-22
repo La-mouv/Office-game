@@ -55,7 +55,7 @@ export const GUIDED_MISSIONS: Mission[] = [
     templateId: "guided-first-skill",
     kind: "guided",
     title: "Une vraie méthode",
-    description: "Débloque Organisation. Le chaos aime les systèmes mal rangés.",
+    description: "Achète Organisation. Le chaos aime les systèmes mal rangés.",
     emoji: "📋",
     requirement: { kind: "skillUnlocked", skillId: "organization" },
     reward: {
@@ -255,7 +255,7 @@ function createUnlockSkill(state: GameState): Mission | null {
     templateId: "unlock-skill",
     kind: "dynamic",
     title: "La bonne habitude",
-    description: `Débloque ${skill.name}. La compétence préfère être invitée.`,
+    description: `Achète ${skill.name}. La compétence préfère être invitée.`,
     emoji: skill.emoji,
     requirement: {
       kind: "skillUnlocked",
@@ -296,7 +296,7 @@ function createFindSynergy(state: GameState): Mission | null {
     templateId: "find-synergy",
     kind: "dynamic",
     title: "Éclair de génie collectif",
-    description: "Débloque une nouvelle synergie. Les bureaux aussi aiment les duos.",
+    description: "Découvre un nouveau combo. Les bureaux aussi aiment les duos.",
     emoji: "🔗",
     requirement: {
       kind: "synergiesDiscovered",

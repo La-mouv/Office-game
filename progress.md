@@ -74,3 +74,22 @@ Original prompt: Build a playable local web MVP of Office Village from the provi
 - Moved the Incident button into the resource meter row between Ambiance and Chaos.
 - Removed stacking from office layout cards while preserving worker stack badges.
 - Replaced max-level labels with Max and removed useless max buttons from maxed cards.
+
+## 2026-05-21 office card sizing pass
+- Forced every owned card on the office board to share the same fixed height.
+- Kept the equal-size rule scoped to bureau cards only, so Development shop cards can keep their normal content-driven height.
+- Compacted bureau cards further by removing narrative labels from stat lines, leaving inline values like "+30 % idées · +15 % réputation".
+- Simplified Development cards into purchase cards: image, title, description, and one buy button with price; removed level, production/effect lines, and upgrade buttons from that panel.
+- Restored the useful reputation threshold on locked Development cards with a compact "Débloqué à X réputation" line.
+
+## 2026-05-21 wording consistency pass
+- Replaced visible incremental-game "synergie" wording with "combo" in missions, guidance, achievements, menu overview, and dormant combo views.
+- Replaced the remaining visible "upgrade" guidance wording with "boost"/"talent" vocabulary.
+- Removed "production globale" from talent and milestone copy, using "efficacité globale" or "bonus global" instead.
+- Added a copy-consistency regression test for the active incremental text surfaces and talent price pluralization.
+- Added a save migration so existing local saves refresh old mission/log wording like "Débloque Organisation" and "Synergie découverte".
+
+## 2026-05-21 office cleanup pass
+- Removed the "Le bureau grandit" micro-heading from the office scene because it did not add useful information.
+- Removed raw mission progress counters like "0 / 1" from the To-do panel.
+- Made the office worker buy and level-up buttons share equal width so the bottom row reads cleaner.

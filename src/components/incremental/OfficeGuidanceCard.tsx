@@ -1,4 +1,6 @@
 import { getMissionProgress } from "@/lib/incrementalMissions";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import { getMissionAssetId } from "@/lib/incrementalAssets";
 import type { GameState, MissionReward, Resources } from "@/types/incremental";
 
 const RESOURCE_LABELS: Record<keyof Resources, string> = {
@@ -60,8 +62,13 @@ export function OfficeGuidanceCard({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-wide">Mission du moment</p>
-          <h2 className="mt-1 text-xl font-black">
-            <span aria-hidden="true">{mission.emoji}</span> {mission.title}
+          <h2 className="mission-current-title mt-1 text-xl font-black">
+            <GameAssetImage
+              assetId={getMissionAssetId(mission)}
+              alt=""
+              className="mission-current-asset"
+            />
+            {mission.title}
           </h2>
           <p className="handwritten mt-2 text-sm">{mission.description}</p>
         </div>
@@ -80,7 +87,8 @@ export function OfficeGuidanceCard({
         <div className="mt-3 flex flex-wrap gap-2">
           {boosts.map((boost) => (
             <span key={boost.id} className="paper-pill bg-[var(--mint)] text-sm font-bold">
-              ⚡ {boost.name} · {boost.description} ·{" "}
+              <GameAssetImage assetId="icon-sparkle" alt="" className="resource-pill-asset" />
+              {boost.name} · {boost.description} ·{" "}
               {Math.max(1, Math.ceil((boost.expiresAt - now) / 1000))} s
             </span>
           ))}

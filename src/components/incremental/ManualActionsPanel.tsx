@@ -1,4 +1,6 @@
 import { formatResourceEffect } from "@/lib/incrementalUi";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import { getActionAssetId } from "@/lib/incrementalAssets";
 import type { ManualAction, OfficeLocation, Resources } from "@/types/incremental";
 
 const ACTION_BUTTON_LABELS: Record<string, string> = {
@@ -73,10 +75,16 @@ export function ManualActionsPanel({
               key={action.id}
               className={`quick-action-card ${disabled ? "quick-action-disabled" : ""}`}
             >
-              <span className="text-2xl">{action.emoji}</span>
-              <div className="quick-action-deltas">
-                {action.cost && <span>{formatResourceEffect(invertResourceEffect(action.cost))}</span>}
-                <span>{formatResourceEffect(action.effect)}</span>
+              <div className="quick-action-main">
+                <GameAssetImage
+                  assetId={getActionAssetId(action.id)}
+                  alt=""
+                  className="quick-action-asset"
+                />
+                <div className="quick-action-deltas">
+                  {action.cost && <span>{formatResourceEffect(invertResourceEffect(action.cost))}</span>}
+                  <span>{formatResourceEffect(action.effect)}</span>
+                </div>
               </div>
               <button
                 type="button"

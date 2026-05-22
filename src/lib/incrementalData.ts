@@ -252,7 +252,7 @@ export const SYNERGIES: Synergy[] = [
   {
     id: "caffeinated-dev",
     name: "Développeur caféiné",
-    description: "Machine à café + développeur = production technique boostée.",
+    description: "Machine à café + développeur = idées techniques boostées.",
     requirements: { workers: { "tired-dev": 1 }, locations: ["coffee-machine"] },
     effect: { ideasMultiplier: 0.25 },
     discovered: false,
@@ -496,7 +496,7 @@ export const SKILLS: Skill[] = [
     id: "efficient-meetings",
     name: "Réunions efficaces",
     branch: "productivity",
-    description: "+20 % production globale.",
+    description: "+20 % efficacité globale.",
     cost: 1,
     unlockReputation: 120,
     effect: { globalMultiplier: 0.2 },
@@ -586,7 +586,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "ten-interns",
     title: "Promo de stagiaires",
-    description: "Acheter 10 stagiaires. Production globale +10 %.",
+    description: "Acheter 10 stagiaires. Bonus global +10 %.",
     condition: { workerCount: { workerId: "intern", count: 10 } },
     reward: { globalMultiplier: 0.1 },
     achieved: false,
@@ -621,8 +621,8 @@ export const MILESTONES: Milestone[] = [
   },
   {
     id: "synergy-master",
-    title: "Bureau synergique",
-    description: "Débloquer 5 synergies. +20 % global.",
+    title: "Bureau combo",
+    description: "Découvrir 5 combos. +20 % global.",
     condition: { synergiesCount: 5 },
     reward: { globalMultiplier: 0.2 },
     achieved: false,

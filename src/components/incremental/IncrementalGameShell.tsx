@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import { OfficeView } from "@/components/incremental/OfficeView";
 import {
   buyOrUpgradeLocation,
@@ -212,7 +213,7 @@ export function IncrementalGameShell() {
       {state.completed && !state.sandboxMode && (
         <div className="overlay">
           <div className="paper-card max-w-lg bg-white p-6 text-center">
-            <p className="text-5xl">🏆</p>
+            <GameAssetImage assetId="badge-trophy" alt="" className="completion-asset" />
             <h2 className="mt-3 text-3xl font-black">Office Village complet</h2>
             <p className="handwritten mt-3">
               Ton bureau est devenu une machine à idées autonome, heureuse et absurdement productive.
