@@ -52,6 +52,7 @@ export function createInitialGameState(now = Date.now()): GameState {
     lastIncidentAt: now,
     startedAt: now,
     lastTickAt: now,
+    completedAt: null,
     totalIdeasEarned: 0,
     totalBudgetEarned: 0,
     totalReputationEarned: 0,
@@ -510,6 +511,28 @@ export function gameTick(
   return checkCompletion(nextState);
 }
 
+export function getRunElapsedMs(state: GameState, now = Date.now()): number {
+  const endpoint = state.completed ? (state.completedAt ?? state.lastTickAt) : now;
+  return Math.max(0, endpoint - state.startedAt);
+}
+
+export function resumeRunTimer(state: GameState, now = Date.now()): GameState {
+  if (state.completed) {
+    return {
+      ...state,
+      lastTickAt: now,
+    };
+  }
+
+  const elapsedBeforePause = Math.max(0, state.lastTickAt - state.startedAt);
+
+  return {
+    ...state,
+    startedAt: now - elapsedBeforePause,
+    lastTickAt: now,
+  };
+}
+
 export function buyWorker(
   state: GameState,
   workerId: string,
@@ -538,7 +561,7 @@ export function buyWorker(
   nextState = updateSynergies(nextState);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now, rng);
-  return checkCompletion(nextState);
+  return checkCompletion(nextState, now);
 }
 
 export function upgradeWorker(
@@ -614,7 +637,7 @@ export function buyOrUpgradeLocation(
   nextState = updateSynergies(nextState);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now, rng);
-  return checkCompletion(nextState);
+  return checkCompletion(nextState, now);
 }
 
 export function unlockSkill(
@@ -712,7 +735,7 @@ export function resolveIncidentChoice(
   nextState = updateSynergies(nextState);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now, rng);
-  return checkCompletion(nextState);
+  return checkCompletion(nextState, now);
 }
 
 export function useManualAction(state: GameState, actionId: string, now: number): GameState {
@@ -752,10 +775,10 @@ export function useManualAction(state: GameState, actionId: string, now: number)
   nextState = appendLog(nextState, `Action lancée : ${action.name}. Le bureau fait semblant de garder son calme.`);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now);
-  return checkCompletion(nextState);
+  return checkCompletion(nextState, now);
 }
 
-export function checkCompletion(state: GameState): GameState {
+export function checkCompletion(state: GameState, completedAt = state.lastTickAt): GameState {
   if (state.completed) return state;
   const autonomousOffice = state.locations.find((location) => location.id === "autonomous-office");
   const autopilot = state.synergies.find((synergy) => synergy.id === "office-autopilot");
@@ -764,7 +787,7 @@ export function checkCompletion(state: GameState): GameState {
 
   return completed
     ? appendLog(
-        { ...state, completed: true },
+        { ...state, completed: true, completedAt },
         "Office Village complet. Le comité de pilotage applaudit sans ouvrir le micro.",
       )
     : state;

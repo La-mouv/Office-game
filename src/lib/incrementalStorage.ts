@@ -151,6 +151,9 @@ export function parseSavedGame(raw: string): GameState | null {
       typeof parsed.lastIncidentAt === "number" &&
       typeof parsed.startedAt === "number" &&
       typeof parsed.lastTickAt === "number" &&
+      (parsed.completedAt === undefined ||
+        parsed.completedAt === null ||
+        typeof parsed.completedAt === "number") &&
       typeof parsed.totalIdeasEarned === "number" &&
       typeof parsed.totalBudgetEarned === "number" &&
       typeof parsed.totalReputationEarned === "number" &&
@@ -251,6 +254,7 @@ export function rehydrateSavedGame(saved: GameState): GameState {
     lastIncidentAt: saved.lastIncidentAt,
     startedAt: saved.startedAt,
     lastTickAt: saved.lastTickAt,
+    completedAt: saved.completedAt ?? null,
     totalIdeasEarned: saved.totalIdeasEarned,
     totalBudgetEarned: saved.totalBudgetEarned,
     totalReputationEarned: saved.totalReputationEarned,

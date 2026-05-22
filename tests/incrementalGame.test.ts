@@ -334,20 +334,24 @@ describe("incremental office rules", () => {
     );
     expect(twice.log).toHaveLength(once.log.length);
 
-    const complete = checkCompletion({
-      ...twice,
-      resources: {
-        ...twice.resources,
-        reputation: 1_000_000,
+    const complete = checkCompletion(
+      {
+        ...twice,
+        resources: {
+          ...twice.resources,
+          reputation: 1_000_000,
+        },
+        locations: twice.locations.map((location) =>
+          location.id === "autonomous-office" ? { ...location, owned: true } : location,
+        ),
+        synergies: twice.synergies.map((synergy) =>
+          synergy.id === "office-autopilot" ? { ...synergy, discovered: true } : synergy,
+        ),
       },
-      locations: twice.locations.map((location) =>
-        location.id === "autonomous-office" ? { ...location, owned: true } : location,
-      ),
-      synergies: twice.synergies.map((synergy) =>
-        synergy.id === "office-autopilot" ? { ...synergy, discovered: true } : synergy,
-      ),
-    });
+      123_456,
+    );
 
     expect(complete.completed).toBe(true);
+    expect(complete.completedAt).toBe(123_456);
   });
 });

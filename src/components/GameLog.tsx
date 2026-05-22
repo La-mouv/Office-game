@@ -22,12 +22,30 @@ export function getTypingState(entries: string[], visibleCharacters: number) {
   });
 }
 
+export function formatRunElapsedTime(elapsedMs: number): string {
+  const totalSeconds = Math.max(0, Math.floor(elapsedMs / 1000));
+  const seconds = totalSeconds % 60;
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const minutes = totalMinutes % 60;
+  const hours = Math.floor(totalMinutes / 60);
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
 export function GameLog({
   entries,
   language = "fr",
+  elapsedMs,
+  highlighted = false,
 }: {
   entries: string[];
   language?: GameLanguage;
+  elapsedMs?: number;
+  highlighted?: boolean;
 }) {
   const copy = getCopy(language);
   const recentEntries = getRecentLogEntries(entries, 4);
@@ -64,8 +82,21 @@ export function GameLog({
   const typedEntries = getTypingState(recentEntries, visibleCharacters);
 
   return (
-    <details className="journal-panel" open>
-      <summary className="cursor-pointer font-black">{copy.ui.journal}</summary>
+    <details className={`journal-panel ${highlighted ? "tutorial-target-active" : ""}`} open>
+      <summary className="journal-summary cursor-pointer font-black">
+        <span className="journal-summary-label">
+          <span className="journal-summary-marker" aria-hidden="true">
+            ▾
+          </span>
+          <span>{copy.ui.journal}</span>
+        </span>
+        {elapsedMs !== undefined && (
+          <span className="journal-timer" aria-label={`${copy.ui.time} ${formatRunElapsedTime(elapsedMs)}`}>
+            <span aria-hidden="true">⏱</span>
+            <span className="journal-timer-value">{formatRunElapsedTime(elapsedMs)}</span>
+          </span>
+        )}
+      </summary>
       <div className="mt-3 space-y-2 text-sm">
         {typedEntries.length > 0 ? (
           typedEntries.map((entry, index) => (

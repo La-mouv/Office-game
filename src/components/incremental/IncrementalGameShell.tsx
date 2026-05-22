@@ -11,6 +11,7 @@ import {
   continueInSandbox,
   createInitialGameState,
   gameTick,
+  resumeRunTimer,
   resolveIncidentChoice,
   unlockSkill,
   upgradeWorker,
@@ -29,6 +30,7 @@ import {
 import type { GameState } from "@/types/incremental";
 
 const PLAYER_NAME_STORAGE_KEY = "office-village-player-name";
+const TUTORIAL_SEEN_STORAGE_KEY = "office-village-tutorial-seen";
 
 declare global {
   interface Window {
@@ -42,6 +44,9 @@ export function IncrementalGameShell() {
   const copy = getCopy(language);
   const [hydrated, setHydrated] = useState(false);
   const [welcomeVisible, setWelcomeVisible] = useState(true);
+  const [tutorialVisible, setTutorialVisible] = useState(false);
+  const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
+  const [tutorialSeen, setTutorialSeen] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [showNameError, setShowNameError] = useState(false);
   const [now, setNow] = useState(0);
@@ -55,16 +60,20 @@ export function IncrementalGameShell() {
       const timestamp = Date.now();
       const loaded = loadGame();
       let storedPlayerName = "";
+      let storedTutorialSeen = false;
 
       try {
         storedPlayerName = window.localStorage.getItem(PLAYER_NAME_STORAGE_KEY) ?? "";
+        storedTutorialSeen = window.localStorage.getItem(TUTORIAL_SEEN_STORAGE_KEY) === "true";
       } catch {
         storedPlayerName = "";
+        storedTutorialSeen = false;
       }
 
       setNow(timestamp);
       setState(loaded ?? createInitialGameState(timestamp));
       setPlayerName(storedPlayerName);
+      setTutorialSeen(storedTutorialSeen);
       setHydrated(true);
     }, 0);
 
@@ -79,7 +88,7 @@ export function IncrementalGameShell() {
   }, [hydrated, state]);
 
   useEffect(() => {
-    if (!hydrated || welcomeVisible) return undefined;
+    if (!hydrated || welcomeVisible || tutorialVisible) return undefined;
 
     const tickTimer = window.setInterval(() => {
       const timestamp = Date.now();
@@ -95,7 +104,7 @@ export function IncrementalGameShell() {
       window.clearInterval(tickTimer);
       window.clearInterval(autosaveTimer);
     };
-  }, [hydrated, welcomeVisible]);
+  }, [hydrated, welcomeVisible, tutorialVisible]);
 
   useEffect(() => {
     window.render_game_to_text = () =>
@@ -190,12 +199,56 @@ export function IncrementalGameShell() {
     setPlayerName(trimmedName);
     setShowNameError(false);
     setWelcomeVisible(false);
+    if (!tutorialSeen) {
+      setTutorialStepIndex(0);
+      setTutorialVisible(true);
+    }
     setNow(timestamp);
     setState((current) => {
-      const next = { ...current, lastTickAt: timestamp };
+      const next = resumeRunTimer(current, timestamp);
       latestStateRef.current = next;
       return next;
     });
+  }
+
+  function markTutorialSeen() {
+    setTutorialSeen(true);
+    try {
+      window.localStorage.setItem(TUTORIAL_SEEN_STORAGE_KEY, "true");
+    } catch {
+      // The tutorial can still close if browser storage is blocked.
+    }
+  }
+
+  function resumeAfterTutorial() {
+    const timestamp = Date.now();
+    setNow(timestamp);
+    setState((current) => {
+      const next = resumeRunTimer(current, timestamp);
+      latestStateRef.current = next;
+      return next;
+    });
+  }
+
+  function closeTutorial() {
+    markTutorialSeen();
+    setTutorialVisible(false);
+    setTutorialStepIndex(0);
+    resumeAfterTutorial();
+  }
+
+  function handleTutorialNext() {
+    if (tutorialStepIndex >= copy.tutorial.steps.length - 1) {
+      closeTutorial();
+      return;
+    }
+
+    setTutorialStepIndex((current) => Math.min(current + 1, copy.tutorial.steps.length - 1));
+  }
+
+  function handleOpenTutorial() {
+    setTutorialStepIndex(0);
+    setTutorialVisible(true);
   }
 
   if (!hydrated) {
@@ -263,6 +316,11 @@ export function IncrementalGameShell() {
             )
           }
           onLanguageChange={setStoredGameLanguage}
+          tutorialVisible={tutorialVisible}
+          tutorialStepIndex={tutorialStepIndex}
+          onTutorialNext={handleTutorialNext}
+          onTutorialSkip={closeTutorial}
+          onOpenTutorial={handleOpenTutorial}
         />
       </main>
 

@@ -55,6 +55,17 @@ type MilestoneCopy = {
 type TranslationBundle = {
   locale: string;
   resources: Record<keyof GameState["resources"], string>;
+  tutorial: {
+    menuLabel: string;
+    progress: (current: number, total: number) => string;
+    skip: string;
+    next: string;
+    finish: string;
+    steps: {
+      title: string;
+      body: string;
+    }[];
+  };
   welcome: {
     eyebrow: string;
     title: string;
@@ -91,6 +102,7 @@ type TranslationBundle = {
     newGameConfirmTitle: string;
     newGameConfirmBody: string;
     cancel: string;
+    time: string;
     newGame: string;
     toDo: string;
     doNow: string;
@@ -151,6 +163,45 @@ const COPY: CopyMap<TranslationBundle> = {
       reputation: "Réputation",
       chaos: "Chaos",
     },
+    tutorial: {
+      menuLabel: "Tutoriel",
+      progress: (current, total) => `${current}/${total}`,
+      skip: "Passer",
+      next: "Suivant",
+      finish: "Terminer",
+      steps: [
+        {
+          title: "But du jeu",
+          body:
+            "Objectif : finir le plus vite possible. Pour gagner : 1 000 000 de réputation, le Bureau autonome, puis le combo final avec l’Agent IA. Simple sur le papier.",
+        },
+        {
+          title: "Chrono",
+          body:
+            "Le chrono vit dans le Journal. Plus il reste petit, plus ton badge aura l’air compétent au leaderboard.",
+        },
+        {
+          title: "Actions rapides",
+          body:
+            "Ces actions lancent la machine : clique, produis, recommence. Oui, c’est presque un process.",
+        },
+        {
+          title: "Missions",
+          body:
+            "Les missions te disent quoi viser. Suis-les pour éviter le pilotage au doigt mouillé.",
+        },
+        {
+          title: "Développement",
+          body:
+            "Ces cartes font grandir le bureau : collègues, salles, talents. Pour aller vite, il faut tout utiliser.",
+        },
+        {
+          title: "Menu et incidents",
+          body:
+            "Le menu garde ce tuto sous la main. Les incidents, eux, gardent le chaos bien vivant. Bureau sous contrôle, enfin presque.",
+        },
+      ],
+    },
     welcome: {
       eyebrow: "Open-space en crise permanente",
       title: "Office Village",
@@ -187,6 +238,7 @@ const COPY: CopyMap<TranslationBundle> = {
       newGameConfirmTitle: "Nouvelle partie ?",
       newGameConfirmBody: "Ça remet la progression à zéro.",
       cancel: "Annuler",
+      time: "Temps",
       newGame: "Nouvelle partie",
       toDo: "To-do",
       doNow: "À faire maintenant",
@@ -244,6 +296,45 @@ const COPY: CopyMap<TranslationBundle> = {
       reputation: "Reputation",
       chaos: "Chaos",
     },
+    tutorial: {
+      menuLabel: "Tutorial",
+      progress: (current, total) => `${current}/${total}`,
+      skip: "Skip",
+      next: "Next",
+      finish: "Finish",
+      steps: [
+        {
+          title: "Game goal",
+          body:
+            "Goal: finish as fast as possible. To win: 1,000,000 reputation, the Autonomous office, then the final combo with the AI Agent. Simple on paper.",
+        },
+        {
+          title: "Timer",
+          body:
+            "The timer lives in the Log. The smaller it stays, the better your badge will look on the leaderboard.",
+        },
+        {
+          title: "Quick actions",
+          body:
+            "These actions start the machine: click, produce, repeat. Yes, it is almost a process.",
+        },
+        {
+          title: "Missions",
+          body:
+            "Missions tell you what to chase. Follow them to avoid managing by open-office instinct.",
+        },
+        {
+          title: "Development",
+          body:
+            "These cards grow the office: colleagues, rooms, talents. If you want speed, use everything.",
+        },
+        {
+          title: "Menu and incidents",
+          body:
+            "The menu keeps this tutorial close. Incidents keep chaos alive. Office under control, almost.",
+        },
+      ],
+    },
     welcome: {
       eyebrow: "Open office in permanent crisis",
       title: "Office Village",
@@ -280,6 +371,7 @@ const COPY: CopyMap<TranslationBundle> = {
       newGameConfirmTitle: "New game?",
       newGameConfirmBody: "This resets your progress.",
       cancel: "Cancel",
+      time: "Time",
       newGame: "New game",
       toDo: "To-do",
       doNow: "Do now",
@@ -337,6 +429,45 @@ const COPY: CopyMap<TranslationBundle> = {
       reputation: "Reputación",
       chaos: "Caos",
     },
+    tutorial: {
+      menuLabel: "Tutorial",
+      progress: (current, total) => `${current}/${total}`,
+      skip: "Saltar",
+      next: "Siguiente",
+      finish: "Terminar",
+      steps: [
+        {
+          title: "Objetivo del juego",
+          body:
+            "Objetivo: terminar lo más rápido posible. Para ganar: 1.000.000 de reputación, la Oficina autónoma y el combo final con el Agente IA. Fácil en el PowerPoint.",
+        },
+        {
+          title: "Cronómetro",
+          body:
+            "El cronómetro vive en el Registro. Cuanto más bajo se quede, mejor queda tu tarjeta en el leaderboard.",
+        },
+        {
+          title: "Acciones rápidas",
+          body:
+            "Estas acciones arrancan la máquina: clic, producción, repetir. Sí, casi parece un proceso.",
+        },
+        {
+          title: "Misiones",
+          body:
+            "Las misiones te dicen qué perseguir. Síguelas para no dirigir por intuición de open space.",
+        },
+        {
+          title: "Desarrollo",
+          body:
+            "Estas cartas hacen crecer la oficina: colegas, salas, talentos. Si quieres ir rápido, úsalo todo.",
+        },
+        {
+          title: "Menú e incidentes",
+          body:
+            "El menú guarda este tutorial a mano. Los incidentes mantienen vivo el caos. Oficina bajo control, casi.",
+        },
+      ],
+    },
     welcome: {
       eyebrow: "Open space en crisis permanente",
       title: "Office Village",
@@ -373,6 +504,7 @@ const COPY: CopyMap<TranslationBundle> = {
       newGameConfirmTitle: "¿Nueva partida?",
       newGameConfirmBody: "Esto reinicia tu progreso.",
       cancel: "Cancelar",
+      time: "Tiempo",
       newGame: "Nueva partida",
       toDo: "Tareas",
       doNow: "Hacer ahora",

@@ -4,6 +4,7 @@ import { RESOURCE_ASSET_IDS } from "@/lib/incrementalAssets";
 import { OfficeTopControls } from "@/components/incremental/OfficeTopControls";
 import { getResourceLabel, type GameLanguage } from "@/lib/gameTranslations";
 import type { ReactNode } from "react";
+import type { OfficeTutorialTarget } from "@/components/incremental/OfficeTutorialOverlay";
 import type { GameState, ProductionSummary } from "@/types/incremental";
 
 export function IncrementalResourceBar({
@@ -13,6 +14,8 @@ export function IncrementalResourceBar({
   onNewGame,
   incidentControl,
   onLanguageChange,
+  onOpenTutorial,
+  tutorialTarget,
 }: {
   language?: GameLanguage;
   state: GameState;
@@ -22,6 +25,8 @@ export function IncrementalResourceBar({
   onLoad?: () => void;
   incidentControl?: ReactNode;
   onLanguageChange?: (language: GameLanguage) => void;
+  onOpenTutorial?: () => void;
+  tutorialTarget?: OfficeTutorialTarget | null;
 }) {
   return (
     <div className="resource-header">
@@ -52,6 +57,8 @@ export function IncrementalResourceBar({
             language={language}
             onLanguageChange={onLanguageChange}
             onNewGame={onNewGame}
+            onOpenTutorial={onOpenTutorial}
+            highlighted={tutorialTarget === "menu"}
           />
         </div>
       </div>
@@ -77,7 +84,11 @@ export function IncrementalResourceBar({
           </div>
         </div>
 
-        {incidentControl && <div className="resource-incident-slot">{incidentControl}</div>}
+        {incidentControl && (
+          <div className={`resource-incident-slot ${tutorialTarget === "menu" ? "tutorial-target-active" : ""}`}>
+            {incidentControl}
+          </div>
+        )}
 
         <div className="resource-meter">
           <div className="mb-2 flex items-center justify-between text-xs font-bold">

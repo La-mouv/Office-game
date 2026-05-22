@@ -88,6 +88,7 @@ export function OfficeShopPanel({
   onUpgradeWorker,
   onBuyOrUpgradeLocation,
   onUnlockSkill,
+  highlighted = false,
 }: {
   language?: GameLanguage;
   state: GameState;
@@ -95,6 +96,7 @@ export function OfficeShopPanel({
   onUpgradeWorker: (workerId: string) => void;
   onBuyOrUpgradeLocation: (locationId: string) => void;
   onUnlockSkill: (skillId: string) => void;
+  highlighted?: boolean;
 }) {
   const copy = getCopy(language);
   const shopTabs: { id: ShopTab; label: string }[] = [
@@ -107,7 +109,7 @@ export function OfficeShopPanel({
   const visibleLocations = getDevelopmentLocations(state.locations, state.resources.reputation);
 
   return (
-    <aside className="paper-note shop-panel space-y-3">
+    <aside className={`paper-note shop-panel space-y-3 ${highlighted ? "tutorial-target-active" : ""}`}>
       <h2 className="section-title-with-asset text-xl font-black">
         <GameAssetImage assetId="badge-sparkles" alt="" className="section-title-asset" />
         {copy.ui.development}

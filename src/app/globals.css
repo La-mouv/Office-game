@@ -1225,6 +1225,48 @@ body {
   background: rgba(255, 250, 240, 0.82);
 }
 
+.journal-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.journal-summary::-webkit-details-marker {
+  display: none;
+}
+
+.journal-summary-label {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.journal-summary-marker {
+  display: inline-block;
+  transition: transform 140ms ease;
+}
+
+.journal-panel:not([open]) .journal-summary-marker {
+  transform: rotate(-90deg);
+}
+
+.journal-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 2px solid rgba(17, 17, 17, 0.16);
+  border-radius: 999px;
+  background: var(--yellow);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  line-height: 1;
+  box-shadow: 2px 2px 0 rgba(17, 17, 17, 0.1);
+  white-space: nowrap;
+}
+
 .office-breathe {
   animation: office-breathe 5.5s ease-in-out infinite;
 }
@@ -1457,4 +1499,107 @@ body {
   place-items: center;
   background: rgba(17, 17, 17, 0.28);
   padding: 1rem;
+}
+
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: auto;
+}
+
+.tutorial-card {
+  position: fixed;
+  width: min(28rem, calc(100vw - 2rem));
+  z-index: 72;
+  border-width: 3px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 247, 191, 0.96)),
+    white;
+  padding: 1rem;
+  pointer-events: auto;
+  transition:
+    top 220ms ease,
+    right 220ms ease,
+    bottom 220ms ease,
+    left 220ms ease,
+    transform 220ms ease;
+  box-shadow:
+    8px 8px 0 rgba(17, 17, 17, 0.16),
+    0 18px 40px rgba(17, 17, 17, 0.14);
+}
+
+.tutorial-card::before {
+  content: "";
+  position: absolute;
+  top: -0.58rem;
+  left: 1.25rem;
+  width: 4.25rem;
+  height: 1.1rem;
+  border: 2px solid rgba(17, 17, 17, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 239, 117, 0.82);
+  transform: rotate(-3deg);
+  box-shadow: 2px 3px 0 rgba(17, 17, 17, 0.08);
+}
+
+.tutorial-card-goal {
+  right: clamp(1rem, 4vw, 2rem);
+  bottom: clamp(1rem, 4vw, 2rem);
+}
+
+.tutorial-card-journal {
+  right: clamp(1rem, 4vw, 2rem);
+  top: 46%;
+  transform: translateY(-50%);
+}
+
+.tutorial-card-actions,
+.tutorial-card-missions {
+  right: clamp(1rem, 4vw, 2rem);
+  bottom: clamp(1rem, 4vw, 2rem);
+}
+
+.tutorial-card-development {
+  left: clamp(1rem, 4vw, 2rem);
+  top: clamp(1rem, 4vw, 2rem);
+}
+
+.tutorial-card-menu {
+  left: clamp(1rem, 4vw, 2rem);
+  bottom: clamp(1rem, 4vw, 2rem);
+}
+
+.tutorial-progress {
+  width: fit-content;
+  border: 2px solid rgba(17, 17, 17, 0.16);
+  border-radius: 999px;
+  background: var(--yellow-soft);
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.tutorial-target-active {
+  position: relative;
+  z-index: 71;
+  pointer-events: none;
+  scroll-margin: 5rem;
+  outline: 4px solid var(--yellow);
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 9px rgba(255, 239, 117, 0.32),
+    6px 6px 0 rgba(17, 17, 17, 0.14);
+}
+
+@media (max-width: 767px) {
+  .tutorial-card {
+    top: auto;
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+    width: auto;
+    transform: none;
+  }
 }

@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { getTypingState } from "@/components/GameLog";
+import { GameLog, formatRunElapsedTime, getTypingState } from "@/components/GameLog";
 import { getRecentLogEntries } from "@/lib/incrementalPresentation";
 
 describe("GameLog typing state", () => {
@@ -34,5 +34,22 @@ describe("GameLog typing state", () => {
     );
 
     expect(html).toContain("typing-cursor");
+  });
+
+  it("renders the run timer as a compact pictogram in the journal header", () => {
+    const html = renderToStaticMarkup(
+      <GameLog entries={["Bienvenue"]} elapsedMs={65_000} />,
+    );
+
+    expect(html).toContain("Journal");
+    expect(html).toContain("journal-summary-label");
+    expect(html).toContain("⏱");
+    expect(html).toContain("01:05");
+    expect(html).not.toContain(">Temps</span>");
+  });
+
+  it("formats elapsed run time for short and long games", () => {
+    expect(formatRunElapsedTime(65_000)).toBe("01:05");
+    expect(formatRunElapsedTime(3_661_000)).toBe("1:01:01");
   });
 });

@@ -26,12 +26,14 @@ describe("OfficeTopControls", () => {
         onNewGame={vi.fn()}
         onSave={vi.fn()}
         onLoad={vi.fn()}
+        onOpenTutorial={vi.fn()}
         initialMenuOpen
       />,
     );
 
     expect(html).toContain("Langue");
     expect(html).toContain("Sauvegarde automatique active");
+    expect(html).toContain("Tutoriel");
     expect(html).not.toContain("Sauvegarder");
     expect(html).not.toContain("Charger");
     expect(html).toContain("🇫🇷");

@@ -57,6 +57,7 @@ export function ManualActionsPanel({
   onUse,
   variant = "panel",
   language = "fr",
+  highlighted = false,
 }: {
   actions: ManualAction[];
   resources: Resources;
@@ -65,11 +66,16 @@ export function ManualActionsPanel({
   onUse: (actionId: string) => void;
   variant?: "panel" | "scene";
   language?: GameLanguage;
+  highlighted?: boolean;
 }) {
   const isScene = variant === "scene";
 
   return (
-    <section className={isScene ? "office-action-wall" : "actions-panel space-y-3"}>
+    <section
+      className={`${isScene ? "office-action-wall" : "actions-panel space-y-3"} ${
+        highlighted ? "tutorial-target-active" : ""
+      }`.trim()}
+    >
       {!isScene && (
         <div>
           <h2 className="text-xl font-black">

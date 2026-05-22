@@ -57,6 +57,66 @@ describe("office scene integration", () => {
     expect(html).not.toContain("office-action-dock");
   });
 
+  it("renders a guided tutorial overlay with the concrete game goal", () => {
+    const state = createInitialGameState(0);
+    const html = renderToStaticMarkup(
+      <OfficeView
+        state={state}
+        production={calculateProduction(state)}
+        now={0}
+        gainBubbles={[]}
+        sceneReaction={null}
+        onNewGame={vi.fn()}
+        onBuyWorker={vi.fn()}
+        onUpgradeWorker={vi.fn()}
+        onBuyOrUpgradeLocation={vi.fn()}
+        onUnlockSkill={vi.fn()}
+        onUseManualAction={vi.fn()}
+        onResolveIncident={vi.fn()}
+        tutorialVisible
+        tutorialStepIndex={0}
+        onTutorialNext={vi.fn()}
+        onTutorialSkip={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain("1 000 000");
+    expect(html).toContain("Bureau autonome");
+    expect(html).toContain("Agent IA");
+    expect(html).toContain("Passer");
+    expect(html).toContain("Suivant");
+    expect(html).toContain("tutorial-card tutorial-card-goal");
+    expect(html).not.toContain("tutorial-scrim");
+  });
+
+  it("can highlight the fast actions during the tutorial", () => {
+    const state = createInitialGameState(0);
+    const html = renderToStaticMarkup(
+      <OfficeView
+        state={state}
+        production={calculateProduction(state)}
+        now={0}
+        gainBubbles={[]}
+        sceneReaction={null}
+        onNewGame={vi.fn()}
+        onBuyWorker={vi.fn()}
+        onUpgradeWorker={vi.fn()}
+        onBuyOrUpgradeLocation={vi.fn()}
+        onUnlockSkill={vi.fn()}
+        onUseManualAction={vi.fn()}
+        onResolveIncident={vi.fn()}
+        tutorialVisible
+        tutorialStepIndex={2}
+        onTutorialNext={vi.fn()}
+        onTutorialSkip={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain("office-action-wall tutorial-target-active");
+    expect(html).toContain("tutorial-card tutorial-card-actions");
+    expect(html).toContain("Ces actions lancent la machine");
+  });
+
   it("does not show raw mission progress counters in the to-do panel", () => {
     const state = createInitialGameState(0);
     const html = renderToStaticMarkup(<MissionTodoPanel state={state} now={0} />);

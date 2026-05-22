@@ -209,6 +209,7 @@ export type GameState = {
   lastIncidentAt: number;
   startedAt: number;
   lastTickAt: number;
+  completedAt: number | null;
   totalIdeasEarned: number;
   totalBudgetEarned: number;
   totalReputationEarned: number;

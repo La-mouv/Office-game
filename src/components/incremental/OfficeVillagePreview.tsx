@@ -10,6 +10,7 @@ import { formatResourceEffect } from "@/lib/incrementalUi";
 import { getCopy, type GameLanguage } from "@/lib/gameTranslations";
 import { getIncidentAssetId } from "@/lib/incrementalAssets";
 import { type GainBubble } from "@/lib/incrementalPresentation";
+import type { OfficeTutorialTarget } from "@/components/incremental/OfficeTutorialOverlay";
 import type { GameState, ProductionSummary } from "@/types/incremental";
 
 export function OfficeVillagePreview({
@@ -26,6 +27,8 @@ export function OfficeVillagePreview({
   onUseManualAction,
   onResolveIncident,
   onLanguageChange,
+  onOpenTutorial,
+  tutorialTarget,
 }: {
   language?: GameLanguage;
   state: GameState;
@@ -42,6 +45,8 @@ export function OfficeVillagePreview({
   onUseManualAction: (actionId: string) => void;
   onResolveIncident: (incidentId: string, choiceId: string) => void;
   onLanguageChange?: (language: GameLanguage) => void;
+  onOpenTutorial?: () => void;
+  tutorialTarget?: OfficeTutorialTarget | null;
 }) {
   const copy = getCopy(language);
   const [incidentOpen, setIncidentOpen] = useState(false);
@@ -83,10 +88,12 @@ export function OfficeVillagePreview({
         production={production}
         onNewGame={onNewGame}
         onLanguageChange={onLanguageChange}
+        onOpenTutorial={onOpenTutorial}
         incidentControl={incidentButton}
+        tutorialTarget={tutorialTarget}
       />
 
-      <div className="office-floor">
+      <div className={`office-floor ${tutorialTarget === "goal" ? "tutorial-target-active" : ""}`}>
         <div className="office-board-grid">
           {ownedLocations.map((location) => (
             <LocationCard
@@ -123,6 +130,7 @@ export function OfficeVillagePreview({
         onUse={onUseManualAction}
         variant="scene"
         language={language}
+        highlighted={tutorialTarget === "actions"}
       />
 
       {incidentOpen && state.activeIncident && (

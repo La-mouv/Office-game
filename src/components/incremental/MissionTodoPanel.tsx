@@ -21,10 +21,12 @@ export function MissionTodoPanel({
   state,
   now,
   language = "fr",
+  highlighted = false,
 }: {
   state: GameState;
   now: number;
   language?: GameLanguage;
+  highlighted?: boolean;
 }) {
   const copy = getCopy(language);
   const missionTodos = buildMissionTodoItems(state);
@@ -32,7 +34,7 @@ export function MissionTodoPanel({
   const activeBoosts = state.activeBoosts.filter((boost) => boost.expiresAt > now);
 
   return (
-    <details className="journal-panel todo-panel" open>
+    <details className={`journal-panel todo-panel ${highlighted ? "tutorial-target-active" : ""}`} open>
       <summary className="cursor-pointer font-black">{copy.ui.toDo}</summary>
       <div className="todo-feed mt-3 space-y-2 text-sm">
         {missionTodos.map((mission) => (

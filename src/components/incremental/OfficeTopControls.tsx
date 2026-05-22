@@ -15,6 +15,8 @@ export function OfficeTopControls({
   language = "fr",
   onLanguageChange,
   onNewGame,
+  onOpenTutorial,
+  highlighted = false,
   initialMenuOpen = false,
   initialNewGameConfirmOpen = false,
 }: {
@@ -24,6 +26,8 @@ export function OfficeTopControls({
   onNewGame: () => void;
   onSave?: () => void;
   onLoad?: () => void;
+  onOpenTutorial?: () => void;
+  highlighted?: boolean;
   initialMenuOpen?: boolean;
   initialNewGameConfirmOpen?: boolean;
 }) {
@@ -45,9 +49,14 @@ export function OfficeTopControls({
     setMenuOpen(false);
   }
 
+  function handleOpenTutorial() {
+    onOpenTutorial?.();
+    setMenuOpen(false);
+  }
+
   return (
     <>
-      <div className="office-top-controls">
+      <div className={`office-top-controls ${highlighted ? "tutorial-target-active" : ""}`}>
         <button
           type="button"
           className="paper-button bg-white"
@@ -165,6 +174,12 @@ export function OfficeTopControls({
             </div>
 
             <div className="grid gap-2">
+              {onOpenTutorial && (
+                <button type="button" className="paper-button bg-white" onClick={handleOpenTutorial}>
+                  <GameAssetImage assetId="badge-gem" alt="" className="button-asset-icon" />
+                  {copy.tutorial.menuLabel}
+                </button>
+              )}
               <button
                 type="button"
                 className="paper-button bg-[var(--pink)]"
