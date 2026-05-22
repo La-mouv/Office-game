@@ -1,48 +1,53 @@
 import { getAchievementBadges } from "@/lib/incrementalAchievements";
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import { getMilestoneAssetId, getSynergyAssetId } from "@/lib/incrementalAssets";
+import { getCopy, getResourceLabel, type GameLanguage } from "@/lib/gameTranslations";
 import type { AchievementBadge } from "@/lib/incrementalAchievements";
 import type { GameState } from "@/types/incremental";
 
-const EFFECT_LABELS: Record<string, string> = {
-  ideasMultiplier: "idées",
-  budgetMultiplier: "budget",
-  reputationMultiplier: "réputation",
-  globalMultiplier: "global",
-  ambianceBonus: "ambiance",
-  chaosReduction: "chaos/s",
-  resources: "ressources",
-};
+function effectText(effect: AchievementBadge["effect"], language: GameLanguage): string {
+  const effectLabels: Record<string, string> = {
+    ideasMultiplier: getResourceLabel("ideas", language).toLowerCase(),
+    budgetMultiplier: getResourceLabel("budget", language).toLowerCase(),
+    reputationMultiplier: getResourceLabel("reputation", language).toLowerCase(),
+    globalMultiplier: "global",
+    ambianceBonus: getResourceLabel("ambiance", language).toLowerCase(),
+    chaosReduction: `${getResourceLabel("chaos", language).toLowerCase()}/s`,
+    resources: language === "en" ? "resource bonus" : language === "es" ? "bonus de recursos" : "bonus de ressources",
+  };
 
-function effectText(effect: AchievementBadge["effect"]): string {
   return Object.entries(effect)
     .map(([key, value]) => {
-      if (key === "resources") return "bonus de ressources";
+      if (key === "resources") return effectLabels.resources;
       if (key.includes("Multiplier")) {
-        return `+${Math.round((value as number) * 100)} % ${EFFECT_LABELS[key]}`;
+        return `+${Math.round((value as number) * 100)} % ${effectLabels[key]}`;
       }
-      if (key === "chaosReduction") return `-${value} ${EFFECT_LABELS[key]}`;
-      return `+${value} ${EFFECT_LABELS[key] ?? key}`;
+      if (key === "chaosReduction") return `-${value} ${effectLabels[key]}`;
+      return `+${value} ${effectLabels[key] ?? key}`;
     })
     .join(" · ");
 }
 
-export function AchievementsView({ state }: { state: GameState }) {
+export function AchievementsView({
+  state,
+  language = "fr",
+}: {
+  state: GameState;
+  language?: GameLanguage;
+}) {
+  const copy = getCopy(language);
   const badges = getAchievementBadges(state);
   const unlockedCount = badges.filter((badge) => badge.unlocked).length;
 
   return (
     <div className="space-y-5">
       <section className="paper-note bg-[var(--yellow-soft)]">
-        <p className="text-xs font-black uppercase tracking-wide">Collection</p>
+        <p className="text-xs font-black uppercase tracking-wide">{copy.ui.collection}</p>
         <h2 className="section-title-with-asset mt-1 text-3xl font-black">
           <GameAssetImage assetId="badge-medal" alt="" className="achievement-title-asset" />
-          Mur des réussites
+          {copy.ui.achievementWall}
         </h2>
-        <p className="handwritten mt-2">
-          {unlockedCount} réussite{unlockedCount > 1 ? "s" : ""} débloquée
-          {unlockedCount > 1 ? "s" : ""}. Les badges gagnés donnent au bureau des raisons de bomber le torse.
-        </p>
+        <p className="handwritten mt-2">{copy.ui.achievementCount(unlockedCount, badges.length)}</p>
       </section>
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -69,13 +74,13 @@ export function AchievementsView({ state }: { state: GameState }) {
                 <h3 className="font-black">{badge.name}</h3>
               </div>
               <span className="paper-pill">
-                {badge.kind === "combo" ? "Combo" : "Palier"}
+                {badge.kind === "combo" ? copy.ui.combo : copy.ui.milestone}
               </span>
             </div>
 
             <p className="handwritten text-sm">{badge.description}</p>
             <p className="text-sm font-bold">
-              {badge.unlocked ? effectText(badge.effect) : badge.requirement ?? "À débloquer quand le bureau aura arrêté de paniquer"}
+              {badge.unlocked ? effectText(badge.effect, language) : badge.requirement ?? copy.ui.lockedAchievement}
             </p>
           </article>
         ))}

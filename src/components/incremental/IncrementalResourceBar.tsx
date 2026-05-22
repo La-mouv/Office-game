@@ -1,29 +1,29 @@
-import {
-  RESOURCE_LABELS,
-  formatNumber,
-  formatPerSecond,
-  formatPercent,
-} from "@/lib/incrementalUi";
+import { formatNumber, formatPerSecond, formatPercent } from "@/lib/incrementalUi";
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import { RESOURCE_ASSET_IDS } from "@/lib/incrementalAssets";
 import { OfficeTopControls } from "@/components/incremental/OfficeTopControls";
+import { getResourceLabel, type GameLanguage } from "@/lib/gameTranslations";
 import type { ReactNode } from "react";
 import type { GameState, ProductionSummary } from "@/types/incremental";
 
 export function IncrementalResourceBar({
+  language = "fr",
   state,
   production,
   onNewGame,
   onSave,
   onLoad,
   incidentControl,
+  onLanguageChange,
 }: {
+  language?: GameLanguage;
   state: GameState;
   production: ProductionSummary;
   onNewGame: () => void;
   onSave: () => void;
   onLoad: () => void;
   incidentControl?: ReactNode;
+  onLanguageChange?: (language: GameLanguage) => void;
 }) {
   return (
     <div className="resource-header">
@@ -41,15 +41,22 @@ export function IncrementalResourceBar({
                 alt=""
                 className="resource-pill-asset"
               />
-              <span className="hidden text-xs sm:inline">{RESOURCE_LABELS[resource]}</span>
-              <strong>{formatNumber(state.resources[resource])}</strong>
+              <span className="hidden text-xs sm:inline">{getResourceLabel(resource, language)}</span>
+              <strong>{formatNumber(state.resources[resource], language)}</strong>
               <span className="text-xs opacity-70">
-                {formatPerSecond(production.perSecond[resource])}
+                {formatPerSecond(production.perSecond[resource], language)}
               </span>
             </div>
           ))}
 
-          <OfficeTopControls state={state} onNewGame={onNewGame} onSave={onSave} onLoad={onLoad} />
+          <OfficeTopControls
+            state={state}
+            language={language}
+            onLanguageChange={onLanguageChange}
+            onNewGame={onNewGame}
+            onSave={onSave}
+            onLoad={onLoad}
+          />
         </div>
       </div>
 
@@ -62,7 +69,7 @@ export function IncrementalResourceBar({
                 alt=""
                 className="meter-label-asset"
               />
-              Ambiance
+              {getResourceLabel("ambiance", language)}
             </span>
             <span>{formatPercent(state.resources.ambiance)}</span>
           </div>
@@ -84,7 +91,7 @@ export function IncrementalResourceBar({
                 alt=""
                 className="meter-label-asset"
               />
-              Chaos
+              {getResourceLabel("chaos", language)}
             </span>
             <span>{formatPercent(state.resources.chaos)}</span>
           </div>

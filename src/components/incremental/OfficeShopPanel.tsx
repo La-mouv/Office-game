@@ -6,15 +6,10 @@ import { LocationCard } from "@/components/incremental/LocationCard";
 import { WorkerCard } from "@/components/incremental/WorkerCard";
 import { formatNumber } from "@/lib/incrementalUi";
 import { getSkillAssetId } from "@/lib/incrementalAssets";
+import { getCopy, type GameLanguage } from "@/lib/gameTranslations";
 import type { GameState, OfficeLocation, Skill, Worker } from "@/types/incremental";
 
 type ShopTab = "workers" | "locations" | "upgrades";
-
-const SHOP_TABS: { id: ShopTab; label: string }[] = [
-  { id: "workers", label: "Recrutement" },
-  { id: "locations", label: "Aménagement" },
-  { id: "upgrades", label: "Talents" },
-];
 
 function onlyActionableAndNextLocked<T extends Worker | OfficeLocation>(
   items: T[],
@@ -46,17 +41,20 @@ export function getDevelopmentLocations(
 }
 
 export function SkillCard({
+  language = "fr",
   skill,
   state,
   onUnlock,
 }: {
+  language?: GameLanguage;
   skill: Skill;
   state: GameState;
   onUnlock: () => void;
 }) {
+  const copy = getCopy(language);
   const locked = state.resources.reputation < skill.unlockReputation;
   const disabled = locked || skill.unlocked || state.talentPoints < skill.cost;
-  const talentLabel = skill.cost > 1 ? "talents" : "talent";
+  const talentLabel = skill.cost > 1 ? copy.ui.talentPlural.toLowerCase() : copy.ui.talent.toLowerCase();
 
   return (
     <article className="shop-card shop-card-upgrade">
@@ -77,25 +75,33 @@ export function SkillCard({
         className="paper-button mt-3 w-full bg-white disabled:cursor-not-allowed disabled:opacity-50"
         onClick={onUnlock}
       >
-        {skill.unlocked ? "Débloqué" : `Acheter ${formatNumber(skill.cost)} ${talentLabel}`}
+        {skill.unlocked ? copy.ui.unlocked : copy.ui.buyTalent(formatNumber(skill.cost, language), talentLabel)}
       </button>
     </article>
   );
 }
 
 export function OfficeShopPanel({
+  language = "fr",
   state,
   onBuyWorker,
   onUpgradeWorker,
   onBuyOrUpgradeLocation,
   onUnlockSkill,
 }: {
+  language?: GameLanguage;
   state: GameState;
   onBuyWorker: (workerId: string) => void;
   onUpgradeWorker: (workerId: string) => void;
   onBuyOrUpgradeLocation: (locationId: string) => void;
   onUnlockSkill: (skillId: string) => void;
 }) {
+  const copy = getCopy(language);
+  const shopTabs: { id: ShopTab; label: string }[] = [
+    { id: "workers", label: copy.ui.recruitment },
+    { id: "locations", label: copy.ui.expansion },
+    { id: "upgrades", label: copy.ui.talentPlural },
+  ];
   const [activeTab, setActiveTab] = useState<ShopTab>("workers");
   const visibleWorkers = getDevelopmentWorkers(state.workers, state.resources.reputation);
   const visibleLocations = getDevelopmentLocations(state.locations, state.resources.reputation);
@@ -104,11 +110,11 @@ export function OfficeShopPanel({
     <aside className="paper-note shop-panel space-y-3">
       <h2 className="section-title-with-asset text-xl font-black">
         <GameAssetImage assetId="badge-sparkles" alt="" className="section-title-asset" />
-        Développement
+        {copy.ui.development}
       </h2>
 
-      <div className="shop-tabs" aria-label="Choisir une catégorie de développement">
-        {SHOP_TABS.map((tab) => (
+      <div className="shop-tabs" aria-label={copy.ui.shopCategoryAria}>
+        {shopTabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
@@ -131,11 +137,12 @@ export function OfficeShopPanel({
                 budget={state.resources.budget}
                 onBuy={() => onBuyWorker(worker.id)}
                 onUpgrade={() => onUpgradeWorker(worker.id)}
+                language={language}
               />
             ))
           ) : (
             <p className="handwritten rounded-2xl bg-white/70 p-3 text-sm">
-              Tout le recrutement actif est déjà dans le Bureau. Le badge d’accès souffle un peu.
+              {copy.ui.allWorkersInOffice}
             </p>
           ))}
 
@@ -148,11 +155,12 @@ export function OfficeShopPanel({
                 reputation={state.resources.reputation}
                 budget={state.resources.budget}
                 onBuyOrUpgrade={() => onBuyOrUpgradeLocation(location.id)}
+                language={language}
               />
             ))
           ) : (
             <p className="handwritten rounded-2xl bg-white/70 p-3 text-sm">
-              Tous les aménagements construits sont déjà dans le Bureau. Les murs font les fiers.
+              {copy.ui.allLocationsInOffice}
             </p>
           ))}
 
@@ -160,8 +168,8 @@ export function OfficeShopPanel({
           <>
             <div className="paper-pill w-fit bg-[var(--yellow-soft)]">
               <GameAssetImage assetId="resource-talent" alt="" className="resource-pill-asset" />
-              <strong>{state.talentPoints}</strong>
-              <span>talent</span>
+              <strong>{formatNumber(state.talentPoints, language)}</strong>
+              <span>{copy.ui.talent.toLowerCase()}</span>
             </div>
             {state.skills.map((skill) => (
               <SkillCard
@@ -169,6 +177,7 @@ export function OfficeShopPanel({
                 skill={skill}
                 state={state}
                 onUnlock={() => onUnlockSkill(skill.id)}
+                language={language}
               />
             ))}
           </>}

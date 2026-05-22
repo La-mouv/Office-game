@@ -19,7 +19,7 @@ describe("OfficeTopControls", () => {
     expect(html).not.toContain(">Bureau<");
   });
 
-  it("shows a language choice inside the menu", () => {
+  it("shows flag language buttons inside the menu", () => {
     const html = renderToStaticMarkup(
       <OfficeTopControls
         state={createInitialGameState(0)}
@@ -31,9 +31,12 @@ describe("OfficeTopControls", () => {
     );
 
     expect(html).toContain("Langue");
-    expect(html).toContain("Français");
-    expect(html).toContain("English");
-    expect(html).toContain("Español");
+    expect(html).toContain("🇫🇷");
+    expect(html).toContain("🇬🇧");
+    expect(html).toContain("🇪🇸");
+    expect(html).toContain('aria-label="Français"');
+    expect(html).toContain('aria-label="English"');
+    expect(html).toContain('aria-label="Español"');
     expect(html).toContain("aria-pressed=\"true\"");
   });
 });

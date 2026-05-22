@@ -16,6 +16,8 @@ import {
   useManualAction as performManualAction,
 } from "@/lib/incrementalGame";
 import { loadGame, saveGame } from "@/lib/incrementalStorage";
+import { getCopy, localizeGameState } from "@/lib/gameTranslations";
+import { setStoredGameLanguage, useGameLanguage } from "@/lib/useGameLanguage";
 import {
   buildGainBubbleLabels,
   diffResources,
@@ -33,6 +35,8 @@ declare global {
 }
 
 export function IncrementalGameShell() {
+  const language = useGameLanguage();
+  const copy = getCopy(language);
   const [hydrated, setHydrated] = useState(false);
   const [now, setNow] = useState(0);
   const [state, setState] = useState<GameState>(() => createInitialGameState(0));
@@ -106,6 +110,7 @@ export function IncrementalGameShell() {
   }, [state]);
 
   const production = useMemo(() => calculateProduction(state), [state]);
+  const localizedState = useMemo(() => localizeGameState(state, language), [state, language]);
 
   function run(update: (current: GameState) => GameState) {
     setState((current) => update(current));
@@ -115,7 +120,7 @@ export function IncrementalGameShell() {
     const timestamp = Date.now();
     const current = latestStateRef.current;
     const next = update(current, timestamp);
-    const bubbles = buildGainBubbleLabels(diffResources(current.resources, next.resources)).map(
+    const bubbles = buildGainBubbleLabels(diffResources(current.resources, next.resources), language).map(
       (label, index) => ({
         id: `${timestamp}-${index}-${label}`,
         label,
@@ -165,7 +170,7 @@ export function IncrementalGameShell() {
     return (
       <div className="grid min-h-screen place-items-center p-4">
         <div className="paper-note bg-[var(--yellow)]">
-          <p className="handwritten">Le stagiaire virtuel cherche les clés du bureau…</p>
+          <p className="handwritten">{copy.ui.loading}</p>
         </div>
       </div>
     );
@@ -175,7 +180,8 @@ export function IncrementalGameShell() {
     <div className="flex min-h-screen flex-col">
       <main className="flex-1 p-4">
         <OfficeView
-          state={state}
+          language={language}
+          state={localizedState}
           production={production}
           now={now}
           gainBubbles={gainBubbles}
@@ -207,6 +213,7 @@ export function IncrementalGameShell() {
               resolveIncidentChoice(current, incidentId, choiceId, Math.random, timestamp),
             )
           }
+          onLanguageChange={setStoredGameLanguage}
         />
       </main>
 
@@ -214,20 +221,18 @@ export function IncrementalGameShell() {
         <div className="overlay">
           <div className="paper-card max-w-lg bg-white p-6 text-center">
             <GameAssetImage assetId="badge-trophy" alt="" className="completion-asset" />
-            <h2 className="mt-3 text-3xl font-black">Office Village complet</h2>
-            <p className="handwritten mt-3">
-              Ton bureau tourne tout seul. Le comité n’a rien compris, donc il valide.
-            </p>
+            <h2 className="mt-3 text-3xl font-black">{copy.ui.completionTitle}</h2>
+            <p className="handwritten mt-3">{copy.ui.completionBody}</p>
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <button
                 type="button"
                 className="paper-button bg-[var(--mint)]"
                 onClick={() => run((current) => continueInSandbox(current))}
               >
-                Continuer en sandbox
+                {copy.ui.keepPlaying}
               </button>
               <button type="button" className="paper-button bg-[var(--yellow)]" onClick={handleNewGame}>
-                Nouvelle partie
+                {copy.ui.restart}
               </button>
             </div>
           </div>

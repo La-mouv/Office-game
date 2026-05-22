@@ -7,9 +7,11 @@ import {
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import { getWorkerAssetId } from "@/lib/incrementalAssets";
 import { classifyWorkerCard } from "@/lib/incrementalPresentation";
+import { getCopy, getResourceLabel, type GameLanguage } from "@/lib/gameTranslations";
 import type { Resources, Worker } from "@/types/incremental";
 
 export function WorkerCard({
+  language = "fr",
   worker,
   reputation,
   budget,
@@ -17,6 +19,7 @@ export function WorkerCard({
   onUpgrade,
   variant = "shop",
 }: {
+  language?: GameLanguage;
   worker: Worker;
   reputation: number;
   budget: number;
@@ -24,12 +27,13 @@ export function WorkerCard({
   onUpgrade: () => void;
   variant?: "shop" | "office";
 }) {
+  const copy = getCopy(language);
   const isOffice = variant === "office";
   const locked = reputation < worker.unlockReputation;
   const nextCost = getWorkerCost(worker);
   const upgradeCost = getWorkerUpgradeCost(worker);
   const maxed = worker.level >= 5;
-  const levelLabel = maxed ? "Max" : `Niv. ${worker.level}`;
+  const levelLabel = maxed ? copy.ui.max : `${copy.ui.level} ${worker.level}`;
   const showLevelLabel = isOffice && !maxed;
   const showFloatingCount = isOffice && worker.count > 1;
   const emphasis = classifyWorkerCard(worker, reputation, budget);
@@ -74,13 +78,13 @@ export function WorkerCard({
       {!isOffice && <p className="handwritten text-sm">{worker.description}</p>}
       {!isOffice && locked && (
         <p className="unlock-requirement">
-          Débloqué à {formatNumber(worker.unlockReputation)} réputation
+          {copy.ui.unlockedAt(getResourceLabel("reputation", language).toLowerCase(), formatNumber(worker.unlockReputation, language))}
         </p>
       )}
 
       {isOffice && (
         <div className="grid gap-1 text-sm">
-          <p className="office-card-stat">{formatResourceEffect(production)}</p>
+          <p className="office-card-stat">{formatResourceEffect(production, language)}</p>
         </div>
       )}
 
@@ -91,12 +95,12 @@ export function WorkerCard({
           className="paper-button pressable-feedback bg-[var(--yellow)] disabled:cursor-not-allowed disabled:opacity-50"
           onClick={onBuy}
         >
-          {`Acheter ${formatNumber(nextCost)} €`}
+          {copy.ui.hire(formatNumber(nextCost, language))}
         </button>
       ) : locked ? (
         <p className="locked-notice">
           <GameAssetImage assetId="ui-lock" alt="" className="notice-asset-icon" />
-          {formatNumber(worker.unlockReputation)} réputation requise
+          {copy.ui.reputationRequired(formatNumber(worker.unlockReputation, language))}
         </p>
       ) : (
         <div className={`office-card-bottom-controls ${maxed ? "office-card-bottom-controls-single" : ""}`}>
@@ -106,18 +110,18 @@ export function WorkerCard({
             className="paper-button office-card-action pressable-feedback bg-[var(--yellow)] disabled:cursor-not-allowed disabled:opacity-50"
             onClick={onBuy}
           >
-            {isOffice ? `+ ${formatNumber(nextCost)} €` : `Acheter ${formatNumber(nextCost)} €`}
+            {isOffice ? `+ ${formatNumber(nextCost, language)} €` : copy.ui.hire(formatNumber(nextCost, language))}
           </button>
           {!maxed && (
             <button
               type="button"
-              aria-label={`Monter niveau ${formatNumber(upgradeCost)} €`}
+              aria-label={`${copy.ui.level} ${formatNumber(upgradeCost, language)} €`}
               disabled={budget < upgradeCost}
               className="paper-button office-card-action office-card-upgrade-action pressable-feedback bg-white disabled:cursor-not-allowed disabled:opacity-50"
               onClick={onUpgrade}
             >
               <GameAssetImage assetId="ui-upgrade" alt="" className="office-card-action-icon" />
-              {formatNumber(upgradeCost)} €
+              {formatNumber(upgradeCost, language)} €
             </button>
           )}
         </div>

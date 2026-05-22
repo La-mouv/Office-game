@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { getCopy, type GameLanguage } from "@/lib/gameTranslations";
 import { getRecentLogEntries } from "@/lib/incrementalPresentation";
 
 export function getTypingState(entries: string[], visibleCharacters: number) {
@@ -21,7 +22,14 @@ export function getTypingState(entries: string[], visibleCharacters: number) {
   });
 }
 
-export function GameLog({ entries }: { entries: string[] }) {
+export function GameLog({
+  entries,
+  language = "fr",
+}: {
+  entries: string[];
+  language?: GameLanguage;
+}) {
+  const copy = getCopy(language);
   const recentEntries = getRecentLogEntries(entries, 4);
   const latestEntry = recentEntries.at(-1) ?? "";
   const [visibleCharacters, setVisibleCharacters] = useState(latestEntry.length);
@@ -57,18 +65,22 @@ export function GameLog({ entries }: { entries: string[] }) {
 
   return (
     <details className="journal-panel" open>
-      <summary className="cursor-pointer font-black">Journal</summary>
+      <summary className="cursor-pointer font-black">{copy.ui.journal}</summary>
       <div className="mt-3 space-y-2 text-sm">
-        {typedEntries.map((entry, index) => (
-          <p key={`${recentEntries[index]}-${index}`} className="handwritten">
-            {entry.text}
-            {entry.typing && (
-              <span aria-hidden className="typing-cursor">
-                |
-              </span>
-            )}
-          </p>
-        ))}
+        {typedEntries.length > 0 ? (
+          typedEntries.map((entry, index) => (
+            <p key={`${recentEntries[index]}-${index}`} className="handwritten">
+              {entry.text}
+              {entry.typing && (
+                <span aria-hidden className="typing-cursor">
+                  |
+                </span>
+              )}
+            </p>
+          ))
+        ) : (
+          <p className="handwritten">{copy.ui.emptyLog}</p>
+        )}
       </div>
     </details>
   );

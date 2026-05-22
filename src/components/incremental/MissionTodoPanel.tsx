@@ -1,28 +1,39 @@
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
+import { getCopy, type GameLanguage } from "@/lib/gameTranslations";
 import { buildMissionTodoItems } from "@/lib/incrementalPresentation";
 import { formatResourceEffect } from "@/lib/incrementalUi";
 import { getMissionAssetId } from "@/lib/incrementalAssets";
 import type { GameState, MissionReward } from "@/types/incremental";
 
-function formatMissionReward(reward: MissionReward): string {
+function formatMissionReward(reward: MissionReward, language: GameLanguage): string {
+  const copy = getCopy(language);
   const parts: string[] = [];
   if (reward.resources) {
-    parts.push(formatResourceEffect(reward.resources));
+    parts.push(formatResourceEffect(reward.resources, language));
   }
   if (reward.boost) {
-    parts.push(`${reward.boost.description} pendant ${reward.boost.durationMs / 1000} s`);
+    parts.push(`${reward.boost.description} ${copy.ui.rewardDuring(reward.boost.durationMs / 1000)}`);
   }
   return parts.join(" · ");
 }
 
-export function MissionTodoPanel({ state, now }: { state: GameState; now: number }) {
+export function MissionTodoPanel({
+  state,
+  now,
+  language = "fr",
+}: {
+  state: GameState;
+  now: number;
+  language?: GameLanguage;
+}) {
+  const copy = getCopy(language);
   const missionTodos = buildMissionTodoItems(state);
   const activeMission = state.activeMission;
   const activeBoosts = state.activeBoosts.filter((boost) => boost.expiresAt > now);
 
   return (
     <details className="journal-panel todo-panel" open>
-      <summary className="cursor-pointer font-black">To-do</summary>
+      <summary className="cursor-pointer font-black">{copy.ui.toDo}</summary>
       <div className="todo-feed mt-3 space-y-2 text-sm">
         {missionTodos.map((mission) => (
           <p
@@ -41,7 +52,7 @@ export function MissionTodoPanel({ state, now }: { state: GameState; now: number
 
       {activeMission && (
         <div className="todo-current-note mt-3">
-          <p className="text-xs font-black uppercase tracking-wide">À faire maintenant</p>
+          <p className="text-xs font-black uppercase tracking-wide">{copy.ui.doNow}</p>
           <p className="mission-current-title mt-1 font-bold">
             <GameAssetImage
               assetId={getMissionAssetId(activeMission)}
@@ -51,7 +62,9 @@ export function MissionTodoPanel({ state, now }: { state: GameState; now: number
             {activeMission.title}
           </p>
           <p className="handwritten mt-1 text-sm">{activeMission.description}</p>
-          <p className="mt-1 text-xs font-bold">Récompense : {formatMissionReward(activeMission.reward)}</p>
+          <p className="mt-1 text-xs font-bold">
+            {copy.ui.reward} {formatMissionReward(activeMission.reward, language)}
+          </p>
         </div>
       )}
 

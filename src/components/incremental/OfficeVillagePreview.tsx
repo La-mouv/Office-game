@@ -7,11 +7,13 @@ import { LocationCard } from "@/components/incremental/LocationCard";
 import { ManualActionsPanel } from "@/components/incremental/ManualActionsPanel";
 import { WorkerCard } from "@/components/incremental/WorkerCard";
 import { formatResourceEffect } from "@/lib/incrementalUi";
+import { getCopy, type GameLanguage } from "@/lib/gameTranslations";
 import { getIncidentAssetId } from "@/lib/incrementalAssets";
 import { type GainBubble } from "@/lib/incrementalPresentation";
 import type { GameState, ProductionSummary } from "@/types/incremental";
 
 export function OfficeVillagePreview({
+  language = "fr",
   state,
   production,
   now,
@@ -25,7 +27,9 @@ export function OfficeVillagePreview({
   onBuyOrUpgradeLocation,
   onUseManualAction,
   onResolveIncident,
+  onLanguageChange,
 }: {
+  language?: GameLanguage;
   state: GameState;
   production: ProductionSummary;
   now: number;
@@ -39,7 +43,9 @@ export function OfficeVillagePreview({
   onBuyOrUpgradeLocation: (locationId: string) => void;
   onUseManualAction: (actionId: string) => void;
   onResolveIncident: (incidentId: string, choiceId: string) => void;
+  onLanguageChange?: (language: GameLanguage) => void;
 }) {
+  const copy = getCopy(language);
   const [incidentOpen, setIncidentOpen] = useState(false);
   const ownedLocations = state.locations.filter((location) => location.owned);
   const activeWorkers = state.workers.filter((worker) => worker.count > 0);
@@ -55,7 +61,7 @@ export function OfficeVillagePreview({
       <span className="incident-alarm-icon" aria-hidden="true">
         <span className="incident-alarm-glow" />
       </span>
-      Incident
+      {copy.ui.incidentTitle}
     </button>
   );
 
@@ -75,10 +81,12 @@ export function OfficeVillagePreview({
 
       <IncrementalResourceBar
         state={state}
+        language={language}
         production={production}
         onNewGame={onNewGame}
         onSave={onSave}
         onLoad={onLoad}
+        onLanguageChange={onLanguageChange}
         incidentControl={incidentButton}
       />
 
@@ -92,6 +100,7 @@ export function OfficeVillagePreview({
               budget={state.resources.budget}
               onBuyOrUpgrade={() => onBuyOrUpgradeLocation(location.id)}
               variant="office"
+              language={language}
             />
           ))}
 
@@ -104,6 +113,7 @@ export function OfficeVillagePreview({
               onBuy={() => onBuyWorker(worker.id)}
               onUpgrade={() => onUpgradeWorker(worker.id)}
               variant="office"
+              language={language}
             />
           ))}
         </div>
@@ -116,6 +126,7 @@ export function OfficeVillagePreview({
         now={now}
         onUse={onUseManualAction}
         variant="scene"
+        language={language}
       />
 
       {incidentOpen && state.activeIncident && (
@@ -123,12 +134,12 @@ export function OfficeVillagePreview({
           <section
             role="dialog"
             aria-modal="true"
-            aria-label="Incident actif"
+            aria-label={copy.ui.activeIncident}
             className="paper-card office-scene-modal incident-scene-modal"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-xs font-black uppercase tracking-wide">Incident actif</p>
+                <p className="text-xs font-black uppercase tracking-wide">{copy.ui.activeIncident}</p>
                 <h3 className="incident-title-with-asset mt-1 text-xl font-black">
                   <GameAssetImage
                     assetId={getIncidentAssetId(state.activeIncident.id)}
@@ -140,7 +151,7 @@ export function OfficeVillagePreview({
               </div>
               <button
                 type="button"
-                aria-label="Fermer"
+                aria-label={copy.ui.close}
                 className="paper-button h-10 w-10 bg-white p-0"
                 onClick={() => setIncidentOpen(false)}
               >
@@ -162,7 +173,7 @@ export function OfficeVillagePreview({
                 >
                   <span>{choice.label}</span>
                   <span className="text-xs opacity-70">
-                    {choice.chance ? "Effet incertain" : formatResourceEffect(choice.effect)}
+                    {choice.chance ? copy.ui.unknownEffect : formatResourceEffect(choice.effect, language)}
                   </span>
                 </button>
               ))}

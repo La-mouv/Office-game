@@ -3,51 +3,59 @@ import { getLocationCost } from "@/lib/incrementalGame";
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import { getLocationAssetId } from "@/lib/incrementalAssets";
 import { classifyLocationCard } from "@/lib/incrementalPresentation";
+import {
+  getCopy,
+  getResourceLabel,
+  type GameLanguage,
+} from "@/lib/gameTranslations";
 import type { OfficeLocation } from "@/types/incremental";
 
-const EFFECT_LABELS: Record<string, string> = {
-  ideasMultiplier: "idées",
-  budgetMultiplier: "budget",
-  reputationMultiplier: "réputation",
-  globalMultiplier: "global",
-};
-
-function formatLocationEffect(location: OfficeLocation): string {
+function formatLocationEffect(location: OfficeLocation, language: GameLanguage): string {
+  const copy = getCopy(language);
+  const effectLabels: Record<string, string> = {
+    ideasMultiplier: getResourceLabel("ideas", language).toLowerCase(),
+    budgetMultiplier: getResourceLabel("budget", language).toLowerCase(),
+    reputationMultiplier: getResourceLabel("reputation", language).toLowerCase(),
+    globalMultiplier: language === "es" ? "global" : "global",
+  };
   const entries = Object.entries(location.effect);
-  if (entries.length === 0) return "Aucun effet";
+  if (entries.length === 0) return copy.ui.noEffect;
 
   return entries
     .map(([key, value]) => {
       const finalValue = (value ?? 0) * location.level;
       if (key.includes("Multiplier")) {
-        return `+${Math.round(finalValue * 100)} % ${EFFECT_LABELS[key] ?? key}`;
+        return `+${Math.round(finalValue * 100)} % ${effectLabels[key] ?? key}`;
       }
-      if (key === "ambianceBonus") return `+${finalValue} ambiance`;
-      if (key === "chaosPerSecond") return `+${finalValue}/s chaos`;
-      if (key === "chaosReduction") return `-${finalValue}/s chaos`;
+      if (key === "ambianceBonus") return `+${finalValue} ${getResourceLabel("ambiance", language).toLowerCase()}`;
+      if (key === "chaosPerSecond") return `+${finalValue}/s ${getResourceLabel("chaos", language).toLowerCase()}`;
+      if (key === "chaosReduction") return `-${finalValue}/s ${getResourceLabel("chaos", language).toLowerCase()}`;
       return `${key} ${finalValue}`;
     })
     .join(" · ");
 }
 
 export function LocationCard({
+  language = "fr",
   location,
   reputation,
   budget,
   onBuyOrUpgrade,
   variant = "shop",
 }: {
+  language?: GameLanguage;
   location: OfficeLocation;
   reputation: number;
   budget: number;
   onBuyOrUpgrade: () => void;
   variant?: "shop" | "office";
 }) {
+  const copy = getCopy(language);
   const isOffice = variant === "office";
   const locked = reputation < location.unlockReputation;
   const cost = getLocationCost(location);
   const maxed = location.owned && location.level >= location.maxLevel;
-  const levelLabel = maxed ? "Max" : `Niv. ${location.level}`;
+  const levelLabel = maxed ? copy.ui.max : `${copy.ui.level} ${location.level}`;
   const showLevelLabel = isOffice && location.owned && !maxed;
   const emphasis = classifyLocationCard(location, reputation, budget);
   const emphasisClass =
@@ -80,21 +88,21 @@ export function LocationCard({
       {!isOffice && <p className="handwritten text-sm">{location.description}</p>}
       {!isOffice && locked && (
         <p className="unlock-requirement">
-          Débloqué à {formatNumber(location.unlockReputation)} réputation
+          {copy.ui.unlockedAt(getResourceLabel("reputation", language).toLowerCase(), formatNumber(location.unlockReputation, language))}
         </p>
       )}
-      {isOffice && <p className="office-card-stat text-sm">{formatLocationEffect(location)}</p>}
+      {isOffice && <p className="office-card-stat text-sm">{formatLocationEffect(location, language)}</p>}
 
       {locked && isOffice ? (
         <p className="locked-notice">
           <GameAssetImage assetId="ui-lock" alt="" className="notice-asset-icon" />
-          {formatNumber(location.unlockReputation)} réputation requise
+          {copy.ui.reputationRequired(formatNumber(location.unlockReputation, language))}
         </p>
       ) : !maxed ? (
         <div className={isOffice ? "office-card-bottom-controls office-card-bottom-controls-single" : ""}>
           <button
             type="button"
-            aria-label={isOffice ? `Monter niveau ${formatNumber(cost)} €` : undefined}
+            aria-label={isOffice ? `${copy.ui.level} ${formatNumber(cost, language)} €` : undefined}
             disabled={locked || budget < cost}
             className={`paper-button pressable-feedback disabled:cursor-not-allowed disabled:opacity-50 ${
               isOffice
@@ -106,10 +114,10 @@ export function LocationCard({
             {isOffice ? (
               <>
                 <GameAssetImage assetId="ui-upgrade" alt="" className="office-card-action-icon" />
-                {formatNumber(cost)} €
+                {formatNumber(cost, language)} €
               </>
             ) : (
-              `Acheter ${formatNumber(cost)} €`
+              copy.ui.buy(formatNumber(cost, language))
             )}
           </button>
         </div>

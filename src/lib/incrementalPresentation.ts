@@ -1,5 +1,6 @@
 import { getLocationCost, getWorkerCost } from "@/lib/incrementalGame";
-import { RESOURCE_LABELS, formatNumber } from "@/lib/incrementalUi";
+import { formatNumber } from "@/lib/incrementalUi";
+import { getResourceLabel, type GameLanguage } from "@/lib/gameTranslations";
 import type { GameState, OfficeLocation, Resources, Worker } from "@/types/incremental";
 
 export type CardEmphasis = "strong" | "standard" | "quiet";
@@ -43,12 +44,15 @@ export function diffResources(before: Resources, after: Resources): Partial<Reso
   );
 }
 
-export function buildGainBubbleLabels(gains: Partial<Resources>): string[] {
+export function buildGainBubbleLabels(
+  gains: Partial<Resources>,
+  language: GameLanguage = "fr",
+): string[] {
   return (Object.entries(gains) as [keyof Resources, number][])
     .filter(([, amount]) => amount > 0)
     .map(
       ([resource, amount]) =>
-        `+${formatNumber(amount)} ${RESOURCE_LABELS[resource].toLowerCase()}`,
+        `+${formatNumber(amount, language)} ${getResourceLabel(resource, language).toLowerCase()}`,
     );
 }
 
@@ -65,7 +69,9 @@ export function getRecentLogEntries(entries: string[], limit = 4): string[] {
 export function buildMissionTodoItems(state: GameState): MissionTodoItem[] {
   const completed = state.log
     .map((entry, index): MissionTodoItem | null => {
-      const match = entry.match(/^(?:Mission accomplie|Mission pliée) : (.+?)(?:\.| Le comité)/);
+      const match = entry.match(
+        /^(?:Mission accomplie|Mission pliée|Mission handled|Misión resuelta)\s*:\s*(.+?)(?:\.| Le comité| The steering| El comité)/,
+      );
       if (!match) return null;
 
       return {
