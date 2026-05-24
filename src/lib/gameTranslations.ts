@@ -77,6 +77,8 @@ type TranslationBundle = {
     language: string;
     leaderboardTitle: string;
     leaderboardBadge: string;
+    leaderboardLoading: string;
+    leaderboardPlaceholder: string;
     leaderboardEmpty: string;
     leaderboardMeta: string;
   };
@@ -212,9 +214,11 @@ const COPY: CopyMap<TranslationBundle> = {
       start: "Démarrer la partie",
       language: "Langue",
       leaderboardTitle: "Leaderboard",
-      leaderboardBadge: "Bientôt branché",
+      leaderboardBadge: "Branché",
+      leaderboardLoading: "Connexion au reporting...",
+      leaderboardPlaceholder: "En attente",
       leaderboardEmpty: "Aucun score pour l'instant. Le reporting attend son premier héros.",
-      leaderboardMeta: "On gardera le pseudo et le temps final. Rien de plus, promis.",
+      leaderboardMeta: "Pseudo et temps final. Rien de plus, promis.",
     },
     ui: {
       loading: "Le stagiaire virtuel cherche les clés du bureau...",
@@ -345,9 +349,11 @@ const COPY: CopyMap<TranslationBundle> = {
       start: "Start game",
       language: "Language",
       leaderboardTitle: "Leaderboard",
-      leaderboardBadge: "Coming soon",
+      leaderboardBadge: "Live",
+      leaderboardLoading: "Connecting the reporting pipeline...",
+      leaderboardPlaceholder: "Waiting",
       leaderboardEmpty: "No scores yet. Reporting is waiting for its first hero.",
-      leaderboardMeta: "Later we only keep nickname and final time. Nothing extra.",
+      leaderboardMeta: "Nickname and final time. Nothing extra.",
     },
     ui: {
       loading: "Hold on, the virtual intern is hunting for the office keys...",
@@ -478,9 +484,11 @@ const COPY: CopyMap<TranslationBundle> = {
       start: "Empezar partida",
       language: "Idioma",
       leaderboardTitle: "Leaderboard",
-      leaderboardBadge: "Próximamente",
+      leaderboardBadge: "Conectado",
+      leaderboardLoading: "Conectando el reporting...",
+      leaderboardPlaceholder: "En espera",
       leaderboardEmpty: "Aún no hay puntuaciones. El reporting espera a su primer héroe.",
-      leaderboardMeta: "Luego guardaremos solo pseudo y tiempo final. Nada más.",
+      leaderboardMeta: "Pseudo y tiempo final. Nada más.",
     },
     ui: {
       loading: "Espera, el becario virtual está buscando las llaves de la oficina...",

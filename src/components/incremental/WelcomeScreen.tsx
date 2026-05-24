@@ -4,11 +4,14 @@ import {
   type GameLanguage,
   type WelcomeCopy,
 } from "@/lib/gameTranslations";
+import { formatLeaderboardTime, type LeaderboardEntry } from "@/lib/leaderboard";
 
 export function WelcomeScreen({
   copy,
   language,
   playerName,
+  leaderboardEntries = [],
+  leaderboardLoading = false,
   showNameError,
   onPlayerNameChange,
   onLanguageChange,
@@ -17,11 +20,15 @@ export function WelcomeScreen({
   copy: WelcomeCopy;
   language: GameLanguage;
   playerName: string;
+  leaderboardEntries?: LeaderboardEntry[];
+  leaderboardLoading?: boolean;
   showNameError: boolean;
   onPlayerNameChange: (value: string) => void;
   onLanguageChange: (language: GameLanguage) => void;
   onStart: () => void;
 }) {
+  const visibleLeaderboardEntries = leaderboardEntries.slice(0, 3);
+
   return (
     <main className="welcome-screen">
       <Image
@@ -94,15 +101,23 @@ export function WelcomeScreen({
               <span>{copy.leaderboardBadge}</span>
             </div>
             <ol>
-              {[1, 2, 3].map((rank) => (
-                <li key={rank}>
-                  <strong>#{rank}</strong>
-                  <span>{copy.leaderboardBadge}</span>
-                  <em>--:--</em>
-                </li>
-              ))}
+              {visibleLeaderboardEntries.length > 0
+                ? visibleLeaderboardEntries.map((entry) => (
+                    <li key={`${entry.rank}-${entry.playerName}-${entry.elapsedMs}`}>
+                      <strong>#{entry.rank}</strong>
+                      <span>{entry.playerName}</span>
+                      <em>{formatLeaderboardTime(entry.elapsedMs)}</em>
+                    </li>
+                  ))
+                : [1, 2, 3].map((rank) => (
+                    <li key={rank}>
+                      <strong>#{rank}</strong>
+                      <span>{copy.leaderboardPlaceholder}</span>
+                      <em>--:--</em>
+                    </li>
+                  ))}
             </ol>
-            <p>{copy.leaderboardEmpty}</p>
+            <p>{leaderboardLoading ? copy.leaderboardLoading : copy.leaderboardEmpty}</p>
             <small>{copy.leaderboardMeta}</small>
           </aside>
         </section>

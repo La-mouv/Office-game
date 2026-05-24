@@ -19,6 +19,13 @@ import {
 } from "@/lib/incrementalGame";
 import { loadGame, saveGame } from "@/lib/incrementalStorage";
 import { getCopy, localizeGameState } from "@/lib/gameTranslations";
+import {
+  buildLeaderboardRunId,
+  OFFICE_VILLAGE_GAME_ID,
+  type LeaderboardEntry,
+  type LeaderboardResponse,
+  type LeaderboardSubmissionResult,
+} from "@/lib/leaderboard";
 import { setStoredGameLanguage, useGameLanguage } from "@/lib/useGameLanguage";
 import {
   buildGainBubbleLabels,
@@ -31,6 +38,7 @@ import type { GameState } from "@/types/incremental";
 
 const PLAYER_NAME_STORAGE_KEY = "office-village-player-name";
 const TUTORIAL_SEEN_STORAGE_KEY = "office-village-tutorial-seen";
+const LEADERBOARD_SUBMITTED_RUNS_STORAGE_KEY = "office-village-leaderboard-submitted-runs";
 
 declare global {
   interface Window {
@@ -49,11 +57,14 @@ export function IncrementalGameShell() {
   const [tutorialSeen, setTutorialSeen] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [showNameError, setShowNameError] = useState(false);
+  const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [now, setNow] = useState(0);
   const [state, setState] = useState<GameState>(() => createInitialGameState(0));
   const [gainBubbles, setGainBubbles] = useState<GainBubble[]>([]);
   const [sceneReaction, setSceneReaction] = useState<SceneReaction>(null);
   const latestStateRef = useRef(state);
+  const submittedLeaderboardRunsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -61,15 +72,23 @@ export function IncrementalGameShell() {
       const loaded = loadGame();
       let storedPlayerName = "";
       let storedTutorialSeen = false;
+      let storedSubmittedLeaderboardRuns: string[] = [];
 
       try {
         storedPlayerName = window.localStorage.getItem(PLAYER_NAME_STORAGE_KEY) ?? "";
         storedTutorialSeen = window.localStorage.getItem(TUTORIAL_SEEN_STORAGE_KEY) === "true";
+        storedSubmittedLeaderboardRuns = JSON.parse(
+          window.localStorage.getItem(LEADERBOARD_SUBMITTED_RUNS_STORAGE_KEY) ?? "[]",
+        );
       } catch {
         storedPlayerName = "";
         storedTutorialSeen = false;
+        storedSubmittedLeaderboardRuns = [];
       }
 
+      submittedLeaderboardRunsRef.current = new Set(
+        storedSubmittedLeaderboardRuns.filter((runId) => typeof runId === "string"),
+      );
       setNow(timestamp);
       setState(loaded ?? createInitialGameState(timestamp));
       setPlayerName(storedPlayerName);
@@ -79,6 +98,31 @@ export function IncrementalGameShell() {
 
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!hydrated) return undefined;
+
+    const abortController = new AbortController();
+    fetch(`/api/leaderboard?gameId=${OFFICE_VILLAGE_GAME_ID}&limit=3`, {
+      signal: abortController.signal,
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload: LeaderboardResponse | null) => {
+        if (payload?.entries) {
+          setLeaderboardEntries(payload.entries);
+        }
+      })
+      .catch(() => {
+        // The game remains playable if the public leaderboard is temporarily unavailable.
+      })
+      .finally(() => {
+        if (!abortController.signal.aborted) {
+          setLeaderboardLoading(false);
+        }
+      });
+
+    return () => abortController.abort();
+  }, [hydrated]);
 
   useEffect(() => {
     latestStateRef.current = state;
@@ -133,6 +177,50 @@ export function IncrementalGameShell() {
       setNow((current) => current + ms);
     };
   }, [state]);
+
+  useEffect(() => {
+    const trimmedName = playerName.trim();
+    if (!hydrated || !state.completed || state.sandboxMode || !state.completedAt || !trimmedName) return;
+
+    const elapsedMs = Math.max(0, state.completedAt - state.startedAt);
+    const runId = buildLeaderboardRunId(trimmedName, state.startedAt, state.completedAt);
+    if (submittedLeaderboardRunsRef.current.has(runId)) return;
+
+    submittedLeaderboardRunsRef.current.add(runId);
+
+    fetch("/api/leaderboard", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        gameId: OFFICE_VILLAGE_GAME_ID,
+        playerName: trimmedName,
+        elapsedMs,
+        runId,
+      }),
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((payload: LeaderboardSubmissionResult | null) => {
+        if (!payload) {
+          submittedLeaderboardRunsRef.current.delete(runId);
+          return;
+        }
+
+        setLeaderboardEntries(payload.entries);
+        try {
+          window.localStorage.setItem(
+            LEADERBOARD_SUBMITTED_RUNS_STORAGE_KEY,
+            JSON.stringify([...submittedLeaderboardRunsRef.current]),
+          );
+        } catch {
+          // Duplicate protection still works for the current tab.
+        }
+      })
+      .catch(() => {
+        submittedLeaderboardRunsRef.current.delete(runId);
+      });
+  }, [hydrated, playerName, state.completed, state.completedAt, state.sandboxMode, state.startedAt]);
 
   const production = useMemo(() => calculateProduction(state), [state]);
   const localizedState = useMemo(() => localizeGameState(state, language), [state, language]);
@@ -267,6 +355,8 @@ export function IncrementalGameShell() {
         copy={copy.welcome}
         language={language}
         playerName={playerName}
+        leaderboardEntries={leaderboardEntries}
+        leaderboardLoading={leaderboardLoading}
         showNameError={showNameError}
         onPlayerNameChange={(value) => {
           setPlayerName(value);
