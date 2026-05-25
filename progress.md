@@ -93,3 +93,8 @@ Original prompt: Build a playable local web MVP of Office Village from the provi
 - Removed the "Le bureau grandit" micro-heading from the office scene because it did not add useful information.
 - Removed raw mission progress counters like "0 / 1" from the To-do panel.
 - Made the office worker buy and level-up buttons share equal width so the bottom row reads cleaner.
+
+## 2026-05-25 menu overlay fix
+- Menu and achievements dialogs now render through a body-level portal so they sit above the full game layout instead of being clipped by the animated office scene.
+- Added a scrollable menu sheet height limit so lower actions remain reachable on shorter screens.
+- Local verification at 1280x789 confirmed the overlay is attached to `body`, covers the full viewport, dims the Development column, and the restart confirmation buttons remain reachable after scrolling.

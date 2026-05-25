@@ -32,6 +32,7 @@ describe("OfficeTopControls", () => {
     );
 
     expect(html).toContain("Langue");
+    expect(html).toContain("office-menu-sheet");
     expect(html).toContain("Sauvegarde automatique active");
     expect(html).toContain("Tutoriel");
     expect(html).not.toContain("Sauvegarder");

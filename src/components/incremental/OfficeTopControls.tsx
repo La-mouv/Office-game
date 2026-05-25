@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { AchievementsView } from "@/components/incremental/AchievementsView";
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import {
@@ -9,6 +10,14 @@ import {
   type GameLanguage,
 } from "@/lib/gameTranslations";
 import type { GameState } from "@/types/incremental";
+
+function ModalPortal({ children }: { children: ReactNode }) {
+  if (typeof document === "undefined") {
+    return <>{children}</>;
+  }
+
+  return createPortal(children, document.body);
+}
 
 export function OfficeTopControls({
   state,
@@ -71,151 +80,156 @@ export function OfficeTopControls({
       </div>
 
       {achievementsOpen && (
-        <div className="overlay">
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-label={copy.ui.achievementsDialog}
-            className="paper-card modal-sheet max-h-[min(80vh,52rem)] w-[min(60rem,calc(100vw-2rem))] overflow-auto bg-white p-4"
-          >
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-xl font-black">{copy.ui.achievements}</h2>
-              <button
-                type="button"
-                aria-label={copy.ui.close}
-                className="paper-button h-10 w-10 bg-white p-0"
-                onClick={() => setAchievementsOpen(false)}
-              >
-                ×
-              </button>
-            </div>
-            <AchievementsView state={state} language={language} />
-          </section>
-        </div>
+        <ModalPortal>
+          <div className="overlay">
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-label={copy.ui.achievementsDialog}
+              className="paper-card modal-sheet max-h-[min(80vh,52rem)] w-[min(60rem,calc(100vw-2rem))] overflow-auto bg-white p-4"
+            >
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h2 className="text-xl font-black">{copy.ui.achievements}</h2>
+                <button
+                  type="button"
+                  aria-label={copy.ui.close}
+                  className="paper-button h-10 w-10 bg-white p-0"
+                  onClick={() => setAchievementsOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <AchievementsView state={state} language={language} />
+            </section>
+          </div>
+        </ModalPortal>
       )}
 
       {menuOpen && (
-        <div className="overlay">
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-label={copy.ui.menu}
-            className="paper-card modal-sheet w-[min(22rem,calc(100vw-2rem))] space-y-3 bg-white p-4"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-xl font-black">{copy.ui.menu}</h2>
-              <button
-                type="button"
-                aria-label={copy.ui.close}
-                className="paper-button h-10 w-10 bg-white p-0"
-                onClick={() => setMenuOpen(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="paper-note surface-quiet space-y-2">
-              <h3 className="font-black">{copy.ui.overview}</h3>
-              <p className="overview-line">
-                <GameAssetImage assetId="worker-intern" alt="" className="overview-asset-icon" />
-                {copy.ui.colleagues} : {totalWorkers}
-              </p>
-              <p className="overview-line">
-                <GameAssetImage
-                  assetId="location-starting-office"
-                  alt=""
-                  className="overview-asset-icon"
-                />
-                {copy.ui.locations} : {ownedLocations}
-              </p>
-              <p className="overview-line">
-                <GameAssetImage assetId="badge-gem" alt="" className="overview-asset-icon" />
-                {copy.ui.combos} : {activeSynergies}
-              </p>
-              <p className="overview-line">
-                <GameAssetImage assetId="badge-trophy" alt="" className="overview-asset-icon" />
-                {copy.ui.objective} : {state.completed ? copy.ui.objectiveDone : copy.ui.objectiveInProgress}
-              </p>
-            </div>
-
-            <div className="paper-note surface-quiet space-y-2 bg-[var(--yellow-soft)]">
-              <h3 className="font-black">{copy.ui.goldenRuleTitle}</h3>
-              <p className="handwritten text-sm">{copy.ui.goldenRule}</p>
-            </div>
-
-            <div className="paper-note surface-quiet space-y-3">
-              <div>
-                <h3 className="font-black">{copy.ui.languageTitle}</h3>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {LANGUAGE_OPTIONS.map((option) => (
-                  <button
-                    key={option.code}
-                    type="button"
-                    aria-label={option.label}
-                    aria-pressed={language === option.code}
-                    title={option.label}
-                    className={`paper-button justify-center px-2 py-2 text-lg leading-none ${
-                      language === option.code ? "bg-[var(--yellow)]" : "bg-white"
-                    }`}
-                    onClick={() => handleLanguageChange(option.code)}
-                  >
-                    <span aria-hidden="true">{option.flag}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="paper-note surface-quiet bg-[var(--mint)] py-3">
-              <p className="overview-line text-sm font-black">
-                <GameAssetImage assetId="ui-check" alt="" className="overview-asset-icon" />
-                {copy.ui.autoSaveStatus}
-              </p>
-            </div>
-
-            <div className="grid gap-2">
-              {onOpenTutorial && (
-                <button type="button" className="paper-button bg-white" onClick={handleOpenTutorial}>
-                  <GameAssetImage assetId="badge-gem" alt="" className="button-asset-icon" />
-                  {copy.tutorial.menuLabel}
+        <ModalPortal>
+          <div className="overlay">
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-label={copy.ui.menu}
+              className="paper-card modal-sheet office-menu-sheet w-[min(22rem,calc(100vw-2rem))] space-y-3 bg-white p-4"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-xl font-black">{copy.ui.menu}</h2>
+                <button
+                  type="button"
+                  aria-label={copy.ui.close}
+                  className="paper-button h-10 w-10 bg-white p-0"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  ×
                 </button>
-              )}
-              <button
-                type="button"
-                className="paper-button bg-[var(--pink)]"
-                onClick={() => setNewGameConfirmOpen(true)}
-              >
-                <GameAssetImage assetId="badge-starburst" alt="" className="button-asset-icon" />
-                {copy.ui.newGame}
-              </button>
+              </div>
 
-              {newGameConfirmOpen && (
-                <div className="paper-note surface-quiet space-y-3 bg-[var(--pink)]">
-                  <div>
-                    <h3 className="font-black">{copy.ui.newGameConfirmTitle}</h3>
-                    <p className="handwritten text-sm">{copy.ui.newGameConfirmBody}</p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      className="paper-button bg-white px-3"
-                      onClick={() => setNewGameConfirmOpen(false)}
-                    >
-                      {copy.ui.cancel}
-                    </button>
-                    <button
-                      type="button"
-                      className="paper-button bg-[var(--yellow)] px-3"
-                      onClick={handleConfirmNewGame}
-                    >
-                      {copy.ui.restart}
-                    </button>
-                  </div>
+              <div className="paper-note surface-quiet space-y-2">
+                <h3 className="font-black">{copy.ui.overview}</h3>
+                <p className="overview-line">
+                  <GameAssetImage assetId="worker-intern" alt="" className="overview-asset-icon" />
+                  {copy.ui.colleagues} : {totalWorkers}
+                </p>
+                <p className="overview-line">
+                  <GameAssetImage
+                    assetId="location-starting-office"
+                    alt=""
+                    className="overview-asset-icon"
+                  />
+                  {copy.ui.locations} : {ownedLocations}
+                </p>
+                <p className="overview-line">
+                  <GameAssetImage assetId="badge-gem" alt="" className="overview-asset-icon" />
+                  {copy.ui.combos} : {activeSynergies}
+                </p>
+                <p className="overview-line">
+                  <GameAssetImage assetId="badge-trophy" alt="" className="overview-asset-icon" />
+                  {copy.ui.objective} :{" "}
+                  {state.completed ? copy.ui.objectiveDone : copy.ui.objectiveInProgress}
+                </p>
+              </div>
+
+              <div className="paper-note surface-quiet space-y-2 bg-[var(--yellow-soft)]">
+                <h3 className="font-black">{copy.ui.goldenRuleTitle}</h3>
+                <p className="handwritten text-sm">{copy.ui.goldenRule}</p>
+              </div>
+
+              <div className="paper-note surface-quiet space-y-3">
+                <div>
+                  <h3 className="font-black">{copy.ui.languageTitle}</h3>
                 </div>
-              )}
-            </div>
-          </section>
-        </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {LANGUAGE_OPTIONS.map((option) => (
+                    <button
+                      key={option.code}
+                      type="button"
+                      aria-label={option.label}
+                      aria-pressed={language === option.code}
+                      title={option.label}
+                      className={`paper-button justify-center px-2 py-2 text-lg leading-none ${
+                        language === option.code ? "bg-[var(--yellow)]" : "bg-white"
+                      }`}
+                      onClick={() => handleLanguageChange(option.code)}
+                    >
+                      <span aria-hidden="true">{option.flag}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="paper-note surface-quiet bg-[var(--mint)] py-3">
+                <p className="overview-line text-sm font-black">
+                  <GameAssetImage assetId="ui-check" alt="" className="overview-asset-icon" />
+                  {copy.ui.autoSaveStatus}
+                </p>
+              </div>
+
+              <div className="grid gap-2">
+                {onOpenTutorial && (
+                  <button type="button" className="paper-button bg-white" onClick={handleOpenTutorial}>
+                    <GameAssetImage assetId="badge-gem" alt="" className="button-asset-icon" />
+                    {copy.tutorial.menuLabel}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="paper-button bg-[var(--pink)]"
+                  onClick={() => setNewGameConfirmOpen(true)}
+                >
+                  <GameAssetImage assetId="badge-starburst" alt="" className="button-asset-icon" />
+                  {copy.ui.newGame}
+                </button>
+
+                {newGameConfirmOpen && (
+                  <div className="paper-note surface-quiet space-y-3 bg-[var(--pink)]">
+                    <div>
+                      <h3 className="font-black">{copy.ui.newGameConfirmTitle}</h3>
+                      <p className="handwritten text-sm">{copy.ui.newGameConfirmBody}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        className="paper-button bg-white px-3"
+                        onClick={() => setNewGameConfirmOpen(false)}
+                      >
+                        {copy.ui.cancel}
+                      </button>
+                      <button
+                        type="button"
+                        className="paper-button bg-[var(--yellow)] px-3"
+                        onClick={handleConfirmNewGame}
+                      >
+                        {copy.ui.restart}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        </ModalPortal>
       )}
     </>
   );
