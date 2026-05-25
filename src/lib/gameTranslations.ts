@@ -52,7 +52,7 @@ type MilestoneCopy = {
   description: string;
 };
 
-type TranslationBundle = {
+export type TranslationBundle = {
   locale: string;
   resources: Record<keyof GameState["resources"], string>;
   tutorial: {
@@ -73,6 +73,8 @@ type TranslationBundle = {
     playerLabel: string;
     playerPlaceholder: string;
     playerError: string;
+    playerTakenError: string;
+    playerReserveError: string;
     start: string;
     language: string;
     leaderboardTitle: string;
@@ -130,6 +132,14 @@ type TranslationBundle = {
     unknownEffect: string;
     completionTitle: string;
     completionBody: string;
+    endScreenEyebrow: string;
+    endScreenTitle: string;
+    endScreenBody: string;
+    endPlayer: string;
+    endTime: string;
+    endRank: string;
+    endLeaderboardReady: string;
+    endLeaderboardSyncing: string;
     lossTitle: string;
     lossBody: string;
     keepPlaying: string;
@@ -211,6 +221,8 @@ const COPY: CopyMap<TranslationBundle> = {
       playerLabel: "Pseudo",
       playerPlaceholder: "Ton nom de bureau",
       playerError: "Entre un pseudo avant de passer le badge.",
+      playerTakenError: "Pseudo déjà pris. Le badge est déjà sur un autre bureau.",
+      playerReserveError: "Impossible de réserver ce pseudo. Le reporting bloque à l’accueil.",
       start: "Démarrer la partie",
       language: "Langue",
       leaderboardTitle: "Leaderboard",
@@ -270,6 +282,15 @@ const COPY: CopyMap<TranslationBundle> = {
       completionTitle: "Bureau autonome lancé",
       completionBody:
         "La boîte tourne presque toute seule. Quelqu'un prépare déjà un reporting pour expliquer pourquoi.",
+      endScreenEyebrow: "Reporting final",
+      endScreenTitle: "Partie terminée",
+      endScreenBody:
+        "Le bureau est sauvé. Le comité de pilotage cherche déjà qui mettre dans le PowerPoint.",
+      endPlayer: "Pseudo",
+      endTime: "Temps final",
+      endRank: "Position",
+      endLeaderboardReady: "Classé",
+      endLeaderboardSyncing: "Synchronisation",
       lossTitle: "Partie perdue",
       lossBody:
         "Ambiance à 0 % ou chaos à 100 %. Le comité de crise reprend la main, et personne n’a réservé la salle.",
@@ -348,6 +369,8 @@ const COPY: CopyMap<TranslationBundle> = {
       playerLabel: "Nickname",
       playerPlaceholder: "Your office name",
       playerError: "Enter a nickname before swiping the badge.",
+      playerTakenError: "Nickname already taken. That badge is already on another desk.",
+      playerReserveError: "Could not reserve this nickname. Reporting got stuck at reception.",
       start: "Start game",
       language: "Language",
       leaderboardTitle: "Leaderboard",
@@ -407,6 +430,15 @@ const COPY: CopyMap<TranslationBundle> = {
       completionTitle: "Autonomous office online",
       completionBody:
         "The company almost runs itself now. Someone is already preparing a report to explain why.",
+      endScreenEyebrow: "Final reporting",
+      endScreenTitle: "Run complete",
+      endScreenBody:
+        "The office is saved. The steering committee is already looking for someone to put in the deck.",
+      endPlayer: "Nickname",
+      endTime: "Final time",
+      endRank: "Rank",
+      endLeaderboardReady: "Ranked",
+      endLeaderboardSyncing: "Syncing",
       lossTitle: "Run lost",
       lossBody:
         "Mood at 0% or chaos at 100%. Crisis committee takes over, and nobody booked the room.",
@@ -485,6 +517,8 @@ const COPY: CopyMap<TranslationBundle> = {
       playerLabel: "Pseudo",
       playerPlaceholder: "Tu nombre de oficina",
       playerError: "Escribe un pseudo antes de pasar la tarjeta.",
+      playerTakenError: "Pseudo ya ocupado. Esa tarjeta ya está en otro escritorio.",
+      playerReserveError: "No se pudo reservar el pseudo. El reporting se quedó en recepción.",
       start: "Empezar partida",
       language: "Idioma",
       leaderboardTitle: "Leaderboard",
@@ -544,6 +578,15 @@ const COPY: CopyMap<TranslationBundle> = {
       completionTitle: "Oficina autónoma activada",
       completionBody:
         "La empresa casi funciona sola. Alguien ya prepara un informe para explicar por qué.",
+      endScreenEyebrow: "Reporting final",
+      endScreenTitle: "Partida terminada",
+      endScreenBody:
+        "La oficina está salvada. El comité ya busca a quién meter en el PowerPoint.",
+      endPlayer: "Pseudo",
+      endTime: "Tiempo final",
+      endRank: "Posición",
+      endLeaderboardReady: "Clasificado",
+      endLeaderboardSyncing: "Sincronizando",
       lossTitle: "Partida perdida",
       lossBody:
         "Ambiente al 0 % o caos al 100 %. El comité de crisis toma el mando, y nadie reservó la sala.",

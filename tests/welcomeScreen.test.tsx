@@ -68,4 +68,21 @@ describe("WelcomeScreen", () => {
     expect(html).not.toContain("Aucun score pour l&#x27;instant");
     expect(html).not.toContain("Pseudo et temps final");
   });
+
+  it("shows when a nickname is already taken", () => {
+    const html = renderToStaticMarkup(
+      <WelcomeScreen
+        copy={getCopy("fr").welcome}
+        language="fr"
+        playerName="Alexis"
+        playerErrorMessage="Pseudo déjà pris. Le badge est déjà sur un autre bureau."
+        showNameError={true}
+        onPlayerNameChange={vi.fn()}
+        onLanguageChange={vi.fn()}
+        onStart={vi.fn()}
+      />,
+    );
+
+    expect(html).toContain("Pseudo déjà pris");
+  });
 });

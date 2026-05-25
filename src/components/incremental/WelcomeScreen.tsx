@@ -13,6 +13,9 @@ export function WelcomeScreen({
   leaderboardEntries = [],
   leaderboardLoading = false,
   showNameError,
+  playerErrorMessage,
+  playerLocked = false,
+  startDisabled = false,
   onPlayerNameChange,
   onLanguageChange,
   onStart,
@@ -23,6 +26,9 @@ export function WelcomeScreen({
   leaderboardEntries?: LeaderboardEntry[];
   leaderboardLoading?: boolean;
   showNameError: boolean;
+  playerErrorMessage?: string | null;
+  playerLocked?: boolean;
+  startDisabled?: boolean;
   onPlayerNameChange: (value: string) => void;
   onLanguageChange: (language: GameLanguage) => void;
   onStart: () => void;
@@ -64,10 +70,11 @@ export function WelcomeScreen({
               placeholder={copy.playerPlaceholder}
               maxLength={20}
               autoComplete="nickname"
+              readOnly={playerLocked}
             />
             {showNameError && (
               <p className="welcome-error" role="alert">
-                {copy.playerError}
+                {playerErrorMessage ?? copy.playerError}
               </p>
             )}
 
@@ -90,7 +97,7 @@ export function WelcomeScreen({
               </div>
             </div>
 
-            <button type="submit" className="welcome-start-button">
+            <button type="submit" className="welcome-start-button" disabled={startDisabled}>
               {copy.start}
             </button>
           </form>

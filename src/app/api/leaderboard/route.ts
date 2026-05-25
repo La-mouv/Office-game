@@ -5,7 +5,12 @@ import {
   type LeaderboardResponse,
   type LeaderboardSubmissionResult,
 } from "@/lib/leaderboard";
-import { getLeaderboard, normalizeLeaderboardLimit, submitLeaderboardScore } from "@/lib/leaderboardDb";
+import {
+  getLeaderboardResult,
+  LeaderboardPlayerTokenError,
+  normalizeLeaderboardLimit,
+  submitLeaderboardScore,
+} from "@/lib/leaderboardDb";
 
 export const runtime = "nodejs";
 
@@ -19,15 +24,14 @@ function databaseErrorResponse() {
 export async function GET(request: NextRequest) {
   const gameId = request.nextUrl.searchParams.get("gameId") ?? OFFICE_VILLAGE_GAME_ID;
   const limit = normalizeLeaderboardLimit(Number(request.nextUrl.searchParams.get("limit") ?? "10"));
+  const runId = request.nextUrl.searchParams.get("runId");
 
   if (gameId !== OFFICE_VILLAGE_GAME_ID) {
     return NextResponse.json({ error: "Unknown game" }, { status: 400 });
   }
 
   try {
-    const response: LeaderboardResponse = {
-      entries: await getLeaderboard(gameId, limit),
-    };
+    const response: LeaderboardResponse = await getLeaderboardResult(gameId, limit, runId);
     return NextResponse.json(response);
   } catch {
     return databaseErrorResponse();
@@ -52,8 +56,11 @@ export async function POST(request: NextRequest) {
     const result = await submitLeaderboardScore(submission);
     const response: LeaderboardSubmissionResult = result;
     return NextResponse.json(response);
-  } catch {
+  } catch (error) {
+    if (error instanceof LeaderboardPlayerTokenError) {
+      return NextResponse.json({ error: "Player name does not match this browser" }, { status: 403 });
+    }
+
     return databaseErrorResponse();
   }
 }
-

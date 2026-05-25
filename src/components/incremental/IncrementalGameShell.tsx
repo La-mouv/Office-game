@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { EndScreen } from "@/components/incremental/EndScreen";
 import { GameAssetImage } from "@/components/incremental/GameAssetImage";
 import { OfficeView } from "@/components/incremental/OfficeView";
 import { WelcomeScreen } from "@/components/incremental/WelcomeScreen";
@@ -8,9 +9,9 @@ import {
   buyOrUpgradeLocation,
   buyWorker,
   calculateProduction,
-  continueInSandbox,
   createInitialGameState,
   gameTick,
+  getRunElapsedMs,
   resumeRunTimer,
   resolveIncidentChoice,
   unlockSkill,
@@ -21,8 +22,10 @@ import { loadGame, saveGame } from "@/lib/incrementalStorage";
 import { getCopy, localizeGameState } from "@/lib/gameTranslations";
 import {
   buildLeaderboardRunId,
+  buildLeaderboardUrl,
   OFFICE_VILLAGE_GAME_ID,
   type LeaderboardEntry,
+  type LeaderboardPlayerRegistrationResult,
   type LeaderboardResponse,
   type LeaderboardSubmissionResult,
 } from "@/lib/leaderboard";
@@ -37,6 +40,7 @@ import {
 import type { GameState } from "@/types/incremental";
 
 const PLAYER_NAME_STORAGE_KEY = "office-village-player-name";
+const PLAYER_TOKEN_STORAGE_KEY = "office-village-player-token";
 const TUTORIAL_SEEN_STORAGE_KEY = "office-village-tutorial-seen";
 const LEADERBOARD_SUBMITTED_RUNS_STORAGE_KEY = "office-village-leaderboard-submitted-runs";
 
@@ -56,8 +60,12 @@ export function IncrementalGameShell() {
   const [tutorialStepIndex, setTutorialStepIndex] = useState(0);
   const [tutorialSeen, setTutorialSeen] = useState(false);
   const [playerName, setPlayerName] = useState("");
+  const [playerToken, setPlayerToken] = useState("");
   const [showNameError, setShowNameError] = useState(false);
+  const [playerErrorMessage, setPlayerErrorMessage] = useState<string | null>(null);
+  const [playerReservationPending, setPlayerReservationPending] = useState(false);
   const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardPlayerEntry, setLeaderboardPlayerEntry] = useState<LeaderboardEntry | null>(null);
   const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const [now, setNow] = useState(0);
   const [state, setState] = useState<GameState>(() => createInitialGameState(0));
@@ -71,17 +79,20 @@ export function IncrementalGameShell() {
       const timestamp = Date.now();
       const loaded = loadGame();
       let storedPlayerName = "";
+      let storedPlayerToken = "";
       let storedTutorialSeen = false;
       let storedSubmittedLeaderboardRuns: string[] = [];
 
       try {
         storedPlayerName = window.localStorage.getItem(PLAYER_NAME_STORAGE_KEY) ?? "";
+        storedPlayerToken = window.localStorage.getItem(PLAYER_TOKEN_STORAGE_KEY) ?? "";
         storedTutorialSeen = window.localStorage.getItem(TUTORIAL_SEEN_STORAGE_KEY) === "true";
         storedSubmittedLeaderboardRuns = JSON.parse(
           window.localStorage.getItem(LEADERBOARD_SUBMITTED_RUNS_STORAGE_KEY) ?? "[]",
         );
       } catch {
         storedPlayerName = "";
+        storedPlayerToken = "";
         storedTutorialSeen = false;
         storedSubmittedLeaderboardRuns = [];
       }
@@ -92,7 +103,11 @@ export function IncrementalGameShell() {
       setNow(timestamp);
       setState(loaded ?? createInitialGameState(timestamp));
       setPlayerName(storedPlayerName);
+      setPlayerToken(storedPlayerToken);
       setTutorialSeen(storedTutorialSeen);
+      if (loaded?.completed && !loaded.sandboxMode) {
+        setWelcomeVisible(false);
+      }
       setHydrated(true);
     }, 0);
 
@@ -103,13 +118,20 @@ export function IncrementalGameShell() {
     if (!hydrated) return undefined;
 
     const abortController = new AbortController();
-    fetch(`/api/leaderboard?gameId=${OFFICE_VILLAGE_GAME_ID}&limit=3`, {
+    const trimmedName = playerName.trim();
+    const runId =
+      state.completed && !state.sandboxMode && state.completedAt && trimmedName
+        ? buildLeaderboardRunId(trimmedName, state.startedAt, state.completedAt)
+        : null;
+
+    fetch(buildLeaderboardUrl(runId, 5), {
       signal: abortController.signal,
     })
       .then((response) => (response.ok ? response.json() : null))
       .then((payload: LeaderboardResponse | null) => {
         if (payload?.entries) {
           setLeaderboardEntries(payload.entries);
+          setLeaderboardPlayerEntry(payload.playerEntry ?? null);
         }
       })
       .catch(() => {
@@ -122,7 +144,7 @@ export function IncrementalGameShell() {
       });
 
     return () => abortController.abort();
-  }, [hydrated]);
+  }, [hydrated, playerName, state.completed, state.completedAt, state.sandboxMode, state.startedAt]);
 
   useEffect(() => {
     latestStateRef.current = state;
@@ -181,7 +203,16 @@ export function IncrementalGameShell() {
 
   useEffect(() => {
     const trimmedName = playerName.trim();
-    if (!hydrated || !state.completed || state.sandboxMode || !state.completedAt || !trimmedName) return;
+    if (
+      !hydrated ||
+      !state.completed ||
+      state.sandboxMode ||
+      !state.completedAt ||
+      !trimmedName ||
+      !playerToken
+    ) {
+      return;
+    }
 
     const elapsedMs = Math.max(0, state.completedAt - state.startedAt);
     const runId = buildLeaderboardRunId(trimmedName, state.startedAt, state.completedAt);
@@ -197,6 +228,7 @@ export function IncrementalGameShell() {
       body: JSON.stringify({
         gameId: OFFICE_VILLAGE_GAME_ID,
         playerName: trimmedName,
+        playerToken,
         elapsedMs,
         runId,
       }),
@@ -209,6 +241,7 @@ export function IncrementalGameShell() {
         }
 
         setLeaderboardEntries(payload.entries);
+        setLeaderboardPlayerEntry(payload.playerEntry ?? null);
         try {
           window.localStorage.setItem(
             LEADERBOARD_SUBMITTED_RUNS_STORAGE_KEY,
@@ -221,14 +254,18 @@ export function IncrementalGameShell() {
       .catch(() => {
         submittedLeaderboardRunsRef.current.delete(runId);
       });
-  }, [hydrated, playerName, state.completed, state.completedAt, state.sandboxMode, state.startedAt]);
+  }, [
+    hydrated,
+    playerName,
+    playerToken,
+    state.completed,
+    state.completedAt,
+    state.sandboxMode,
+    state.startedAt,
+  ]);
 
   const production = useMemo(() => calculateProduction(state), [state]);
   const localizedState = useMemo(() => localizeGameState(state, language), [state, language]);
-
-  function run(update: (current: GameState) => GameState) {
-    setState((current) => update(current));
-  }
 
   function runAtCurrentTime(update: (current: GameState, timestamp: number) => GameState) {
     const timestamp = Date.now();
@@ -268,24 +305,86 @@ export function IncrementalGameShell() {
     latestStateRef.current = next;
     setState(next);
     setGainBubbles([]);
+    setLeaderboardPlayerEntry(null);
   }
 
-  function handleStartGame() {
+  function handleRestartFromEnd() {
+    handleNewGame();
+    setWelcomeVisible(true);
+    setTutorialVisible(false);
+    setTutorialStepIndex(0);
+    setShowNameError(false);
+  }
+
+  async function reservePlayerName(trimmedName: string): Promise<string | null> {
+    setPlayerReservationPending(true);
+    try {
+      const response = await fetch("/api/leaderboard/player", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          gameId: OFFICE_VILLAGE_GAME_ID,
+          playerName: trimmedName,
+          ...(playerToken ? { playerToken } : {}),
+        }),
+      });
+
+      if (response.status === 409) {
+        setPlayerErrorMessage(copy.welcome.playerTakenError);
+        setShowNameError(true);
+        return null;
+      }
+
+      if (!response.ok) {
+        setPlayerErrorMessage(copy.welcome.playerReserveError);
+        setShowNameError(true);
+        return null;
+      }
+
+      const payload = (await response.json()) as LeaderboardPlayerRegistrationResult;
+      setPlayerName(payload.playerName);
+      setPlayerToken(payload.playerToken);
+      try {
+        window.localStorage.setItem(PLAYER_NAME_STORAGE_KEY, payload.playerName);
+        window.localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, payload.playerToken);
+      } catch {
+        // The run can continue, but this browser may not remember the reserved badge.
+      }
+      return payload.playerToken;
+    } catch {
+      setPlayerErrorMessage(copy.welcome.playerReserveError);
+      setShowNameError(true);
+      return null;
+    } finally {
+      setPlayerReservationPending(false);
+    }
+  }
+
+  async function handleStartGame() {
     const trimmedName = playerName.trim();
 
     if (!trimmedName) {
+      setPlayerErrorMessage(null);
       setShowNameError(true);
       return;
     }
 
+    const reservedToken = await reservePlayerName(trimmedName);
+    if (!reservedToken) return;
+
     const timestamp = Date.now();
     try {
       window.localStorage.setItem(PLAYER_NAME_STORAGE_KEY, trimmedName);
+      window.localStorage.setItem(PLAYER_TOKEN_STORAGE_KEY, reservedToken);
     } catch {
       // The run can start even if browser storage is blocked.
     }
 
     setPlayerName(trimmedName);
+    setPlayerToken(reservedToken);
+    setPlayerErrorMessage(null);
     setShowNameError(false);
     setWelcomeVisible(false);
     if (!tutorialSeen) {
@@ -359,14 +458,34 @@ export function IncrementalGameShell() {
         leaderboardEntries={leaderboardEntries}
         leaderboardLoading={leaderboardLoading}
         showNameError={showNameError}
+        playerErrorMessage={playerErrorMessage}
+        playerLocked={Boolean(playerToken)}
         onPlayerNameChange={(value) => {
+          if (playerToken) return;
           setPlayerName(value);
           if (showNameError && value.trim()) {
             setShowNameError(false);
+            setPlayerErrorMessage(null);
           }
         }}
         onLanguageChange={setStoredGameLanguage}
         onStart={handleStartGame}
+        startDisabled={playerReservationPending}
+      />
+    );
+  }
+
+  if (state.completed && !state.sandboxMode) {
+    return (
+      <EndScreen
+        copy={copy}
+        language={language}
+        playerName={playerName.trim()}
+        elapsedMs={getRunElapsedMs(state, now)}
+        playerEntry={leaderboardPlayerEntry}
+        leaderboardEntries={leaderboardEntries}
+        leaderboardLoading={leaderboardLoading}
+        onRestart={handleRestartFromEnd}
       />
     );
   }
@@ -414,28 +533,6 @@ export function IncrementalGameShell() {
           onOpenTutorial={handleOpenTutorial}
         />
       </main>
-
-      {state.completed && !state.sandboxMode && (
-        <div className="overlay">
-          <div className="paper-card max-w-lg bg-white p-6 text-center">
-            <GameAssetImage assetId="badge-trophy" alt="" className="completion-asset" />
-            <h2 className="mt-3 text-3xl font-black">{copy.ui.completionTitle}</h2>
-            <p className="handwritten mt-3">{copy.ui.completionBody}</p>
-            <div className="mt-5 flex flex-wrap justify-center gap-2">
-              <button
-                type="button"
-                className="paper-button bg-[var(--mint)]"
-                onClick={() => run((current) => continueInSandbox(current))}
-              >
-                {copy.ui.keepPlaying}
-              </button>
-              <button type="button" className="paper-button bg-[var(--yellow)]" onClick={handleNewGame}>
-                {copy.ui.restart}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {state.lost && (
         <div className="overlay">
