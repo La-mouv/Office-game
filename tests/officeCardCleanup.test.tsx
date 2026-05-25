@@ -260,6 +260,27 @@ describe("office card cleanup", () => {
     expect(shopLocationHtml).not.toContain("Effet :");
   });
 
+  it("shows the coffee machine passive budget stream on its card", () => {
+    const state = createInitialGameState(0);
+    const location = {
+      ...state.locations.find((candidate) => candidate.id === "coffee-machine")!,
+      owned: true,
+      level: 1,
+    };
+
+    const html = renderToStaticMarkup(
+      <LocationCard
+        location={location}
+        reputation={state.resources.reputation}
+        budget={state.resources.budget}
+        onBuyOrUpgrade={vi.fn()}
+        variant="office"
+      />,
+    );
+
+    expect(html).toContain("+0,4/s budget");
+  });
+
   it("keeps office card controls in a compact bottom row", () => {
     const state = createInitialGameState(0);
     const location = {

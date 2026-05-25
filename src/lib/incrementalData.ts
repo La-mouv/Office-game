@@ -150,7 +150,7 @@ export const LOCATIONS: OfficeLocation[] = [
     owned: false,
     level: 1,
     maxLevel: 5,
-    effect: { ambianceBonus: 5, ideasMultiplier: 0.15 },
+    effect: { ambianceBonus: 5, ideasMultiplier: 0.15, budgetPerSecond: 0.4 },
     unlockReputation: 20,
     emoji: "☕",
     tags: ["comfort", "energy"],
@@ -475,7 +475,7 @@ export const MANUAL_ACTIONS: ManualAction[] = [
     cooldownMs: 20000,
     lastUsedAt: null,
     cost: { ideas: 25 },
-    effect: { budget: 30, reputation: 15 },
+    effect: { budget: 35, reputation: 15 },
     emoji: "🤝",
   },
 ];

@@ -33,6 +33,7 @@ export type OfficeLocation = {
     reputationMultiplier?: number;
     globalMultiplier?: number;
     ambianceBonus?: number;
+    budgetPerSecond?: number;
     chaosPerSecond?: number;
     chaosReduction?: number;
   };

@@ -56,7 +56,7 @@ describe("incremental office rules", () => {
     const pitch = state.manualActions.find((action) => action.id === "client-pitch")!;
 
     expect(getManualActionCost(pitch)).toEqual({ ideas: 25 });
-    expect(pitch.effect).toEqual({ budget: 30, reputation: 15 });
+    expect(pitch.effect).toEqual({ budget: 35, reputation: 15 });
 
     state = {
       ...state,
@@ -69,7 +69,7 @@ describe("incremental office rules", () => {
     state = useManualAction(state, "client-pitch", 10_000);
 
     expect(state.resources.ideas).toBe(0);
-    expect(state.resources.budget).toBe(80);
+    expect(state.resources.budget).toBe(85);
     expect(state.resources.reputation).toBe(15);
   });
 
@@ -107,6 +107,7 @@ describe("incremental office rules", () => {
       global: 1,
     });
     expect(production.perSecond.ideas).toBeCloseTo(11.853625, 5);
+    expect(production.perSecond.budget).toBeCloseTo(0.437, 5);
   });
 
   it("applies active mission boosts to production and expires them during ticks", () => {

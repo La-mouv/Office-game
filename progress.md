@@ -106,3 +106,7 @@ Original prompt: Build a playable local web MVP of Office Village from the provi
 ## 2026-05-25 welcome leaderboard cleanup
 - Removed the empty-score helper sentence and the pseudo/time meta sentence from the welcome leaderboard.
 - Kept the loading line only while leaderboard data is actively loading.
+
+## 2026-05-25 early budget pacing
+- Made the early economy less stalled by raising Pitch client from +30 to +35 budget.
+- Added a small passive budget stream to the Machine à café with `budgetPerSecond: 0.4`, so budget automation starts well before the Commercial.

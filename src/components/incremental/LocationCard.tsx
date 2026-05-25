@@ -27,9 +27,11 @@ function formatLocationEffect(location: OfficeLocation, language: GameLanguage):
       if (key.includes("Multiplier")) {
         return `+${Math.round(finalValue * 100)} % ${effectLabels[key] ?? key}`;
       }
-      if (key === "ambianceBonus") return `+${finalValue} ${getResourceLabel("ambiance", language).toLowerCase()}`;
-      if (key === "chaosPerSecond") return `+${finalValue}/s ${getResourceLabel("chaos", language).toLowerCase()}`;
-      if (key === "chaosReduction") return `-${finalValue}/s ${getResourceLabel("chaos", language).toLowerCase()}`;
+      const formattedValue = formatNumber(finalValue, language);
+      if (key === "ambianceBonus") return `+${formattedValue} ${getResourceLabel("ambiance", language).toLowerCase()}`;
+      if (key === "budgetPerSecond") return `+${formattedValue}/s ${getResourceLabel("budget", language).toLowerCase()}`;
+      if (key === "chaosPerSecond") return `+${formattedValue}/s ${getResourceLabel("chaos", language).toLowerCase()}`;
+      if (key === "chaosReduction") return `-${formattedValue}/s ${getResourceLabel("chaos", language).toLowerCase()}`;
       return `${key} ${finalValue}`;
     })
     .join(" · ");

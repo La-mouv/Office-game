@@ -288,6 +288,10 @@ export function calculateProduction(state: GameState): ProductionSummary {
   );
 
   const ownedLocations = state.locations.filter((location) => location.owned);
+  const locationBudget = ownedLocations.reduce(
+    (total, location) => total + (location.effect.budgetPerSecond ?? 0) * location.level,
+    0,
+  );
   const locationChaos = ownedLocations.reduce(
     (total, location) => total + (location.effect.chaosPerSecond ?? 0) * location.level,
     0,
@@ -309,7 +313,7 @@ export function calculateProduction(state: GameState): ProductionSummary {
         ambianceMultiplier *
         chaosMultiplier,
       budget:
-        workerProduction.budget *
+        (workerProduction.budget + locationBudget) *
         budgetMultiplier *
         globalMultiplier *
         ambianceMultiplier *

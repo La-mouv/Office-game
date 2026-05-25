@@ -48,7 +48,7 @@ describe("incremental save parsing", () => {
     });
     expect(rehydrated.manualActions.find((action) => action.id === "client-pitch")).toMatchObject({
       cost: { ideas: 25 },
-      effect: { budget: 30, reputation: 15 },
+      effect: { budget: 35, reputation: 15 },
     });
     expect(rehydrated.activeMission?.id).toBe("guided-first-intern");
     expect(rehydrated.completedMissionIds).toEqual([]);
