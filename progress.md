@@ -102,3 +102,7 @@ Original prompt: Build a playable local web MVP of Office Village from the provi
 ## 2026-05-25 loss condition
 - Added a real loss state for the incremental game: ambiance at 0% or chaos at 100% now ends the run.
 - The timer stops on loss, autosubmission stays win-only, old saves still rehydrate, and the player sees a restart-only loss overlay.
+
+## 2026-05-25 welcome leaderboard cleanup
+- Removed the empty-score helper sentence and the pseudo/time meta sentence from the welcome leaderboard.
+- Kept the loading line only while leaderboard data is actively loading.

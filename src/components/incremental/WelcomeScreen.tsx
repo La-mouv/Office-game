@@ -117,8 +117,7 @@ export function WelcomeScreen({
                     </li>
                   ))}
             </ol>
-            <p>{leaderboardLoading ? copy.leaderboardLoading : copy.leaderboardEmpty}</p>
-            <small>{copy.leaderboardMeta}</small>
+            {leaderboardLoading && <p>{copy.leaderboardLoading}</p>}
           </aside>
         </section>
       </div>

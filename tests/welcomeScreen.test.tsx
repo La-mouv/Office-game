@@ -51,4 +51,21 @@ describe("WelcomeScreen", () => {
     expect(html).toContain("Alexis");
     expect(html).toContain("01:05");
   });
+
+  it("keeps the welcome leaderboard compact when no score is available", () => {
+    const html = renderToStaticMarkup(
+      <WelcomeScreen
+        copy={getCopy("fr").welcome}
+        language="fr"
+        playerName=""
+        showNameError={false}
+        onPlayerNameChange={vi.fn()}
+        onLanguageChange={vi.fn()}
+        onStart={vi.fn()}
+      />,
+    );
+
+    expect(html).not.toContain("Aucun score pour l&#x27;instant");
+    expect(html).not.toContain("Pseudo et temps final");
+  });
 });

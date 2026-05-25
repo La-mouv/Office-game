@@ -79,8 +79,6 @@ type TranslationBundle = {
     leaderboardBadge: string;
     leaderboardLoading: string;
     leaderboardPlaceholder: string;
-    leaderboardEmpty: string;
-    leaderboardMeta: string;
   };
   ui: {
     loading: string;
@@ -219,8 +217,6 @@ const COPY: CopyMap<TranslationBundle> = {
       leaderboardBadge: "Branché",
       leaderboardLoading: "Connexion au reporting...",
       leaderboardPlaceholder: "En attente",
-      leaderboardEmpty: "Aucun score pour l'instant. Le reporting attend son premier héros.",
-      leaderboardMeta: "Pseudo et temps final. Rien de plus, promis.",
     },
     ui: {
       loading: "Le stagiaire virtuel cherche les clés du bureau...",
@@ -357,8 +353,6 @@ const COPY: CopyMap<TranslationBundle> = {
       leaderboardBadge: "Live",
       leaderboardLoading: "Connecting the reporting pipeline...",
       leaderboardPlaceholder: "Waiting",
-      leaderboardEmpty: "No scores yet. Reporting is waiting for its first hero.",
-      leaderboardMeta: "Nickname and final time. Nothing extra.",
     },
     ui: {
       loading: "Hold on, the virtual intern is hunting for the office keys...",
@@ -495,8 +489,6 @@ const COPY: CopyMap<TranslationBundle> = {
       leaderboardBadge: "Conectado",
       leaderboardLoading: "Conectando el reporting...",
       leaderboardPlaceholder: "En espera",
-      leaderboardEmpty: "Aún no hay puntuaciones. El reporting espera a su primer héroe.",
-      leaderboardMeta: "Pseudo y tiempo final. Nada más.",
     },
     ui: {
       loading: "Espera, el becario virtual está buscando las llaves de la oficina...",
