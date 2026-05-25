@@ -98,3 +98,7 @@ Original prompt: Build a playable local web MVP of Office Village from the provi
 - Menu and achievements dialogs now render through a body-level portal so they sit above the full game layout instead of being clipped by the animated office scene.
 - Added a scrollable menu sheet height limit so lower actions remain reachable on shorter screens.
 - Local verification at 1280x789 confirmed the overlay is attached to `body`, covers the full viewport, dims the Development column, and the restart confirmation buttons remain reachable after scrolling.
+
+## 2026-05-25 loss condition
+- Added a real loss state for the incremental game: ambiance at 0% or chaos at 100% now ends the run.
+- The timer stops on loss, autosubmission stays win-only, old saves still rehydrate, and the player sees a restart-only loss overlay.

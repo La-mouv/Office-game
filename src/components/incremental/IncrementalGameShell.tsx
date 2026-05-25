@@ -132,7 +132,7 @@ export function IncrementalGameShell() {
   }, [hydrated, state]);
 
   useEffect(() => {
-    if (!hydrated || welcomeVisible || tutorialVisible) return undefined;
+    if (!hydrated || welcomeVisible || tutorialVisible || state.lost) return undefined;
 
     const tickTimer = window.setInterval(() => {
       const timestamp = Date.now();
@@ -148,7 +148,7 @@ export function IncrementalGameShell() {
       window.clearInterval(tickTimer);
       window.clearInterval(autosaveTimer);
     };
-  }, [hydrated, welcomeVisible, tutorialVisible]);
+  }, [hydrated, welcomeVisible, tutorialVisible, state.lost]);
 
   useEffect(() => {
     window.render_game_to_text = () =>
@@ -171,6 +171,7 @@ export function IncrementalGameShell() {
         })),
         activeIncident: state.activeIncident?.id ?? null,
         completed: state.completed,
+        lost: state.lost,
       });
     window.advanceTime = (ms: number) => {
       setState((current) => gameTick(current, current.lastTickAt + ms));
@@ -428,6 +429,21 @@ export function IncrementalGameShell() {
               >
                 {copy.ui.keepPlaying}
               </button>
+              <button type="button" className="paper-button bg-[var(--yellow)]" onClick={handleNewGame}>
+                {copy.ui.restart}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {state.lost && (
+        <div className="overlay">
+          <div className="paper-card max-w-lg bg-white p-6 text-center">
+            <GameAssetImage assetId="resource-chaos" alt="" className="completion-asset" />
+            <h2 className="mt-3 text-3xl font-black">{copy.ui.lossTitle}</h2>
+            <p className="handwritten mt-3">{copy.ui.lossBody}</p>
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
               <button type="button" className="paper-button bg-[var(--yellow)]" onClick={handleNewGame}>
                 {copy.ui.restart}
               </button>

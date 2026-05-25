@@ -161,6 +161,8 @@ export function parseSavedGame(raw: string): GameState | null {
       typeof parsed.highestRewardedReputationLevel === "number" &&
       typeof parsed.completed === "boolean" &&
       typeof parsed.sandboxMode === "boolean" &&
+      (parsed.lost === undefined || typeof parsed.lost === "boolean") &&
+      (parsed.lostAt === undefined || parsed.lostAt === null || typeof parsed.lostAt === "number") &&
       Array.isArray(parsed.log);
 
     return isValid ? (parsed as GameState) : null;
@@ -262,6 +264,8 @@ export function rehydrateSavedGame(saved: GameState): GameState {
     highestRewardedReputationLevel: saved.highestRewardedReputationLevel,
     completed: saved.completed,
     sandboxMode: saved.sandboxMode,
+    lost: saved.lost ?? false,
+    lostAt: saved.lostAt ?? null,
     log,
   };
 

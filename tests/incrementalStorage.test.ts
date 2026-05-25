@@ -55,6 +55,20 @@ describe("incremental save parsing", () => {
     expect(rehydrated.activeBoosts).toEqual([]);
   });
 
+  it("keeps older saves valid before the loss fields existed", () => {
+    const olderSave = createInitialGameState(1_000);
+    delete (olderSave as Partial<typeof olderSave>).lost;
+    delete (olderSave as Partial<typeof olderSave>).lostAt;
+
+    const parsed = parseSavedGame(JSON.stringify(olderSave));
+    const rehydrated = parsed ? rehydrateSavedGame(parsed) : null;
+
+    expect(rehydrated).toMatchObject({
+      lost: false,
+      lostAt: null,
+    });
+  });
+
   it("removes retired manual actions and their old journal traces from saved games", () => {
     const state = createInitialGameState(1_000);
     const olderSave = {

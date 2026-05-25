@@ -60,6 +60,8 @@ export function createInitialGameState(now = Date.now()): GameState {
     highestRewardedReputationLevel: 1,
     completed: false,
     sandboxMode: false,
+    lost: false,
+    lostAt: null,
     log: ["Bienvenue dans Office Village. L’open-space respire encore, le chaos demande déjà un badge."],
   };
 
@@ -488,8 +490,15 @@ export function gameTick(
   now = Date.now(),
   rng: () => number = Math.random,
 ): GameState {
+  if (state.completed || state.lost) {
+    return {
+      ...state,
+      lastTickAt: now,
+    };
+  }
+
   const elapsedSeconds = Math.max(0, (now - state.lastTickAt) / 1000);
-  if (elapsedSeconds <= 0) return expireBoosts(state, now);
+  if (elapsedSeconds <= 0) return checkRunEnd(expireBoosts(state, now), now);
 
   let nextState = expireBoosts(state, now);
   nextState = updateSynergies(nextState);
@@ -508,16 +517,21 @@ export function gameTick(
   nextState = updateMilestones(nextState);
   nextState = maybeTriggerIncident(nextState, now, rng);
   nextState = updateMissions(nextState, now, rng);
-  return checkCompletion(nextState);
+  return checkRunEnd(nextState, now);
 }
 
 export function getRunElapsedMs(state: GameState, now = Date.now()): number {
-  const endpoint = state.completed ? (state.completedAt ?? state.lastTickAt) : now;
+  const endpoint =
+    state.completed
+      ? (state.completedAt ?? state.lastTickAt)
+      : state.lost
+        ? (state.lostAt ?? state.lastTickAt)
+        : now;
   return Math.max(0, endpoint - state.startedAt);
 }
 
 export function resumeRunTimer(state: GameState, now = Date.now()): GameState {
-  if (state.completed) {
+  if (state.completed || state.lost) {
     return {
       ...state,
       lastTickAt: now,
@@ -539,6 +553,8 @@ export function buyWorker(
   now = Date.now(),
   rng: () => number = Math.random,
 ): GameState {
+  if (state.completed || state.lost) return state;
+
   const worker = state.workers.find((candidate) => candidate.id === workerId);
   if (!worker) return state;
   if (state.resources.reputation < worker.unlockReputation) {
@@ -561,7 +577,7 @@ export function buyWorker(
   nextState = updateSynergies(nextState);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now, rng);
-  return checkCompletion(nextState, now);
+  return checkRunEnd(nextState, now);
 }
 
 export function upgradeWorker(
@@ -570,6 +586,8 @@ export function upgradeWorker(
   now = Date.now(),
   rng: () => number = Math.random,
 ): GameState {
+  if (state.completed || state.lost) return state;
+
   const worker = state.workers.find((candidate) => candidate.id === workerId);
   if (!worker) return state;
   if (state.resources.reputation < worker.unlockReputation) {
@@ -592,7 +610,7 @@ export function upgradeWorker(
   };
   nextState = applyResourceDelta(nextState, { budget: -cost });
   nextState = appendLog(nextState, `${worker.name} passe niveau ${worker.level + 1}. La fiche de poste fait semblant de suivre.`);
-  return updateMissions(nextState, now, rng);
+  return checkRunEnd(updateMissions(nextState, now, rng), now);
 }
 
 export function buyOrUpgradeLocation(
@@ -601,6 +619,8 @@ export function buyOrUpgradeLocation(
   now = Date.now(),
   rng: () => number = Math.random,
 ): GameState {
+  if (state.completed || state.lost) return state;
+
   const location = state.locations.find((candidate) => candidate.id === locationId);
   if (!location) return state;
   if (state.resources.reputation < location.unlockReputation) {
@@ -637,7 +657,7 @@ export function buyOrUpgradeLocation(
   nextState = updateSynergies(nextState);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now, rng);
-  return checkCompletion(nextState, now);
+  return checkRunEnd(nextState, now);
 }
 
 export function unlockSkill(
@@ -646,6 +666,8 @@ export function unlockSkill(
   now = Date.now(),
   rng: () => number = Math.random,
 ): GameState {
+  if (state.completed || state.lost) return state;
+
   const skill = state.skills.find((candidate) => candidate.id === skillId);
   if (!skill || skill.unlocked) return state;
   if (state.resources.reputation < skill.unlockReputation) {
@@ -670,7 +692,7 @@ export function unlockSkill(
     resources: clampResources(nextState.resources, nextState.skills),
   };
   nextState = appendLog(nextState, `Talent signé : ${skill.name}. Le bureau se sent soudain compétent.`);
-  return updateMissions(nextState, now, rng);
+  return checkRunEnd(updateMissions(nextState, now, rng), now);
 }
 
 export function maybeTriggerIncident(
@@ -708,6 +730,8 @@ export function resolveIncidentChoice(
   rng: () => number = Math.random,
   now = Date.now(),
 ): GameState {
+  if (state.completed || state.lost) return state;
+
   if (!state.activeIncident || state.activeIncident.id !== incidentId) return state;
   const choice = state.activeIncident.choices.find((candidate) => candidate.id === choiceId);
   if (!choice) return state;
@@ -735,10 +759,12 @@ export function resolveIncidentChoice(
   nextState = updateSynergies(nextState);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now, rng);
-  return checkCompletion(nextState, now);
+  return checkRunEnd(nextState, now);
 }
 
 export function useManualAction(state: GameState, actionId: string, now: number): GameState {
+  if (state.completed || state.lost) return state;
+
   const action = state.manualActions.find((candidate) => candidate.id === actionId);
   if (!action) return state;
   if (
@@ -775,11 +801,34 @@ export function useManualAction(state: GameState, actionId: string, now: number)
   nextState = appendLog(nextState, `Action lancée : ${action.name}. Le bureau fait semblant de garder son calme.`);
   nextState = updateMilestones(nextState);
   nextState = updateMissions(nextState, now);
-  return checkCompletion(nextState, now);
+  return checkRunEnd(nextState, now);
+}
+
+export function checkLoss(state: GameState, lostAt = state.lastTickAt): GameState {
+  if (state.completed || state.lost) return state;
+  if (state.resources.ambiance > 0 && state.resources.chaos < 100) return state;
+
+  const message =
+    state.resources.ambiance <= 0
+      ? "Partie perdue. L’ambiance est à zéro : l’open-space vient de déposer un préavis collectif."
+      : "Partie perdue. Chaos à 100 % : réunion de crise, badges bloqués, café en arrêt technique.";
+
+  return appendLog(
+    {
+      ...state,
+      lost: true,
+      lostAt,
+    },
+    message,
+  );
+}
+
+export function checkRunEnd(state: GameState, endedAt = state.lastTickAt): GameState {
+  return checkCompletion(checkLoss(state, endedAt), endedAt);
 }
 
 export function checkCompletion(state: GameState, completedAt = state.lastTickAt): GameState {
-  if (state.completed) return state;
+  if (state.completed || state.lost) return state;
   const autonomousOffice = state.locations.find((location) => location.id === "autonomous-office");
   const autopilot = state.synergies.find((synergy) => synergy.id === "office-autopilot");
   const completed =

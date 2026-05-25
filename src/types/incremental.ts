@@ -217,5 +217,7 @@ export type GameState = {
   highestRewardedReputationLevel: number;
   completed: boolean;
   sandboxMode: boolean;
+  lost: boolean;
+  lostAt: number | null;
   log: string[];
 };

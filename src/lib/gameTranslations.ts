@@ -132,6 +132,8 @@ type TranslationBundle = {
     unknownEffect: string;
     completionTitle: string;
     completionBody: string;
+    lossTitle: string;
+    lossBody: string;
     keepPlaying: string;
     restart: string;
     emptyLog: string;
@@ -271,6 +273,9 @@ const COPY: CopyMap<TranslationBundle> = {
       completionTitle: "Bureau autonome lancé",
       completionBody:
         "La boîte tourne presque toute seule. Quelqu'un prépare déjà un reporting pour expliquer pourquoi.",
+      lossTitle: "Partie perdue",
+      lossBody:
+        "Ambiance à 0 % ou chaos à 100 %. Le comité de crise reprend la main, et personne n’a réservé la salle.",
       keepPlaying: "Continuer",
       restart: "Recommencer",
       emptyLog: "Rien à signaler. Même Teams respecte le silence.",
@@ -406,6 +411,9 @@ const COPY: CopyMap<TranslationBundle> = {
       completionTitle: "Autonomous office online",
       completionBody:
         "The company almost runs itself now. Someone is already preparing a report to explain why.",
+      lossTitle: "Run lost",
+      lossBody:
+        "Mood at 0% or chaos at 100%. Crisis committee takes over, and nobody booked the room.",
       keepPlaying: "Keep playing",
       restart: "Restart",
       emptyLog: "Nothing to report. Even Teams is respecting the silence.",
@@ -541,6 +549,9 @@ const COPY: CopyMap<TranslationBundle> = {
       completionTitle: "Oficina autónoma activada",
       completionBody:
         "La empresa casi funciona sola. Alguien ya prepara un informe para explicar por qué.",
+      lossTitle: "Partida perdida",
+      lossBody:
+        "Ambiente al 0 % o caos al 100 %. El comité de crisis toma el mando, y nadie reservó la sala.",
       keepPlaying: "Continuar",
       restart: "Reiniciar",
       emptyLog: "Nada que reportar. Hasta Teams respeta el silencio.",

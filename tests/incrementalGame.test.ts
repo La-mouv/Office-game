@@ -354,4 +354,39 @@ describe("incremental office rules", () => {
     expect(complete.completed).toBe(true);
     expect(complete.completedAt).toBe(123_456);
   });
+
+  it("marks the run lost when ambiance hits zero or chaos reaches full panic", () => {
+    const noAmbiance = gameTick(
+      {
+        ...createInitialGameState(1_000),
+        resources: {
+          ...createInitialGameState(1_000).resources,
+          ambiance: 0,
+        },
+      },
+      2_000,
+    );
+
+    expect(noAmbiance).toMatchObject({
+      lost: true,
+      lostAt: 2_000,
+    });
+    expect(noAmbiance.log.at(-1)).toContain("Partie perdue");
+
+    const fullChaos = gameTick(
+      {
+        ...createInitialGameState(1_000),
+        resources: {
+          ...createInitialGameState(1_000).resources,
+          chaos: 100,
+        },
+      },
+      2_000,
+    );
+
+    expect(fullChaos).toMatchObject({
+      lost: true,
+      lostAt: 2_000,
+    });
+  });
 });
