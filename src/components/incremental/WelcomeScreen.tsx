@@ -1,10 +1,15 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import {
   LANGUAGE_OPTIONS,
   type GameLanguage,
   type WelcomeCopy,
 } from "@/lib/gameTranslations";
 import { formatLeaderboardTime, type LeaderboardEntry } from "@/lib/leaderboard";
+
+const WELCOME_LEADERBOARD_COMPACT_LIMIT = 3;
 
 export function WelcomeScreen({
   copy,
@@ -16,6 +21,7 @@ export function WelcomeScreen({
   playerErrorMessage,
   playerLocked = false,
   startDisabled = false,
+  initialLeaderboardExpanded = false,
   onPlayerNameChange,
   onLanguageChange,
   onStart,
@@ -29,11 +35,19 @@ export function WelcomeScreen({
   playerErrorMessage?: string | null;
   playerLocked?: boolean;
   startDisabled?: boolean;
+  initialLeaderboardExpanded?: boolean;
   onPlayerNameChange: (value: string) => void;
   onLanguageChange: (language: GameLanguage) => void;
   onStart: () => void;
 }) {
-  const visibleLeaderboardEntries = leaderboardEntries.slice(0, 3);
+  const [leaderboardExpanded, setLeaderboardExpanded] = useState(initialLeaderboardExpanded);
+  const hasExpandableLeaderboard = leaderboardEntries.length > WELCOME_LEADERBOARD_COMPACT_LIMIT;
+  const visibleLeaderboardEntries = leaderboardExpanded
+    ? leaderboardEntries
+    : leaderboardEntries.slice(0, WELCOME_LEADERBOARD_COMPACT_LIMIT);
+  const leaderboardToggleLabel = leaderboardExpanded
+    ? copy.leaderboardShowTop(WELCOME_LEADERBOARD_COMPACT_LIMIT)
+    : copy.leaderboardShowAll;
 
   return (
     <main className="welcome-screen">
@@ -107,7 +121,10 @@ export function WelcomeScreen({
               <h2>{copy.leaderboardTitle}</h2>
               <span>{copy.leaderboardBadge}</span>
             </div>
-            <ol>
+            <ol
+              id="welcome-leaderboard-list"
+              className={leaderboardExpanded ? "leaderboard-list-expanded" : undefined}
+            >
               {visibleLeaderboardEntries.length > 0
                 ? visibleLeaderboardEntries.map((entry) => (
                     <li key={`${entry.rank}-${entry.playerName}-${entry.elapsedMs}`}>
@@ -124,6 +141,17 @@ export function WelcomeScreen({
                     </li>
                   ))}
             </ol>
+            {hasExpandableLeaderboard && (
+              <button
+                type="button"
+                className="leaderboard-toggle-button"
+                aria-controls="welcome-leaderboard-list"
+                aria-expanded={leaderboardExpanded}
+                onClick={() => setLeaderboardExpanded((current) => !current)}
+              >
+                {leaderboardToggleLabel}
+              </button>
+            )}
             {leaderboardLoading && <p>{copy.leaderboardLoading}</p>}
           </aside>
         </section>

@@ -1,4 +1,5 @@
 export const OFFICE_VILLAGE_GAME_ID = "office-village";
+export const LEADERBOARD_EXPANDED_LIMIT = 50;
 
 export type LeaderboardEntry = {
   rank: number;

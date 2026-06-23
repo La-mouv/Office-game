@@ -1,6 +1,11 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { formatLeaderboardTime, type LeaderboardEntry } from "@/lib/leaderboard";
 import type { GameLanguage, TranslationBundle } from "@/lib/gameTranslations";
+
+const END_LEADERBOARD_COMPACT_LIMIT = 5;
 
 type EndScreenCopy = {
   welcome: TranslationBundle["welcome"];
@@ -15,6 +20,7 @@ export function EndScreen({
   playerEntry,
   leaderboardEntries,
   leaderboardLoading,
+  initialLeaderboardExpanded = false,
   onRestart,
 }: {
   copy: EndScreenCopy;
@@ -24,11 +30,19 @@ export function EndScreen({
   playerEntry?: LeaderboardEntry | null;
   leaderboardEntries: LeaderboardEntry[];
   leaderboardLoading: boolean;
+  initialLeaderboardExpanded?: boolean;
   onRestart: () => void;
 }) {
-  const entries = leaderboardEntries.slice(0, 5);
+  const [leaderboardExpanded, setLeaderboardExpanded] = useState(initialLeaderboardExpanded);
+  const hasExpandableLeaderboard = leaderboardEntries.length > END_LEADERBOARD_COMPACT_LIMIT;
+  const entries = leaderboardExpanded
+    ? leaderboardEntries
+    : leaderboardEntries.slice(0, END_LEADERBOARD_COMPACT_LIMIT);
   const rankLabel = playerEntry ? `#${playerEntry.rank}` : "--";
   const finalTime = formatLeaderboardTime(playerEntry?.elapsedMs ?? elapsedMs);
+  const leaderboardToggleLabel = leaderboardExpanded
+    ? copy.welcome.leaderboardShowTop(END_LEADERBOARD_COMPACT_LIMIT)
+    : copy.welcome.leaderboardShowAll;
 
   return (
     <main className="end-screen" lang={language} style={{ position: "relative" }}>
@@ -68,7 +82,10 @@ export function EndScreen({
             <h2>{copy.welcome.leaderboardTitle}</h2>
             <span>{leaderboardLoading ? copy.ui.endLeaderboardSyncing : copy.ui.endLeaderboardReady}</span>
           </div>
-          <ol>
+          <ol
+            id="end-leaderboard-list"
+            className={leaderboardExpanded ? "leaderboard-list-expanded" : undefined}
+          >
             {entries.length > 0
               ? entries.map((entry) => (
                   <li
@@ -88,6 +105,17 @@ export function EndScreen({
                   </li>
                 ))}
           </ol>
+          {hasExpandableLeaderboard && (
+            <button
+              type="button"
+              className="leaderboard-toggle-button"
+              aria-controls="end-leaderboard-list"
+              aria-expanded={leaderboardExpanded}
+              onClick={() => setLeaderboardExpanded((current) => !current)}
+            >
+              {leaderboardToggleLabel}
+            </button>
+          )}
           {playerEntry && !entries.some((entry) => entry.rank === playerEntry.rank) && (
             <div className="end-player-rank-note">
               <strong>#{playerEntry.rank}</strong>

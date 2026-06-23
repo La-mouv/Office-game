@@ -52,6 +52,36 @@ describe("WelcomeScreen", () => {
     expect(html).toContain("01:05");
   });
 
+  it("can expand the welcome leaderboard from the top 3 to the full loaded list", () => {
+    const copy = getCopy("fr").welcome;
+    const leaderboardEntries = [
+      { rank: 1, playerName: "Alexis", elapsedMs: 65_000, createdAt: "2026-05-24T20:00:00.000Z" },
+      { rank: 2, playerName: "Nina", elapsedMs: 70_000, createdAt: "2026-05-24T21:00:00.000Z" },
+      { rank: 3, playerName: "Sam", elapsedMs: 75_000, createdAt: "2026-05-24T22:00:00.000Z" },
+      { rank: 4, playerName: "Morgan", elapsedMs: 80_000, createdAt: "2026-05-24T23:00:00.000Z" },
+    ];
+    const baseProps = {
+      copy,
+      language: "fr" as const,
+      playerName: "",
+      leaderboardEntries,
+      showNameError: false,
+      onPlayerNameChange: vi.fn(),
+      onLanguageChange: vi.fn(),
+      onStart: vi.fn(),
+    };
+
+    const compactHtml = renderToStaticMarkup(<WelcomeScreen {...baseProps} />);
+    const expandedHtml = renderToStaticMarkup(
+      <WelcomeScreen {...baseProps} initialLeaderboardExpanded />,
+    );
+
+    expect(compactHtml).toContain("Voir tout le leaderboard");
+    expect(compactHtml).not.toContain("Morgan");
+    expect(expandedHtml).toContain("Morgan");
+    expect(expandedHtml).toContain("Voir le top 3");
+  });
+
   it("keeps the welcome leaderboard compact when no score is available", () => {
     const html = renderToStaticMarkup(
       <WelcomeScreen

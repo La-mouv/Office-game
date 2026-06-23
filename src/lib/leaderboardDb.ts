@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { neon } from "@neondatabase/serverless";
 import {
+  LEADERBOARD_EXPANDED_LIMIT,
   normalizePlayerNameKey,
   type LeaderboardEntry,
   type LeaderboardPlayerRegistration,
@@ -9,7 +10,7 @@ import {
 } from "@/lib/leaderboard";
 
 const DEFAULT_LIMIT = 10;
-const MAX_LIMIT = 50;
+const MAX_LIMIT = LEADERBOARD_EXPANDED_LIMIT;
 
 type LeaderboardRow = {
   player_name: string;
@@ -368,7 +369,7 @@ export async function submitLeaderboardScore(
     WHERE EXCLUDED.elapsed_ms < leaderboard_scores.elapsed_ms
     RETURNING id
   `;
-  const entries = await getLeaderboard(submission.gameId);
+  const entries = await getLeaderboard(submission.gameId, LEADERBOARD_EXPANDED_LIMIT);
   const playerEntry = await getLeaderboardEntryForPlayer(submission.gameId, player.id);
 
   return {

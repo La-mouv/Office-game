@@ -81,6 +81,8 @@ export type TranslationBundle = {
     leaderboardBadge: string;
     leaderboardLoading: string;
     leaderboardPlaceholder: string;
+    leaderboardShowAll: string;
+    leaderboardShowTop: (count: number) => string;
   };
   ui: {
     loading: string;
@@ -229,6 +231,8 @@ const COPY: CopyMap<TranslationBundle> = {
       leaderboardBadge: "Branché",
       leaderboardLoading: "Connexion au reporting...",
       leaderboardPlaceholder: "En attente",
+      leaderboardShowAll: "Voir tout le leaderboard",
+      leaderboardShowTop: (count) => `Voir le top ${count}`,
     },
     ui: {
       loading: "Le stagiaire virtuel cherche les clés du bureau...",
@@ -377,6 +381,8 @@ const COPY: CopyMap<TranslationBundle> = {
       leaderboardBadge: "Live",
       leaderboardLoading: "Connecting the reporting pipeline...",
       leaderboardPlaceholder: "Waiting",
+      leaderboardShowAll: "View full leaderboard",
+      leaderboardShowTop: (count) => `Show top ${count}`,
     },
     ui: {
       loading: "Hold on, the virtual intern is hunting for the office keys...",
@@ -525,6 +531,8 @@ const COPY: CopyMap<TranslationBundle> = {
       leaderboardBadge: "Conectado",
       leaderboardLoading: "Conectando el reporting...",
       leaderboardPlaceholder: "En espera",
+      leaderboardShowAll: "Ver todo el leaderboard",
+      leaderboardShowTop: (count) => `Ver top ${count}`,
     },
     ui: {
       loading: "Espera, el becario virtual está buscando las llaves de la oficina...",

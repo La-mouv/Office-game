@@ -21,6 +21,7 @@ import {
 import { loadGame, saveGame } from "@/lib/incrementalStorage";
 import { getCopy, localizeGameState } from "@/lib/gameTranslations";
 import {
+  LEADERBOARD_EXPANDED_LIMIT,
   buildLeaderboardRunId,
   buildLeaderboardUrl,
   OFFICE_VILLAGE_GAME_ID,
@@ -124,7 +125,7 @@ export function IncrementalGameShell() {
         ? buildLeaderboardRunId(trimmedName, state.startedAt, state.completedAt)
         : null;
 
-    fetch(buildLeaderboardUrl(runId, 5), {
+    fetch(buildLeaderboardUrl(runId, LEADERBOARD_EXPANDED_LIMIT), {
       signal: abortController.signal,
     })
       .then((response) => (response.ok ? response.json() : null))
